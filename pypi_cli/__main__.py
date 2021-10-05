@@ -430,7 +430,7 @@ def info(
 
     metadata = Table.grid()
     metadata.add_column(justify="left")
-    if not hide_project_urls:
+    if info.get("project_urls") and not hide_project_urls:
         metadata.add_row(
             Panel(
                 "\n".join(f"[yellow]{name}[/]: [cyan]{url}[/]" for name, url in info["project_urls"].items()),
