@@ -102,6 +102,9 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
+# Visual Studio Code project settings
+.vscode
+
 # mkdocs documentation
 /site
 
@@ -112,3 +115,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# File history
+.history/
