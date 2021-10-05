@@ -52,6 +52,13 @@ def utc_to_local(utc_dt):
     return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
 
+def remove_dot_git(text):
+    """Remove the .git suffix from a URL."""
+    if text.endswith(".git"):
+        return text[:-4]
+    return text
+
+
 def _format_classifiers(_classifiers: str):
     """Format classifiers gotten from the API."""
     classifier_dict = {}
@@ -409,10 +416,10 @@ def info(
         else f"[red]Newer version available ({latest_version})[/]"
     )
     repo = re.findall(
-        r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})",
+        r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?",
         str(info),
     )
-    repo = repo[0][1] if repo else None
+    repo = remove_dot_git(repo[0][1]) if repo else None
 
     title = Text.from_markup(f"[bold cyan]{info['name']} {info['version']}[/]\n{description}", justify="left")
     message = Text.from_markup(f"{version_comment}\nReleased: {natural_time}", justify="right")
@@ -438,22 +445,32 @@ def info(
             with console.status("Getting data from GitHub"):
                 resp = requests.get(url, headers=headers)
             github_data = json.loads(resp.text)
-            size = github_data["size"]
-            stars = github_data["stargazers_count"]
-            forks = github_data["forks_count"]
-            issues = github_data["open_issues"]
-            metadata.add_row(
-                Panel(
-                    f"[light_green link=https://github.com/{repo}]Name[/]: {repo}\n"
-                    f"[light_green]Size[/]: {size:,} KB\n"
-                    f"[light_green]Stargazers[/]: {stars:,}\n"
-                    f"[light_green]Issues/Pull Requests[/]: {issues:,}\n"
-                    f"[light_green]Forks[/]: {forks:,}",
-                    expand=False,
-                    border_style="green",
-                    title="GitHub",
+            if github_data.get("message") and github_data["message"] == "Not Found":
+                metadata.add_row(
+                    Panel(
+                        f"[red underline]Repo Not Found[/]\n[cyan]Link[/]: {url}\n[light_green]Name[/]: {repo}\n",
+                        expand=False,
+                        border_style="green",
+                        title="GitHub",
+                    )
                 )
-            )
+            else:
+                size = github_data["size"]
+                stars = github_data["stargazers_count"]
+                forks = github_data["forks_count"]
+                issues = github_data["open_issues"]
+                metadata.add_row(
+                    Panel(
+                        f"[light_green link=https://github.com/{repo}]Name[/]: {repo}\n"
+                        f"[light_green]Size[/]: {size:,} KB\n"
+                        f"[light_green]Stargazers[/]: {stars:,}\n"
+                        f"[light_green]Issues/Pull Requests[/]: {issues:,}\n"
+                        f"[light_green]Forks[/]: {forks:,}",
+                        expand=False,
+                        border_style="green",
+                        title="GitHub",
+                    )
+                )
     if not hide_stats:
         stats_url = f"https://pypistats.org/api/packages/{package_name}/recent"
         with console.status("Getting statistics from PyPI Stats"):
