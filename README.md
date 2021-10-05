@@ -30,7 +30,7 @@
 - Installing from source.
 
   ```sh
-  pip install git+https://github.com/wasi-master/pypi_command_line.git
+  pip install git+https://github.com/wasi-master/pypi-command-line.git
   ```
 
 ## Usage
