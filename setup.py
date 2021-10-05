@@ -37,14 +37,18 @@ setuptools.setup(
         "console_scripts": ["pypi=pypi_cli.__main__:run"],
     },
     keywords=[
-        "pypi" "pypi cli",
-        "pypi-cli"
-        "pypi command line"
-        "pypi-command-line"
-        "pypi command line interface"
+        "pypi",
+        "pypi cli",
+        "pypi-cli",
+        "pypi command line",
+        "pypi-command-line",
+        "pypi command line interface",
         "pypi-command-line-interface",
         "pypi command line application",
-        "pypi-command-line-application" "command line interface",
-        "command-line-interface" "command line application" "command-line-application",
+        "pypi-command-line-application",
+        "command line interface",
+        "command-line-interface",
+        "command line application",
+        "command-line-application",
     ],
 )
