@@ -2,7 +2,6 @@
 import json
 import re
 from datetime import datetime, timezone
-from distutils.version import LooseVersion
 from typing import List
 from urllib.parse import quote
 
@@ -11,6 +10,7 @@ import humanize
 import requests
 import rich
 import typer
+from packaging.version import parse as parse_version
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
@@ -409,10 +409,11 @@ def info(
     release_time = datetime.strptime(urls[-1]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ")
     natural_time = release_time.strftime("%b %d, %Y")
     description = info["summary"]
-    latest_version = list(sorted(releases.keys(), key=LooseVersion, reverse=True))[0]
+    latest_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0]
+    latest_stable_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0]
     version_comment = (
         "[green]Latest Version[/]"
-        if latest_version == info["version"]
+        if str(latest_version) == str(info["version"])
         else f"[red]Newer version available ({latest_version})[/]"
     )
     repo = re.findall(
