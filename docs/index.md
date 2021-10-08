@@ -48,9 +48,13 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 ### `… info django`
 
 - pypi-cli - **0.9757808**
+
     Now I do have to admit that this is faster, mainly because this does a single api call but mine does 3. You do have to realise that you are getting [this](https://i.imgur.com/X7OuPIb.png) instead of [this](https://i.imgur.com/s8aQx09.png)
+
 - pypi-command-line - **2.1925032**
+
     This does take longer but it's using that time to get not only the pypi stats but the *proper* download stats and github stats along with the pypi stats, disabling those lowers this time to [1.35](# "1.3591562") seconds.
 
 - pypi-client - **can't see info**
+
     You can't see project info with this package, you can only search for stuff.
