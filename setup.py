@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pypi-command-line",
-    version="0.1.2",
+    version="0.1.3",
     author="Wasi Master",
     author_email="arianmollik323@gmail.com",
     description="A beautiful command line interface for the Python Package Index",
@@ -37,7 +37,7 @@ setuptools.setup(
     ],
     packages=["pypi_cli"],
     python_requires=">=3.6",
-    install_requires=["typer", "rich", "rich-rst", "bs4", "lxml", "requests"],
+    install_requires=["typer", "rich", "rich-rst", "bs4", "lxml", "requests", "packaging"],
     entry_points={
         "console_scripts": ["pypi=pypi_cli.__main__:run"],
     },
