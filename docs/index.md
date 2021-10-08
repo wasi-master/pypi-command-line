@@ -31,7 +31,7 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
 ## Benchmarks for speed
 
-### `... search discord`
+### `… search discord`
 
 - pypi-command-line - **1.9511792**
 
@@ -45,7 +45,7 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
     The command doesn't work anymore since pypi has discontinued it's xml-rpc api<sup><a title=Reference href="https://status.python.org/incidents/grk0k7sz6zkp">‾</a></sup>
 
-### `... info django`
+### `… info django`
 
 - pypi-cli - **0.9757808**
     Now I have to admit that this is faster, mainly because this does a single api call but mine does 3. now you have to realise that you are getting [this](https://i.imgur.com/X7OuPIb.png) instead of [this](https://i.imgur.com/s8aQx09.png)
