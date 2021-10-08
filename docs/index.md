@@ -1,37 +1,56 @@
-## Welcome to GitHub Pages
+# Welcome to pypi-command-line documentation
 
-You can use the [editor on GitHub](https://github.com/wasi-master/pypi-command-line/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+`pypi-command-line` is a A powerful command line interface for [pypi.org](https://pypi.org)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## What is this?
 
-### Markdown
+It's a [command line interface](https://en.wikipedia.org/wiki/Command-line_interface "A command-line interface (CLI) processes commands to a computer program in the form of lines of text.") that you can use to run [commands](https://en.wikipedia.org/wiki/Command_(computing) "In computing, a command is a directive to a computer program to perform a specific task.") in a [terminal](https://en.wikipedia.org/wiki/Computer_terminal "The terminal is an interface that allows you to access the command line.")
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Why is this?
 
-```markdown
-Syntax highlighted code block
+There are [a few alternatives](#alternatives) that I've come across but none of those offer the same amount of functionality and [beautifulness](https://www.merriam-webster.com/thesaurus/beautifulness "the qualities in a person or thing that as a whole give pleasure to the senses") or even the same [amount of speed](#benchmarks-for-speed).
 
-# Header 1
-## Header 2
-### Header 3
+## Usage
 
-- Bulleted
-- List
+For usage details see [usage](https://wasi-master.github.io/pypi-command-line/usage)
 
-1. Numbered
-2. List
+## Alternatives
 
-**Bold** and _Italic_ and `Code` text
+### [pypi-cli](https://pypi.org/project/pypi-cli/)
 
-[Link](url) and ![Image](src)
-```
+Now this probably was the best option before `pypi-command-line` came out and even it has some flaws. The `info` command is pretty minimal, there's no way of seeing the github info, The download count doesn't work, the long descriptions aren't formatted at all. The search feature doesn't even work at all. It used to use the [xml-rpc](https://en.wikipedia.org/wiki/XML-RPC "XML-RPC is a remote procedure call (RPC) protocol which uses XML to encode its calls and HTTP as a transport mechanism.") API that is discontinued therefore the feature doesn't work anymore. The stat command is broken and is badly formatted for screens that are not ultra high resolution.
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+**TL;DR** The `stat` and `search` commands don't work anymore, the info command kinda works but the download count doesn't work, can't see github info.
 
-### Jekyll Themes
+### [pypi-client](https://pypi.org/project/pypi-client/)
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/wasi-master/pypi-command-line/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+So this can just search for packages on pypi and thats it. Now don't you think that this is inherently bad as per say. So I tried it out immediately and it just got stuck loading the packages, it gets all package names from pypi<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=fetches%20all%20package%20names%20from%20pypi">‾</a></sup> which took like 4 mins, then I assume it downloads the github stars?<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=downloads%20github%20stars">‾</a></sup> Which takes like another 3 mins and then It just asked me to authorize… like why does it even need authorization from me since github has a public api. And then it showed [this](https://i.imgur.com/D0VJhmZ.png) which isn't really unreadable just badly formatted for screens that are not ultra high resolution. by changing the font size a bit I could make it look like [this](https://i.imgur.com/usU2AnJ.jpeg) which still isn't bad just a bit convoluted. And even at the end the results are manually searched through therefore different from pypi<sup><a title=Example href="https://i.imgur.com/2AuCKuX.jpg">‾</a></sup>
 
-### Support or Contact
+**TL;DR:**
+Takes too long (≈7 mins), Needs github authorization, badly formatted for non ultra-high-end monitors, searches manually so results are different compared to pypi
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+## Benchmarks for speed
+
+### `... search discord`
+
+- pypi-command-line - **1.9511792**
+
+    Takes around 2 secs to do a get request to the pypi search page then parse and return the results so that the results are the exact same as shown in [pypi.org](https://pypi.org)
+
+- pypi-client - **7.4170682**
+
+    Takes 7 secs to get all packages and show ones containing discord, `pypi-command-lines` can achieve the same result in [`4.33`](# "04.3348642") seconds using `pypi rsearch discord` (r stands for regex, the command allows you to search with regex)
+
+- pypi-cli - doesn't work anymore
+
+    The command doesn't work anymore since pypi has discontinued it's xml-rpc api<sup><a title=Reference href="https://status.python.org/incidents/grk0k7sz6zkp">‾</a></sup>
+
+### `... info django`
+
+- pypi-cli - **0.9757808**
+    Now I have to admit that this is faster, mainly because this does a single api call but mine does 3. now you have to realise that you are getting [this](https://i.imgur.com/X7OuPIb.png) instead of [this](https://i.imgur.com/s8aQx09.png)
+- pypi-command-line - **2.1925032**
+    This does take longer but it's using that time to get not only the pypi stats but the *proper* download stats and github stats along with the pypi stats, disabling those lowers this time to [1.35](# "1.3591562") seconds.
+
+- pypi-client - can't see info
+    You can't see project info with this, you can only search for stuff.
