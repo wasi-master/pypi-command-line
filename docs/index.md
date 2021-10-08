@@ -41,7 +41,7 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
     Takes 7 secs to get all packages and show ones containing discord, `pypi-command-lines` can achieve the same result in [`4.33`](# "04.3348642") seconds using `pypi rsearch discord` (r stands for regex, the command allows you to search with regex)
 
-- pypi-cli - doesn't work anymore
+- pypi-cli - **doesn't work** anymore
 
     The command doesn't work anymore since pypi has discontinued it's xml-rpc api<sup><a title=Reference href="https://status.python.org/incidents/grk0k7sz6zkp">‾</a></sup>
 
@@ -52,5 +52,5 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 - pypi-command-line - **2.1925032**
     This does take longer but it's using that time to get not only the pypi stats but the *proper* download stats and github stats along with the pypi stats, disabling those lowers this time to [1.35](# "1.3591562") seconds.
 
-- pypi-client - can't see info
-    You can't see project info with this, you can only search for stuff.
+- pypi-client - **can't see info**
+    You can't see project info with this package, you can only search for stuff.
