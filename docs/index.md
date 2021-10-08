@@ -39,7 +39,7 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
 - pypi-client - **7.4170682**
 
-    Takes 7 secs to get all packages and show ones containing discord, `pypi-command-lines` can achieve the same result in [`4.33`](# "04.3348642") seconds using `pypi rsearch discord` (r stands for regex, the command allows you to search with regex)
+    Takes 7 secs to get all packages and show ones containing discord, `pypi-command-line` can achieve the same result in [`4.33`](# "04.3348642") seconds using `pypi rsearch discord` (r stands for regex, the command allows you to search with regex)
 
 - pypi-cli - **doesn't work** anymore
 
