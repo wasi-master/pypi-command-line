@@ -8,7 +8,7 @@ It's a [command line interface](https://en.wikipedia.org/wiki/Command-line_inter
 
 ## Why is this?
 
-There are [a few alternatives](#alternatives) that I've come across but none of those offer the same amount of functionality and [beautifulness](https://www.merriam-webster.com/thesaurus/beautifulness "the qualities in a person or thing that as a whole give pleasure to the senses") or even the same [amount of speed](#benchmarks-for-speed).
+There are [a few alternatives](#alternatives) that I've come across but none of those offer the same amount of functionality and [beautifulness](https://www.merriam-webster.com/thesaurus/beautifulness "The qualities in something that give pleasure to the senses") or even the same [amount of speed](#benchmarks-for-speed).
 
 ## Usage
 
