@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pypi-command-line",
-    version="0.2.1",
+    version="0.2.2",
     author="Wasi Master",
     author_email="arianmollik323@gmail.com",
     description="A beautiful command line interface for the Python Package Index",
@@ -42,7 +42,8 @@ setuptools.setup(
         "console_scripts": ["pypi=pypi_cli.__main__:run"],
     },
     keywords=[
-        "pypi" "pypi cli",
+        "pypi",
+        "pypi cli",
         "pypi-cli",
         "pypi command line",
         "pypi-command-line",
