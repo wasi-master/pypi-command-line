@@ -205,9 +205,6 @@ def desc(
     if parsed_data["description_content_type"] == "text/markdown":
         description = Markdown(parsed_data["description"])
     elif parsed_data["description_content_type"] == "text/x-rst":
-        if not HAS_DOCUTILS:
-            rich.print("[red] docutils is not installed, printing reStructuredText documentation is not gonna work[/]")
-            raise typer.Exit()
         description = RestructuredText(parsed_data["description"])
     else:
         description = Text(parsed_data["description"])
