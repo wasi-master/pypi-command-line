@@ -3,7 +3,7 @@ typer[all]
 # For pretty printing
 rich
 # For web scraping and XML parsing
-beautifulsoup
+beautifulsoup4
 lxml
 # For HTTP requests
 requests

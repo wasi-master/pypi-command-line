@@ -37,7 +37,7 @@ setuptools.setup(
     ],
     packages=["pypi_cli"],
     python_requires=">=3.6",
-    install_requires=["typer", "rich", "rich-rst", "beautifulsoup", "lxml", "requests", "packaging"],
+    install_requires=["typer", "rich", "rich-rst", "beautifulsoup4", "lxml", "requests", "packaging"],
     entry_points={
         "console_scripts": ["pypi=pypi_cli.__main__:run"],
     },
