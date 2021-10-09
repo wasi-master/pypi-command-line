@@ -7,8 +7,6 @@ beautifulsoup4
 lxml
 # For HTTP requests
 requests
-# For reStructuredText parsing
-docutils
 # For reStructuredText pretty printing
 rich-rst
 # For parsing version numbers (should already be installed with setuptools but just in case)
