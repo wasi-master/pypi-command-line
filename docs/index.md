@@ -4,11 +4,11 @@
 
 ## What is this?
 
-It's a command line interface<sup>[<a title="A command-line interface (CLI) processes commands to a computer program in the form of lines of text." href="https://en.wikipedia.org/wiki/Command-line_interface">?</a>]</sup> that you can use to run commands<sup>[<a title="In computing, a command is a directive to a computer program to perform a specific task." href="https://en.wikipedia.org/wiki/Command_(computing)">?</a>]</sup> in a terminal<sup>[<a title="The terminal is an interface that allows you to access the command line." href="https://en.wikipedia.org/wiki/Computer_terminal">?</a>]</sup>
+It's a command line interface<sup>[<a title="A command-line interface (CLI) processes commands to a computer program in the form of lines of text." href="https://en.wikipedia.org/wiki/Command-line_interface" target="_blank">?</a>]</sup> that you can use to run commands<sup>[<a title="In computing, a command is a directive to a computer program to perform a specific task." href="https://en.wikipedia.org/wiki/Command_(computing)" target="_blank">?</a>]</sup> in a terminal<sup>[<a title="The terminal is an interface that allows you to access the command line." href="https://en.wikipedia.org/wiki/Computer_terminal" target="_blank">?</a>]</sup>
 
 ## Why is this?
 
-There are [a few alternatives](#alternatives "List containing 2 alternatives") that I've come across but none of those offer the same amount of functionality and beautifulness<sup>[<a title="The qualities in something that give pleasure to the senses" href="https://www.merriam-webster.com/thesaurus/beautifulness">?</a>]</sup> or even the same [amount of speed](#benchmarks-for-speed "Benchmarks for Speed").
+There are [a few alternatives](#alternatives "List containing 2 alternatives") that I've come across but none of those offer the same amount of functionality and beautifulness<sup>[<a title="The qualities in something that give pleasure to the senses" href="https://www.merriam-webster.com/thesaurus/beautifulness" target="_blank">?</a>]</sup> or even the same [amount of speed](#benchmarks-for-speed "Benchmarks for Speed").
 
 ## Usage
 
@@ -18,13 +18,13 @@ For usage details see [usage](https://wasi-master.github.io/pypi-command-line/us
 
 ### [pypi-cli](https://pypi.org/project/pypi-cli/ "pypi-cli")
 
-Now this probably was the best option before `pypi-command-line` came out and even it has some flaws. The `info` command is pretty minimal, there's no way of seeing the github info, The download count doesn't work, the long descriptions aren't formatted at all. The search feature doesn't even work at all. It used to use the xml-rpc<sup>[<a title="XML-RPC is a remote procedure call (RPC) protocol which uses XML to encode its calls and HTTP as a transport mechanism." href="https://en.wikipedia.org/wiki/XML-RPC">?</a>]</sup> API that is discontinued therefore the feature doesn't work anymore. The stat command is broken and is badly formatted for screens that are not ultra high resolution.
+Now this probably was the best option before `pypi-command-line` came out and even it has some flaws. The `info` command is pretty minimal, there's no way of seeing the github info, The download count doesn't work, the long descriptions aren't formatted at all. The search feature doesn't even work at all. It used to use the xml-rpc<sup>[<a title="XML-RPC is a remote procedure call (RPC) protocol which uses XML to encode its calls and HTTP as a transport mechanism." href="https://en.wikipedia.org/wiki/XML-RPC" target="_blank">?</a>]</sup> API that is discontinued therefore the feature doesn't work anymore. The stat command is broken and is badly formatted for screens that are not ultra high resolution.
 
 **TL;DR** The `stat` and `search` commands don't work anymore, the info command kinda works but the download count doesn't work, can't see github info.
 
 ### [pypi-client](https://pypi.org/project/pypi-client/ "pypi-client")
 
-So this can just search for packages on pypi and thats it. Now don't you think that this is inherently bad as per say. So I tried it out immediately and it just got stuck loading the packages, it gets all package names from pypi<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=fetches%20all%20package%20names%20from%20pypi">‾</a></sup> which took like 4 mins, then I assume it downloads the github stars?<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=downloads%20github%20stars">‾</a></sup> Which takes like another 3 mins and then It just asked me to authorize… like why does it even need authorization from me since github has a public api. And then it showed [this](https://i.imgur.com/D0VJhmZ.png "Demo of the program that has been badly formatted") which isn't really unreadable just badly formatted for screens that are not ultra high resolution. by changing the font size a bit I could make it look like [this](https://i.imgur.com/usU2AnJ.jpeg "Demo of the program after lowering the font size") which still isn't bad just a bit convoluted. And even at the end the results are manually searched through therefore different from pypi<sup><a title=Example href="https://i.imgur.com/2AuCKuX.jpg">‾</a></sup>
+So this can just search for packages on pypi and thats it. Now don't you think that this is inherently bad as per say. So I tried it out immediately and it just got stuck loading the packages, it gets all package names from pypi<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=fetches%20all%20package%20names%20from%20pypi" target="_blank">‾</a></sup> which took like 4 mins, then I assume it downloads the github stars?<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=downloads%20github%20stars" target="_blank">‾</a></sup> Which takes like another 3 mins and then It just asked me to authorize… like why does it even need authorization from me since github has a public api. And then it showed [this](https://i.imgur.com/D0VJhmZ.png "Demo of the program that has been badly formatted") which isn't really unreadable just badly formatted for screens that are not ultra high resolution. by changing the font size a bit I could make it look like [this](https://i.imgur.com/usU2AnJ.jpeg "Demo of the program after lowering the font size") which still isn't bad just a bit convoluted. And even at the end the results are manually searched through therefore different from pypi<sup><a title=Example href="https://i.imgur.com/2AuCKuX.jpg" target="_blank">‾</a></sup>
 
 **TL;DR:**
 Takes too long (≈7 mins), Needs github authorization, badly formatted for non ultra-high-end monitors, searches manually so results are different compared to pypi
@@ -43,7 +43,7 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
 - pypi-cli - **doesn't work** anymore
 
-    The command doesn't work anymore since pypi has discontinued it's xml-rpc api<sup><a title=Reference href="https://status.python.org/incidents/grk0k7sz6zkp">‾</a></sup>
+    The command doesn't work anymore since pypi has discontinued it's xml-rpc api<sup><a title=Reference href="https://status.python.org/incidents/grk0k7sz6zkp" target="_blank">‾</a></sup>
 
 ### `… info django`
 
