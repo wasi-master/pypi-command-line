@@ -4,11 +4,11 @@
 
 ## What is this?
 
-It's a [command line interface](https://en.wikipedia.org/wiki/Command-line_interface "A command-line interface (CLI) processes commands to a computer program in the form of lines of text.") that you can use to run [commands](https://en.wikipedia.org/wiki/Command_(computing) "In computing, a command is a directive to a computer program to perform a specific task.") in a [terminal](https://en.wikipedia.org/wiki/Computer_terminal "The terminal is an interface that allows you to access the command line.")
+It's a command line interface<sup>[<a title="A command-line interface (CLI) processes commands to a computer program in the form of lines of text." href="https://en.wikipedia.org/wiki/Command-line_interface">?</a>]</sup> that you can use to run commands<sup>[<a title="In computing, a command is a directive to a computer program to perform a specific task." href="https://en.wikipedia.org/wiki/Command_(computing)">?</a>]</sup> in a terminal<sup>[<a title="The terminal is an interface that allows you to access the command line." href="https://en.wikipedia.org/wiki/Computer_terminal">?</a>]</sup>
 
 ## Why is this?
 
-There are [a few alternatives](#alternatives) that I've come across but none of those offer the same amount of functionality and [beautifulness](https://www.merriam-webster.com/thesaurus/beautifulness "The qualities in something that give pleasure to the senses") or even the same [amount of speed](#benchmarks-for-speed).
+There are [a few alternatives](#alternatives) that I've come across but none of those offer the same amount of functionality and beautifulness<sup>[<a title="The qualities in something that give pleasure to the senses" href="https://www.merriam-webster.com/thesaurus/beautifulness">?</a>]</sup> or even the same [amount of speed](#benchmarks-for-speed).
 
 ## Usage
 
@@ -18,7 +18,7 @@ For usage details see [usage](https://wasi-master.github.io/pypi-command-line/us
 
 ### [pypi-cli](https://pypi.org/project/pypi-cli/)
 
-Now this probably was the best option before `pypi-command-line` came out and even it has some flaws. The `info` command is pretty minimal, there's no way of seeing the github info, The download count doesn't work, the long descriptions aren't formatted at all. The search feature doesn't even work at all. It used to use the [xml-rpc](https://en.wikipedia.org/wiki/XML-RPC "XML-RPC is a remote procedure call (RPC) protocol which uses XML to encode its calls and HTTP as a transport mechanism.") API that is discontinued therefore the feature doesn't work anymore. The stat command is broken and is badly formatted for screens that are not ultra high resolution.
+Now this probably was the best option before `pypi-command-line` came out and even it has some flaws. The `info` command is pretty minimal, there's no way of seeing the github info, The download count doesn't work, the long descriptions aren't formatted at all. The search feature doesn't even work at all. It used to use the xml-rpc<sup>[<a title="XML-RPC is a remote procedure call (RPC) protocol which uses XML to encode its calls and HTTP as a transport mechanism." href="https://en.wikipedia.org/wiki/XML-RPC">?</a>]</sup> API that is discontinued therefore the feature doesn't work anymore. The stat command is broken and is badly formatted for screens that are not ultra high resolution.
 
 **TL;DR** The `stat` and `search` commands don't work anymore, the info command kinda works but the download count doesn't work, can't see github info.
 
