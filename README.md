@@ -12,6 +12,7 @@
   - See beautifully rendered markdown/rst/plain text description of a package
   - Search for packages with the same information as pypi and even filter them.
   - Search for packages with regex, for example using `flask-.+` will show all flask extensions.
+  - Browse for a package's URLs and open any of those URLs inside a browser with a beautiful colored link selection menu
   - See all the releases of a package, along with when they were made and their size.
   - See New projects and new releases [just like PyPI](https://pypi.org#pypi-trending-packages).
   - See top 100 of the largest packages [just like PyPI](https://pypi.org/stats/).

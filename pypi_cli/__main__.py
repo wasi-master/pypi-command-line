@@ -1,12 +1,14 @@
 """The main file."""
 import json
 import re
+import webbrowser
 from datetime import datetime, timezone
 from typing import List
 from urllib.parse import quote
 
 import bs4
 import humanize
+import questionary
 import requests
 import rich
 import typer
@@ -23,6 +25,14 @@ from typer import Argument, Option
 # We instantiate a typer app and a rich console for later use
 app = typer.Typer(add_completion=False)
 console = Console(theme=Theme({"markdown.link": "#6088ff"}))
+# We will use this styling in the browse command
+link_style = questionary.Style(
+    [
+        ("name", "bold red"),
+        ("seperator", "gray"),
+        ("url", "cyan"),
+    ]
+)
 # We will use these headers for every request
 headers = {"User-Agent": "wasi_master/pypi_cli"}
 
@@ -577,6 +587,41 @@ def regex_search(
         console.print(table)
         if table.row_count > 50:
             console.print("[yellow]There are more than 50 matches, consider using the --compact flag")
+
+
+@app.command()
+def browse(package_name: str = Argument(...)):
+    """Browse for a package's URLs"""
+    url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+    with console.status("Getting data from PyPI"):
+        response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        if response.status_code == 404:
+            rich.print("[red]Project not found[/]")
+        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+        raise typer.Exit()
+
+    parsed_data = json.loads(response.text)
+    info = parsed_data["info"]
+
+    urls = info["project_urls"]
+    urls["Project URL"] = info.get("project_url")
+    urls["Home Page"] = info.get("project_url")
+    urls["Release URL"] = info.get("release_url")
+    urls["Mail to"] = ("mailto:" + info["maintainer_email"]) if info.get("maintainer_email") else None
+
+    answer = questionary.select(
+        "Which link do you want to to open?",
+        choices=[
+            questionary.Choice(title=[("class:name", name), ("class:seperator", " - "), ("class:url", url)], value=url)
+            for name, url in urls.items()
+            if url
+        ],
+        style=link_style,
+    ).ask()
+    if answer:
+        webbrowser.open(answer)
 
 
 def run():

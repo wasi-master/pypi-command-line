@@ -2,6 +2,8 @@
 typer[all]
 # For pretty printing
 rich
+# For choosing a link with the browse command
+questionary
 # For web scraping and XML parsing
 beautifulsoup4
 lxml
