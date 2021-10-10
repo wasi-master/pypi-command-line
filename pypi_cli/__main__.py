@@ -281,9 +281,9 @@ def largest_files():
 def search(
     name: str = Argument(..., help="The name of the package to search for"),
     page: int = Option(1, min=1, max=500, help="The page of the search results to show."),
-    classifier: List[str] = Option(
-        None, help="Can be used multiple times to specify a list of classifiers to filter the results."
-    ),
+    # classifier: List[str] = Option(
+    #     None, help="Can be used multiple times to specify a list of classifiers to filter the results."
+    # ),
 ):
     """Search for a package on PyPI."""
     url = "https://pypi.org/search/"
@@ -291,27 +291,32 @@ def search(
         "q": name,
         "page": page,
     }
-    if classifier:
-        parameters["c"] = classifier
+    # if classifier:
+    #     parameters["c"] = classifier
+    with console.status(f"Searching for {name}..."):
+        response = requests.get(url, headers=headers, params=parameters)
 
-    response = requests.get(url, headers=headers, params=parameters)
-
-    soup = bs4.BeautifulSoup(response.text, "lxml")
-    result_list = soup.find(attrs={"aria-label": "Search results"}, class_="unstyled")
-    if not result_list:
-        comment = soup.select(
-            "div.split-layout.split-layout--table.split-layout--wrap-on-tablet > div:nth-child(1) > p"
-        )
-        console.print(f"[bold]{' '.join(comment[0].get_text().split())}[/]")
+    if response.status_code == 404:
+        console.print("[bold]The specified page doesn't exist[/]")
         raise typer.Exit()
 
-    results = [Package(i) for i in result_list.find_all("a", class_="package-snippet")]
+    with console.status("Parsing data..."):
+        soup = bs4.BeautifulSoup(response.text, "lxml")
+        result_list = soup.find(attrs={"aria-label": "Search results"}, class_="unstyled")
+        if not result_list:
+            comment = soup.select(
+                "div.split-layout.split-layout--table.split-layout--wrap-on-tablet > div:nth-child(1) > p"
+            )
+            console.print(f"[bold]{' '.join(comment[0].get_text().split())}[/]")
+            raise typer.Exit()
 
-    pagination = soup.find(class_="button-group--pagination")
-    if not pagination:
-        amount_of_pages = 1
-    else:
-        amount_of_pages = int(pagination.find_all(["span", "a"])[-2].get_text())
+        results = [Package(i) for i in result_list.find_all("a", class_="package-snippet")]
+
+        pagination = soup.find(class_="button-group--pagination")
+        if not pagination:
+            amount_of_pages = 1
+        else:
+            amount_of_pages = int(pagination.find_all(["span", "a"])[-2].get_text())
 
     table = Table(
         show_header=True,
@@ -329,7 +334,7 @@ def search(
         table.add_row(
             f"{index}.",
             package.version,
-            package.name,
+            f"[link=https://pypi.org/project/{package.name}]{package.name}[/]",
             package.description,
             package.date,
         )
