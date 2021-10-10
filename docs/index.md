@@ -33,13 +33,13 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
 ### `… search discord`
 
-- pypi-command-line - **1.9511792**
+- pypi-command-line - **1.4221807**
 
-    Takes around 2 secs to do a get request to the pypi search page then parse and return the results so that the results are the exact same as shown in [pypi.org](https://pypi.org "The Python Package Index (PyPI) is a repository of software for the Python programming language.")
+    Takes around 1.5 secs to do a get request to the pypi search page then parse and return the results so that the results are the exact same as shown in [pypi.org](https://pypi.org "The Python Package Index (PyPI) is a repository of software for the Python programming language.")
 
 - pypi-client - **7.4170682**
 
-    Takes 7 secs to get all packages and show ones containing discord, `pypi-command-line` can achieve the same result in `4.33`<sup>[<a title="Real Speed is 4.3348642" href="javascript: void(0)">*</a>]</sup> seconds using `pypi rsearch discord` (r stands for regex, the command allows you to search with regex)
+    Takes 7 secs to get all packages and show ones containing discord, `pypi-command-line` can achieve the same result in `3.84`<sup>[<a title="Real Speed is 3.8414752" href="javascript: void(0)">*</a>]</sup> seconds using `pypi rsearch discord` (r stands for regex, the command allows you to search with regex)
 
 - pypi-cli - **doesn't work** anymore
 
@@ -51,10 +51,12 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
     Now I do have to admit that this is faster, mainly because this does a single api call but mine does 3. You do have to realise that you are getting [this](https://i.imgur.com/X7OuPIb.png "Less information without color") instead of [this](https://i.imgur.com/s8aQx09.png "More detailed information with colored formatting")
 
-- pypi-command-line - **2.1925032**
+- pypi-command-line - **2.0484411**
 
     This does take longer but it's using that time to get not only the pypi stats but the *proper* download stats and github stats along with the pypi stats, disabling those lowers this time to `1.35`<sup>[<a title="Real Speed is 1.3591562" href="javascript: void(0)">*</a>]</sup> seconds.
 
 - pypi-client - **can't see info**
 
     You can't see project info with this package, you can only search for stuff.
+
+Notes: <https://wasi-master.github.io/pypi-command-line/notes#imports-outside-top-level>

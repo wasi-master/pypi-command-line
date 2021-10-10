@@ -1,38 +1,21 @@
 """The main file."""
 import json
-import re
-import webbrowser
-from datetime import datetime, timezone
-from typing import List
+from datetime import datetime
 from urllib.parse import quote
 
-import bs4
 import humanize
-import questionary
 import requests
 import rich
 import typer
-from packaging.version import parse as parse_version
 from rich.console import Console
-from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
-from rich.text import Text
 from rich.theme import Theme
-from rich_rst import RestructuredText
 from typer import Argument, Option
 
 # We instantiate a typer app and a rich console for later use
 app = typer.Typer(add_completion=False)
 console = Console(theme=Theme({"markdown.link": "#6088ff"}))
-# We will use this styling in the browse command
-link_style = questionary.Style(
-    [
-        ("name", "bold red"),
-        ("seperator", "gray"),
-        ("url", "cyan"),
-    ]
-)
 # We will use these headers for every request
 headers = {"User-Agent": "wasi_master/pypi_cli"}
 
@@ -40,7 +23,7 @@ headers = {"User-Agent": "wasi_master/pypi_cli"}
 class Package:
     """Represents a package gotten from scraping the search results."""
 
-    def __init__(self, soup: bs4.BeautifulSoup):
+    def __init__(self, soup):
         """Instantiates a package
 
         Parameters
@@ -114,6 +97,8 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
     with console.status("Fetching packages"):
         response = requests.get(url, headers=headers)
     soup = bs4.BeautifulSoup(response.text, "lxml-xml")
+    from datetime import timezone  # pylint: disable=import-outside-toplevel
+
     for index, package in enumerate(soup.find_all("item"), 1):
         title = package.find("title").text
         if split_title:
@@ -121,6 +106,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
         author = package.find("author")
         description = package.find("description")
         link = package.find("link").text
+
         date = utc_to_local(datetime.strptime(package.find("pubDate").text, "%a, %d %b %Y %H:%M:%S GMT")).replace(
             tzinfo=None
         )
@@ -162,6 +148,8 @@ def desc(
         response = requests.get(url, headers=headers)
     parsed_data = json.loads(response.text)["info"]
     if force_github:
+        import re  # pylint: disable=import-outside-toplevel
+
         repo = re.findall(r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
         repo = repo[0][1] if repo else None
         if not repo:
@@ -180,6 +168,8 @@ def desc(
             parsed_data["description_content_type"] = "text/markdown"
     if not parsed_data["description"] or parsed_data["description"] == "UNKNOWN":
         console.print("[red]No description found on PyPI.[/]")
+        import re  # pylint: disable=import-outside-toplevel
+
         repo = re.findall(r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
         repo = repo[0][1] if repo else None
         if repo:
@@ -203,10 +193,16 @@ def desc(
                 raise typer.Exit()
 
     if parsed_data["description_content_type"] == "text/markdown":
+        from rich.markdown import Markdown  # pylint: disable=import-outside-toplevel
+
         description = Markdown(parsed_data["description"])
     elif parsed_data["description_content_type"] == "text/x-rst":
+        from rich_rst import RestructuredText  # pylint: disable=import-outside-toplevel
+
         description = RestructuredText(parsed_data["description"])
     else:
+        from rich.text import Text  # pylint: disable=import-outside-toplevel
+
         description = Text(parsed_data["description"])
     console.print(Panel(description, title=f"Description for {package_name}", border_style="bold magenta"))
 
@@ -217,6 +213,8 @@ def new_packages(
     _link: bool = Option(True, metavar="link", help="Show the project link of not"),
 ):
     """See the top 40 newly added packages."""
+    import bs4  # pylint: disable=import-outside-toplevel
+
     _format_xml_packages(
         "https://pypi.org/rss/packages.xml",
         "Newly Added Packages",
@@ -233,6 +231,8 @@ def new_releases(
     _link: bool = Option(True, metavar="link", help="Show the project link of not"),
 ):
     """See the top 100 newly updated packages."""
+    import bs4  # pylint: disable=import-outside-toplevel
+
     _format_xml_packages(
         "https://pypi.org/rss/updates.xml",
         "Newly Released Packages",
@@ -301,6 +301,8 @@ def search(
         raise typer.Exit()
 
     with console.status("Parsing data..."):
+        import bs4  # pylint: disable=import-outside-toplevel
+
         soup = bs4.BeautifulSoup(response.text, "lxml")
         result_list = soup.find(attrs={"aria-label": "Search results"}, class_="unstyled")
         if not result_list:
@@ -417,6 +419,8 @@ def info(
     releases = parsed_data["releases"]
     urls = parsed_data["urls"]
 
+    from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
+
     # HACK: should use fromisotime
     release_time = datetime.strptime(urls[-1]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ")
     natural_time = release_time.strftime("%b %d, %Y")
@@ -428,11 +432,15 @@ def info(
         if str(latest_version) == str(info["version"])
         else f"[red]Newer version available ({latest_version})[/]"
     )
+    import re  # pylint: disable=import-outside-toplevel
+
     repo = re.findall(
         r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?",
         str(info),
     )
     repo = remove_dot_git(repo[0][1]) if repo else None
+
+    from rich.text import Text  # pylint:disable=import-outside-toplevel
 
     title = Text.from_markup(f"[bold cyan]{info['name']} {info['version']}[/]\n{description}", justify="left")
     message = Text.from_markup(f"{version_comment}\nReleased: {natural_time}", justify="right")
@@ -563,6 +571,8 @@ def regex_search(
     all_packages_url = "https://pypi.org/simple/"
     with console.status("Fetching packages"):
         response = requests.get(all_packages_url)
+    import re  # pylint: disable=import-outside-toplevel
+
     packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response.text)
     # We compile the regex because it's twice as fast (https://imgur.com/a/MoUyEMg)
     _regex = re.compile(regex)
@@ -594,6 +604,17 @@ def regex_search(
 @app.command()
 def browse(package_name: str = Argument(...)):
     """Browse for a package's URLs"""
+    import questionary  # pylint: disable=import-outside-toplevel
+    import webbrowser  # pylint: disable=import-outside-toplevel
+
+    link_style = questionary.Style(
+        [
+            ("name", "bold red"),
+            ("seperator", "gray"),
+            ("url", "cyan"),
+        ]
+    )
+
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
         response = requests.get(url, headers=headers)
@@ -624,8 +645,9 @@ def browse(package_name: str = Argument(...)):
         ],
         style=link_style,
     ).ask()
+    chrome_path = r"C:/Program Files/Google/Chrome/Application/chrome.exe %s"
     if answer:
-        webbrowser.open(answer)
+        webbrowser.get(chrome_path).open(answer)
 
 
 def run():
