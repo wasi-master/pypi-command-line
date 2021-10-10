@@ -616,7 +616,9 @@ def browse(package_name: str = Argument(...)):
     answer = questionary.select(
         "Which link do you want to to open?",
         choices=[
-            questionary.Choice(title=[("class:name", name), ("class:seperator", " - "), ("class:url", url)], value=url)
+            questionary.Choice(
+                title=[("class:name", f"{name:15}"), ("class:seperator", " - "), ("class:url", url)], value=url
+            )
             for name, url in urls.items()
             if url
         ],
