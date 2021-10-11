@@ -69,6 +69,36 @@ def _format_classifiers(_classifiers: str):
     return output
 
 
+def load_cache(cache_file):
+    import os  # pylint: disable=import-outside-toplevel
+
+    try:
+        last_refreshed = os.path.getmtime(cache_file)
+    except FileNotFoundError:
+        with console.status("Generating cache"):
+            return fill_cache(cache_file)
+    else:
+        import time  # pylint: disable=import-outside-toplevel
+
+        if time.time() - last_refreshed > 86400:
+            with console.status("Cache is too old (>1d). Refreshing cache"):
+                return fill_cache(cache_file)
+        with open(cache_file, "r") as cache_file:
+            return cache_file.read().splitlines()
+
+
+def fill_cache(cache_file):
+    """Fill the cache with the packages."""
+    all_packages_url = "https://pypi.org/simple/"
+    response = requests.get(all_packages_url)
+    import re  # pylint: disable=import-outside-toplevel
+
+    packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response.text)
+    with open(cache_file, "w") as cache_file:
+        cache_file.write("\n".join(packages))
+    return packages
+
+
 # 1. It first checks if the repository has a readme file. If it doesn't, it raises an exception.
 # 2. If it does, it gets the readme file's content and the path to the file.
 # 3. If the content is not found, it raises an exception.
@@ -568,19 +598,21 @@ def regex_search(
     compact: bool = Option(False, help="Compact formatting"),
 ) -> None:
     """Search for packages that match the regular expression."""
-    all_packages_url = "https://pypi.org/simple/"
-    with console.status("Fetching packages"):
-        response = requests.get(all_packages_url)
+    import os  # pylint: disable=import-outside-toplevel
+
+    cache_path = os.path.join(os.path.dirname(__file__), "cache.txt")
+    packages = load_cache(cache_path)
+
     import re  # pylint: disable=import-outside-toplevel
 
-    packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response.text)
     # We compile the regex because it's twice as fast (https://imgur.com/a/MoUyEMg)
     _regex = re.compile(regex)
     if compact:
         matches = []
-        for package in packages:
-            if _regex.match(package):
-                matches.append(f"[link=https://pypi.org/project/{package}]{package}[/]")
+        with console.status("Finding matches with regex"):
+            for package in packages:
+                if _regex.match(package):
+                    matches.append(f"[link=https://pypi.org/project/{package}]{package}[/]")
         console.print(", ".join(matches))
     else:
         table = Table(show_header=True, show_lines=True, title=f"Matches for {regex}")
@@ -588,14 +620,15 @@ def regex_search(
         table.add_column("[green]Package[/]")
         table.add_column("[blue]Link[/]", style="cyan")
         matches = 0
-        for package in packages:
-            if _regex.match(package):
-                matches += 1
-                table.add_row(
-                    f"{matches}.",
-                    f"[link=https://pypi.org/project/{package}]{package}[/]",
-                    f"https://pypi.org/project/{package}",
-                )
+        with console.status("Finding matches with regex"):
+            for package in packages:
+                if _regex.match(package):
+                    matches += 1
+                    table.add_row(
+                        f"{matches}.",
+                        f"[link=https://pypi.org/project/{package}]{package}[/]",
+                        f"https://pypi.org/project/{package}",
+                    )
         console.print(table)
         if table.row_count > 50:
             console.print("[yellow]There are more than 50 matches, consider using the --compact flag")
