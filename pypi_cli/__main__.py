@@ -23,6 +23,8 @@ headers = {"User-Agent": "wasi_master/pypi_cli"}
 class Package:
     """Represents a package gotten from scraping the search results."""
 
+    __slots__ = ("name", "version", "date", "released", "description")
+
     def __init__(self, soup):
         """Instantiate a package object gotten from scraping the search results.
 
