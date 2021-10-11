@@ -634,7 +634,7 @@ def regex_search(
     # We compile the regex because it's twice as fast (https://imgur.com/a/MoUyEMg)
     _regex = re.compile(regex)
     if compact:
-        matches = []:
+        matches = []
         for package in packages:
             if _regex.match(package):
                 matches.append(f"[link=https://pypi.org/project/{package}]{package}[/]")
