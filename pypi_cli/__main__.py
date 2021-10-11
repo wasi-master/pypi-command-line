@@ -291,10 +291,15 @@ def desc(
         repo = re.findall(r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
         repo = repo[0][1] if repo else None
         if repo:
-            import questionary  # pylint: disable=import-outside-toplevel
-
             console.print(f"[yellow]However, I did find a github repo[/] https://github.com/{repo}.\n")
-            resp = questionary.confirm("Do you want to get the description from there?").ask()
+            try:
+                import questionary  # pylint: disable=import-outside-toplevel
+            except ImportError:
+                from rich.prompt import Confirm
+
+                resp = Confirm.ask("Do you want to get the description from there?")
+            else:
+                resp = questionary.confirm("Do you want to get the description from there?").ask()
             if not resp:
                 console.print("[dim gray]Cancelled![/]")
                 raise typer.Exit()
