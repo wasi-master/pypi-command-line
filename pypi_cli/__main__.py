@@ -14,7 +14,7 @@ from rich.theme import Theme
 from typer import Argument, Option
 
 # We instantiate a typer app and a rich console for later use
-app = typer.Typer(add_completion=False)
+app = typer.Typer()
 console = Console(theme=Theme({"markdown.link": "#6088ff"}))
 # We will use these headers for every request
 headers = {"User-Agent": "wasi_master/pypi_cli"}
