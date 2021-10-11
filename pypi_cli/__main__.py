@@ -24,7 +24,7 @@ class Package:
     """Represents a package gotten from scraping the search results."""
 
     def __init__(self, soup):
-        """Instantiates a package
+        """Instantiate a package object gotten from scraping the search results.
 
         Parameters
         ----------
