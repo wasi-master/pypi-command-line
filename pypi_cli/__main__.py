@@ -190,8 +190,10 @@ def _get_github_readme(repo):
 
 
 def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=False):
-    import bs4  # pylint: disable=import-outside-toplevel
-
+    try:
+        import bs4  # pylint: disable=import-outside-toplevel
+    except ImportError:
+        bs4 = None
     table = Table(title=title, show_lines=True)
     table.add_column("Index", style="magenta", header_style="bold magenta")
     table.add_column("Name", style="green", header_style="bold green")
@@ -203,7 +205,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
     table.add_column(pubmsg, style="yellow", header_style="bold yellow")
     with console.status("Fetching packages"):
         response = session.get(url)
-    if lxml:
+    if lxml and bs4:
         soup = bs4.BeautifulSoup(response.text, "lxml-xml")
     else:
         import xml.etree.ElementTree as ET  # pylint: disable=import-outside-toplevel
