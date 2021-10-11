@@ -37,6 +37,12 @@ else:
         },
         headers={"User-Agent": "wasi_master/pypi_cli"},
     )
+
+try:
+    import lxml
+except ImportError:
+    lxml = None
+
 # We instantiate a typer app and a rich console for later use
 app = typer.Typer()
 console = Console(theme=Theme({"markdown.link": "#6088ff"}))
@@ -197,10 +203,16 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
     table.add_column(pubmsg, style="yellow", header_style="bold yellow")
     with console.status("Fetching packages"):
         response = session.get(url)
-    soup = bs4.BeautifulSoup(response.text, "lxml-xml")
+    if lxml:
+        soup = bs4.BeautifulSoup(response.text, "lxml-xml")
+    else:
+        import xml.etree.ElementTree as ET  # pylint: disable=import-outside-toplevel
+
+        soup = ET.fromstring(response.text)
+
     from datetime import timezone  # pylint: disable=import-outside-toplevel
 
-    for index, package in enumerate(soup.find_all("item"), 1):
+    for index, package in enumerate(soup.find_all("item") if lxml else soup.iter("item"), 1):
         title = package.find("title").text
         if split_title:
             title = title.split()[0]
@@ -236,6 +248,11 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
                 humanize.naturaltime(date),
             )
     console.print(table)
+    if not lxml:
+        console.print(
+            "[bold yellow]WARNING: There is a known bug that occurs when lxml is not installed. "
+            "It doesn't descriptions in some cases. Please install lxml using `pip install lxml`."
+        )
 
 
 @app.command()
@@ -400,7 +417,7 @@ def search(
     with console.status("Parsing data..."):
         import bs4  # pylint: disable=import-outside-toplevel
 
-        soup = bs4.BeautifulSoup(response.text, "lxml")
+        soup = bs4.BeautifulSoup(response.text, "lxml" if lxml else "html.parser")
         result_list = soup.find(attrs={"aria-label": "Search results"}, class_="unstyled")
         if not result_list:
             comment = soup.select(
