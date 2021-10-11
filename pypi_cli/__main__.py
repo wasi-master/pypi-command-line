@@ -716,7 +716,9 @@ def regex_search(
 @app.command()
 def rtfd(
     package_name: str = Argument(..., help="The name or link to the docs of the package to show the documentation for"),
-    query: str = Argument(..., help="The query you want to read the docs for"),
+    query: str = Argument(
+        None, help="The query you want to read the docs for, if not passed goes to the main docs page"
+    ),
 ):
     """Search the documentation for an item of a package."""
     import webbrowser  # pylint: disable=import-outside-toplevel
@@ -803,6 +805,9 @@ def rtfd(
                 console.print("[dim grey]Cancelled![/]")
                 raise typer.Exit()
 
+    if not query:
+        webbrowser.open(url.replace("search.html", ""))
+        raise typer.Exit()
     search_page = url + "?q=" + quote(query)
     webbrowser.open(search_page)
 
