@@ -4,7 +4,6 @@ from datetime import datetime
 from urllib.parse import quote
 
 import humanize
-import requests
 import rich
 import typer
 from rich.console import Console
@@ -13,6 +12,29 @@ from rich.table import Table
 from rich.theme import Theme
 from typer import Argument, Option
 
+try:
+    from requests_cache.session import CachedSession
+except ImportError:
+    from requests import Session
+
+    session = Session()
+else:
+    import os.path  # pylint: disable=import-outside-toplevel
+
+    cache_path = os.path.join(os.path.dirname(__file__), "cache", "requests")
+    session = CachedSession(
+        cache_path,
+        backend="sqlite",
+        urls_expire_after={
+            **dict.fromkeys(
+                ["https://pypi.org/simple", "https://pypi.org/stats", "https://api.github.com/repos/*/readme"], 86400
+            ),
+            "https://pypi.org/pypi": 10800,
+            "https://pypi.org/search": 3600,
+            "https://pypi.org/rss": 60,
+            "https://pypistats.org/api/packages/": 21600,
+        },
+    )
 # We instantiate a typer app and a rich console for later use
 app = typer.Typer()
 console = Console(theme=Theme({"markdown.link": "#6088ff"}))
@@ -74,7 +96,7 @@ def _format_classifiers(_classifiers: str):
 def load_cache():
     import os  # pylint: disable=import-outside-toplevel
 
-    cache_file = os.path.join(os.path.dirname(__file__), "cache.txt")
+    cache_file = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
 
     try:
         last_refreshed = os.path.getmtime(cache_file)
@@ -92,10 +114,14 @@ def load_cache():
 def fill_cache(msg="Fetching cache"):
     """Fill the cache with the packages."""
     from rich.progress import Progress  # pylint: disable=import-outside-toplevel
-    import os.path  # pylint: disable=import-outside-toplevel
+    import requests  # pylint: disable=import-outside-toplevel
+    import os  # pylint: disable=import-outside-toplevel
 
     all_packages_url = "https://pypi.org/simple/"
-    cache_file = os.path.join(os.path.dirname(__file__), "cache.txt")
+    cache_path = os.path.join(os.path.dirname(__file__), "cache")
+    if not os.path.exists(cache_path):
+        os.makedirs(cache_path)
+    cache_file = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
 
     with Progress(transient=True) as progress:
         response = requests.get(all_packages_url, stream=True)
@@ -115,12 +141,12 @@ def fill_cache(msg="Fetching cache"):
     import re  # pylint: disable=import-outside-toplevel
 
     packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response_data)
-    with open(cache_file, "w") as cache_file:
+    with open(cache_file, "w", encoding="utf-8") as cache_file:
         cache_file.write("\n".join(packages))
     return packages
 
 
-def refresh_cache():
+def _refresh_cache():
 
     with console.status("Getting current cache"):
         old_cache = load_cache()
@@ -129,12 +155,29 @@ def refresh_cache():
     console.print(f"[yellow]Updated the cache, number of new packages:[/] [red]{changed}[/]")
 
 
+def _clear_cache():
+    try:
+        session.cache.clear()
+    except AttributeError:
+        pass
+    import os, shutil
+
+    folder = os.path.join(os.path.dirname(__file__), "cache")
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as exc:
+            print(f"Failed to delete {file_path}. Reason: {exc}")
+
+
 def _get_github_readme(repo):
-    readme = requests.get(f"https://api.github.com/repos/{repo}/readme").json()
+    readme = session.get(f"https://api.github.com/repos/{repo}/readme").json()
     if readme.get("message") == "Not Found":
         console.print("[/]Could not find readme[/]")
         raise typer.Exit()
-    content = requests.get(f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
+    content = session.get(f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
     if content.status_code == 200:
         return content.text, readme["path"]
     return None, None
@@ -153,7 +196,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
         table.add_column("Link", style="cyan", header_style="bold blue")
     table.add_column(pubmsg, style="yellow", header_style="bold yellow")
     with console.status("Fetching packages"):
-        response = requests.get(url, headers=headers)
+        response = session.get(url, headers=headers)
     soup = bs4.BeautifulSoup(response.text, "lxml-xml")
     from datetime import timezone  # pylint: disable=import-outside-toplevel
 
@@ -203,7 +246,7 @@ def desc(
     """See the description for a package."""
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
-        response = requests.get(url, headers=headers)
+        response = session.get(url, headers=headers)
     parsed_data = json.loads(response.text)["info"]
     if force_github:
         import re  # pylint: disable=import-outside-toplevel
@@ -303,7 +346,7 @@ def largest_files():
     headers = {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
     url = "https://pypi.org/stats/"
     with console.status("Loading largest files..."):
-        response = requests.get(url, headers=headers)
+        response = session.get(url, headers=headers)
         data = json.loads(response.text)
     packages = data["top_packages"]
     packages = dict(sorted(packages.items(), key=lambda i: i[1]["size"], reverse=True))
@@ -348,7 +391,7 @@ def search(
     # if classifier:
     #     parameters["c"] = classifier
     with console.status(f"Searching for {name}..."):
-        response = requests.get(url, headers=headers, params=parameters)
+        response = session.get(url, headers=headers, params=parameters)
 
     if response.status_code == 404:
         console.print("[bold]The specified page doesn't exist[/]")
@@ -409,7 +452,7 @@ def releases(
     """
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
-        response = requests.get(url, headers=headers)
+        response = session.get(url, headers=headers)
     parsed_data = json.loads(response.text)
 
     table = Table()
@@ -459,7 +502,7 @@ def info(
     """See the information about a package."""
     url = f"https://pypi.org/pypi/{quote(package_name)}{f'/{version}' if version else ''}/json"
     with console.status("Getting data from PyPI"):
-        response = requests.get(url, headers=headers)
+        response = session.get(url, headers=headers)
 
     if response.status_code != 200:
         if response.status_code == 404:
@@ -518,7 +561,7 @@ def info(
         if repo:
             url = f"https://api.github.com/repos/{quote(repo)}"
             with console.status("Getting data from GitHub"):
-                resp = requests.get(url, headers=headers)
+                resp = session.get(url, headers=headers)
             github_data = json.loads(resp.text)
             if github_data.get("message") and github_data["message"] == "Not Found":
                 metadata.add_row(
@@ -549,7 +592,7 @@ def info(
     if not hide_stats:
         stats_url = f"https://pypistats.org/api/packages/{package_name}/recent"
         with console.status("Getting statistics from PyPI Stats"):
-            r = requests.get(stats_url)
+            r = session.get(stats_url)
         try:
             parsed_stats = json.loads(r.text)
             assert isinstance(parsed_stats, dict)
@@ -724,7 +767,7 @@ def rtfd(
             if resp:
                 url = f"https://pypi.org/pypi/{quote(package_name)}/json"
                 with console.status("Getting data from PyPI"):
-                    response = requests.get(url, headers=headers)
+                    response = session.get(url, headers=headers)
 
                 if response.status_code != 200:
                     if response.status_code == 404:
@@ -763,7 +806,7 @@ def browse(package_name: str = Argument(...)):
 
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
-        response = requests.get(url, headers=headers)
+        response = session.get(url, headers=headers)
 
     if response.status_code != 200:
         if response.status_code == 404:
@@ -796,9 +839,52 @@ def browse(package_name: str = Argument(...)):
 
 
 @app.command()
-def refresh():
+def refresh_cache():
     """Refresh the cache."""
-    refresh_cache()
+    _refresh_cache()
+
+
+@app.command()
+def clear_cache():
+    """Clear the cache."""
+    _clear_cache()
+
+
+@app.command()
+def cache_info():
+    """See information about the cache"""
+    import os.path  # pylint: disable=import-outside-toplevel
+
+    packages_cache = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
+    requests_cache = os.path.join(os.path.dirname(__file__), "cache", "requests.sqlite")
+    try:
+        packages_size = os.path.getsize(packages_cache)
+    except FileNotFoundError:
+        packages_size = None
+        console.print("[bold red]Packages cache not available[/]")
+    try:
+        requests_size = os.path.getsize(requests_cache)
+    except FileNotFoundError:
+        requests_size = None
+        console.print("[bold red]Requests cache not available[/]")
+        if not packages_size:
+            # If both the caches are unavailable, then we can't do anything
+            raise typer.Exit()
+
+    console.print(f"Packages cache size: {humanize.naturalsize(packages_size or 0, binary=True)}")
+    console.print(f"Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
+
+    if requests_size:
+        table = Table(title="All cached requests")
+        table.add_column("Index", style="dim magenta", header_style="bold magenta")
+        table.add_column("Link", style="cyan", header_style="bold cyan")
+        table.add_column("Created", style="green", header_style="bold green")
+        table.add_column("Expires", style="green", header_style="bold green")
+        for n, response in enumerate(session.cache.values()):
+            table.add_row(
+                f"{n}.", response.url, humanize.naturaltime(response.created_at), humanize.naturaltime(response.expires)
+            )
+        console.print(table)
 
 
 def run():
