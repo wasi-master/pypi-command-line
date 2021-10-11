@@ -3,6 +3,6 @@
 __name__ = "pypi-command-line"
 __title__ = __name__
 __license__ = "MIT"
-__version__ = "0.3.1"
+__version__ = "0.4.0"
 __author__ = "Arian Mollik Wasi"
 __github__ = "https://github.com/wasi-master/pypi-cli"
