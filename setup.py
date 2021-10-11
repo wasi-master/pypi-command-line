@@ -40,18 +40,18 @@ setuptools.setup(
     install_requires=[
         "typer",
         "rich",
+        "requests",
+        "humanize",
+        "bs4",
         "questionary",
         "rich-rst",
-        "beautifulsoup4",
-        "requests",
         "packaging",
-        "humanize",
     ],
     extras_require={
         "speedups": [
+            "requests_cache",  # For faster web requests
             "shellingham",  # For automatic terminal detection for typer
             "lxml",  # For faster html and xml parsing
-            "requests_cache",  # For faster web requests
         ]
     },
     entry_points={
