@@ -173,24 +173,24 @@ def desc(
         repo = re.findall(r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
         repo = repo[0][1] if repo else None
         if repo:
-            inp = console.input(
-                f"[yellow]However, I found a github repo[/] https://github.com/{repo}.\n"
-                "[bold yellow]Do you want to get the description from there?[/]\n"
-            )
-            if inp in ("y", "yes"):
-                readme, filename = _get_github_readme(repo)
-                if not readme or not filename:
-                    console.print("[red]I could not find a readme inside the GitHub repository[/]")
-                    raise typer.Exit()
-                parsed_data["description"] = readme
-                if filename.endswith((".md", ".md.txt")):
-                    parsed_data["description_content_type"] = "text/markdown"
-                elif filename.endswith((".rst", ".rst.txt")):
-                    parsed_data["description_content_type"] = "text/x-rst"
-                else:
-                    parsed_data["description_content_type"] = "text/markdown"
-            else:
+            import questionary  # pylint: disable=import-outside-toplevel
+
+            console.print(f"[yellow]However, I did find a github repo[/] https://github.com/{repo}.\n")
+            resp = questionary.confirm("Do you want to get the description from there?").ask()
+            if not resp:
+                console.print("[dim gray]Cancelled![/]")
                 raise typer.Exit()
+            readme, filename = _get_github_readme(repo)
+            if not readme or not filename:
+                console.print("[red]I could not find a readme inside the GitHub repository[/]")
+                raise typer.Exit()
+            parsed_data["description"] = readme
+            if filename.endswith((".md", ".md.txt")):
+                parsed_data["description_content_type"] = "text/markdown"
+            elif filename.endswith((".rst", ".rst.txt")):
+                parsed_data["description_content_type"] = "text/x-rst"
+            else:
+                parsed_data["description_content_type"] = "text/markdown"
 
     if parsed_data["description_content_type"] == "text/markdown":
         from rich.markdown import Markdown  # pylint: disable=import-outside-toplevel
