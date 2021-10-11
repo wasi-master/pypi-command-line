@@ -39,7 +39,7 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
 - pypi-client - **7.4170682**
 
-    Takes 7 secs to get all packages and show ones containing discord, `pypi-command-line` can achieve the same result in `3.84`<sup>[<a title="Real Speed is 3.8414752" href="javascript: void(0)">*</a>]</sup> seconds using `pypi rsearch discord` (r stands for regex, the command allows you to search with regex)
+    Takes 7 secs to get all packages and show ones containing discord, `pypi-command-line` can achieve the same result in `1.22`<sup>[<a title="Real Speed is 1.2205886" href="javascript: void(0)">*</a>]</sup> seconds using `pypi rsearch discord` (r stands for regex, the command allows you to search with regex)
 
 - pypi-cli - **doesn't work** anymore
 
