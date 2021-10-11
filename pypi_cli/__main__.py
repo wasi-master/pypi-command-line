@@ -40,9 +40,9 @@ class Package:
         self.description = soup.find(class_="package-snippet__description").get_text()
 
 
-def utc_to_local(utc_dt):
+def utc_to_local(utc_dt, tzinfo):
     """Convert a datetime from utc to local time."""
-    return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
+    return utc_dt.replace(tzinfo=tzinfo).astimezone(tz=None)
 
 
 def remove_dot_git(text):
@@ -141,6 +141,8 @@ def _get_github_readme(repo):
 
 
 def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=False):
+    import bs4  # pylint: disable=import-outside-toplevel
+
     table = Table(title=title, show_lines=True)
     table.add_column("Index", style="magenta", header_style="bold magenta")
     table.add_column("Name", style="green", header_style="bold green")
@@ -163,9 +165,9 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
         description = package.find("description")
         link = package.find("link").text
 
-        date = utc_to_local(datetime.strptime(package.find("pubDate").text, "%a, %d %b %Y %H:%M:%S GMT")).replace(
-            tzinfo=None
-        )
+        date = utc_to_local(
+            datetime.strptime(package.find("pubDate").text, "%a, %d %b %Y %H:%M:%S GMT"), timezone.utc
+        ).replace(tzinfo=None)
         if _link and _author:
             table.add_row(
                 f"{index}.",
@@ -269,8 +271,6 @@ def new_packages(
     _link: bool = Option(True, metavar="link", help="Show the project link of not"),
 ):
     """See the top 40 newly added packages."""
-    import bs4  # pylint: disable=import-outside-toplevel
-
     _format_xml_packages(
         "https://pypi.org/rss/packages.xml",
         "Newly Added Packages",
@@ -287,8 +287,6 @@ def new_releases(
     _link: bool = Option(True, metavar="link", help="Show the project link of not"),
 ):
     """See the top 100 newly updated packages."""
-    import bs4  # pylint: disable=import-outside-toplevel
-
     _format_xml_packages(
         "https://pypi.org/rss/updates.xml",
         "Newly Released Packages",
