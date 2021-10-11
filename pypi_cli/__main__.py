@@ -129,10 +129,6 @@ def refresh_cache():
     console.print(f"[yellow]Updated the cache, number of new packages:[/] [red]{changed}[/]")
 
 
-# 1. It first checks if the repository has a readme file. If it doesn't, it raises an exception.
-# 2. If it does, it gets the readme file's content and the path to the file.
-# 3. If the content is not found, it raises an exception.
-# 4. If the content is found, it returns the content and the path to the file.
 def _get_github_readme(repo):
     readme = requests.get(f"https://api.github.com/repos/{repo}/readme").json()
     if readme.get("message") == "Not Found":
