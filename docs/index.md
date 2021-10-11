@@ -59,4 +59,4 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
     You can't see project info with this package, you can only search for stuff.
 
-Notes: <https://wasi-master.github.io/pypi-command-line/notes#imports-outside-top-level>
+Notes: <https://wasi-master.github.io/pypi-command-line/notes>
