@@ -75,28 +75,54 @@ def load_cache(cache_file):
     try:
         last_refreshed = os.path.getmtime(cache_file)
     except FileNotFoundError:
-        with console.status("Generating cache"):
-            return fill_cache(cache_file)
+        return fill_cache(cache_file, msg="Generating cache")
     else:
         import time  # pylint: disable=import-outside-toplevel
 
         if time.time() - last_refreshed > 86400:
-            with console.status("Cache is too old (>1d). Refreshing cache"):
-                return fill_cache(cache_file)
+            return fill_cache(cache_file, msg="Cache is too old (>1d). Refreshing cache")
         with open(cache_file, "r") as cache_file:
             return cache_file.read().splitlines()
 
 
-def fill_cache(cache_file):
+def fill_cache(cache_file, msg="Fetching cache"):
     """Fill the cache with the packages."""
+    from rich.progress import Progress  # pylint: disable=import-outside-toplevel
+
     all_packages_url = "https://pypi.org/simple/"
-    response = requests.get(all_packages_url)
+
+    with Progress(transient=True) as progress:
+        response = requests.get(all_packages_url, stream=True)
+        response_data = ""
+        content_length = response.headers.get("content-length")
+        if content_length is not None:
+            total_length = int(content_length)
+            task = progress.add_task(msg, total=total_length)
+            downloaded = 0
+            for data in response.iter_content(chunk_size=32768):
+                downloaded += len(data)
+                response_data += data.decode("utf-8")
+                progress.advance(task, 32768)
+        else:
+            response_data = response.content.decode("utf-8")
+
     import re  # pylint: disable=import-outside-toplevel
 
-    packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response.text)
+    packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response_data)
     with open(cache_file, "w") as cache_file:
         cache_file.write("\n".join(packages))
     return packages
+
+
+def refresh_cache():
+    import os.path  # pylint: disable=import-outside-toplevel
+
+    cache_file = os.path.join(os.path.dirname(__file__), "cache.txt")
+    with console.status("Getting current cache"):
+        old_cache = load_cache(cache_file)
+    new_cache = fill_cache(cache_file, msg="Fetching new cache")
+    changed = len(new_cache) - len(old_cache)
+    console.print(f"[yellow]Updated the cache, number of new packages:[/] [red]{changed}[/]")
 
 
 # 1. It first checks if the repository has a readme file. If it doesn't, it raises an exception.
@@ -774,6 +800,12 @@ def browse(package_name: str = Argument(...)):
     ).ask()
     if answer:
         webbrowser.open(answer)
+
+
+@app.command()
+def refresh():
+    """Refresh the cache."""
+    refresh_cache()
 
 
 def run():
