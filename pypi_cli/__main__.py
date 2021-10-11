@@ -602,6 +602,100 @@ def regex_search(
 
 
 @app.command()
+def rtfd(
+    package_name: str = Argument(..., help="The name or link to the docs of the package to show the documentation for"),
+    query: str = Argument(..., help="The query you want to read the docs for"),
+):
+    """Search the documentation for an item of a package."""
+    import webbrowser  # pylint: disable=import-outside-toplevel
+
+    docs_mapping = {
+        **dict.fromkeys(["py", "python", "python3"], "https://docs.python.org/3/search.html"),
+        **dict.fromkeys(["py2", "python2"], "https://docs.python.org/2/search.html"),
+        **dict.fromkeys(["pil", "pillow"], "https://pillow.readthedocs.io/en/stable/search.html"),
+        "aiohttp": "https://docs.aiohttp.org/en/stable/search.html",
+        "attrs": "https://www.attrs.org/en/stable/search.html",
+        "babel": "https://babel.readthedocs.io/en/latest/search.html",
+        "boto3": "https://boto3.amazonaws.com/v1/documentation/api/latest/search.html",
+        "cachetools": "https://cachetools.readthedocs.io/en/latest/search.html",
+        "cffi": "https://cffi.readthedocs.io/en/latest/search.html",
+        "chardet": "https://chardet.readthedocs.io/en/latest/search.html",
+        "cryptography": "https://cryptography.io/en/latest/search.html",
+        "cv2": "http://docs.opencv.org/2.4/search.html",
+        "discord.py": "https://discordpy.readthedocs.io/en/latest/search.html",
+        "django": "http://docs.djangoproject.com/en/dev/search",
+        "dnspython": "https://dnspython.readthedocs.io/en/latest/search.html",
+        "flask": "https://flask.palletsprojects.com/en/1.1.x/search",
+        "h5py": "http://docs.h5py.org/en/latest/search.html",
+        "importlib-metadata": "https://importlib-metadata.readthedocs.io/en/latest/search.html",
+        "importlib-resources": "https://importlib-resources.readthedocs.io/en/latest/search.html",
+        "importlib_metadata": "https://importlib-metadata.readthedocs.io/en/latest/search.html",
+        "importlib_resources": "https://importlib-resources.readthedocs.io/en/latest/search.html",
+        "matplotlib": "https://matplotlib.org/stable/search.html",
+        "natsort": "https://natsort.readthedocs.io/en/master/search.html",
+        "numpy": "http://docs.scipy.org/doc/numpy/search.html",
+        "oauthlib": "https://oauthlib.readthedocs.io/en/latest/search.html",
+        "packaging": "https://packaging.pypa.io/en/latest/search.html",
+        "pandas": "https://pandas.pydata.org/docs/search.html",
+        "psutil": "https://psutil.readthedocs.io/en/latest/search.html",
+        "pydash": "https://pydash.readthedocs.io/en/latest/search.html",
+        "pyjwt": "https://pyjwt.readthedocs.io/en/latest/search.html",
+        "pyopenssl": "https://www.pyopenssl.org/en/latest/search.html",
+        "pyparsing": "https://pyparsing-docs.readthedocs.io/en/latest/search.html",
+        "pyqt": "https://doc.qt.io/qtforpython/search.html",
+        "pyramid": "https://docs.pylonsproject.org/projects/pyramid/en/latest/search.html",
+        "pyrsistent": "https://pyrsistent.readthedocs.io/en/latest/search.html",
+        "pytest": "https://docs.pytest.org/en/stable/search.html",
+        "pytest-regressions": "https://pytest-regressions.readthedocs.io/en/latest/search.html",
+        "python-dateutil": "https://dateutil.readthedocs.io/en/stable/search.html",
+        "pytorch": "https://pytorch.org/docs/stable/search.html",
+        "requests": "https://requests.readthedocs.io/en/master/search.html",
+        "requests-oauthlib": "https://requests-oauthlib.readthedocs.io/en/latest/search.html",
+        "scikit-learn": "https://scikit-learn.org/stable/search.html",
+        "scipy": "https://docs.scipy.org/doc/scipy/search.html",
+        "six": "https://six.readthedocs.io/search.html",
+        "slumber": "https://slumber.readthedocs.io/en/v0.6.0/search.html",
+        "sphinx": "https://www.sphinx-doc.org/en/master/search.html",
+        "yarl": "https://yarl.readthedocs.io/en/latest/search.html",
+        "zipp": "https://zipp.readthedocs.io/en/latest/search.html",
+    }
+
+    if package_name[:4] == "http":
+        url = package_name
+    else:
+        if package_name in docs_mapping:
+            url = docs_mapping[package_name]
+        else:
+            import questionary  # pylint: disable=import-outside-toplevel
+
+            resp = questionary.confirm("Docs not available.Do you want to search pypi to find the documentation?").ask()
+            if resp:
+                url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+                with console.status("Getting data from PyPI"):
+                    response = requests.get(url, headers=headers)
+
+                if response.status_code != 200:
+                    if response.status_code == 404:
+                        rich.print("[red]Project not found[/]")
+                    rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+                    raise typer.Exit()
+
+                parsed_data = json.loads(response.text)
+                url = parsed_data["info"].get("project_urls", {}).get("Documentation", None)
+                if not url:
+                    console.print("[bold]Documentation url not found on PyPI[/]")
+                    raise typer.Exit()
+                else:
+                    url = url + "/search.html"
+            else:
+                console.print("[dim grey]Cancelled![/]")
+                raise typer.Exit()
+
+    search_page = url + "?q=" + quote(query)
+    webbrowser.open(search_page)
+
+
+@app.command()
 def browse(package_name: str = Argument(...)):
     """Browse for a package's URLs"""
     import questionary  # pylint: disable=import-outside-toplevel
@@ -645,9 +739,8 @@ def browse(package_name: str = Argument(...)):
         ],
         style=link_style,
     ).ask()
-    chrome_path = r"C:/Program Files/Google/Chrome/Application/chrome.exe %s"
     if answer:
-        webbrowser.get(chrome_path).open(answer)
+        webbrowser.open(answer)
 
 
 def run():
