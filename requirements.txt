@@ -4,6 +4,8 @@ typer[all]
 rich
 # For choosing a link with the browse command
 questionary
+# For human readable information
+humanize
 # For web scraping and XML parsing
 beautifulsoup4
 lxml
