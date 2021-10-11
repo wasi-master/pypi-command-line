@@ -43,11 +43,17 @@ setuptools.setup(
         "questionary",
         "rich-rst",
         "beautifulsoup4",
-        "lxml",
         "requests",
         "packaging",
         "humanize",
     ],
+    extras_require={
+        "speedups": [
+            "shellingham",  # For automatic terminal detection for typer
+            "lxml",  # For faster html and xml parsing
+            "requests_cache",  # For faster web requests
+        ]
+    },
     entry_points={
         "console_scripts": ["pypi=pypi_cli.__main__:run"],
     },
