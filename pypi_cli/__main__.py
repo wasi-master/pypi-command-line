@@ -634,11 +634,10 @@ def regex_search(
     # We compile the regex because it's twice as fast (https://imgur.com/a/MoUyEMg)
     _regex = re.compile(regex)
     if compact:
-        matches = []
-        with console.status("Finding matches with regex"):
-            for package in packages:
-                if _regex.match(package):
-                    matches.append(f"[link=https://pypi.org/project/{package}]{package}[/]")
+        matches = []:
+        for package in packages:
+            if _regex.match(package):
+                matches.append(f"[link=https://pypi.org/project/{package}]{package}[/]")
         console.print(", ".join(matches))
     else:
         table = Table(show_header=True, show_lines=True, title=f"Matches for {regex}")
@@ -646,15 +645,14 @@ def regex_search(
         table.add_column("[green]Package[/]")
         table.add_column("[blue]Link[/]", style="cyan")
         matches = 0
-        with console.status("Finding matches with regex"):
-            for package in packages:
-                if _regex.match(package):
-                    matches += 1
-                    table.add_row(
-                        f"{matches}.",
-                        f"[link=https://pypi.org/project/{package}]{package}[/]",
-                        f"https://pypi.org/project/{package}",
-                    )
+        for package in packages:
+            if _regex.match(package):
+                matches += 1
+                table.add_row(
+                    f"{matches}.",
+                    f"[link=https://pypi.org/project/{package}]{package}[/]",
+                    f"https://pypi.org/project/{package}",
+                )
         console.print(table)
         if table.row_count > 50:
             console.print("[yellow]There are more than 50 matches, consider using the --compact flag")
