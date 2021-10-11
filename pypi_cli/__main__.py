@@ -839,13 +839,13 @@ def browse(package_name: str = Argument(...)):
 
 
 @app.command()
-def refresh_cache():
+def cache_refresh():
     """Refresh the cache."""
     _refresh_cache()
 
 
 @app.command()
-def clear_cache():
+def cache_clear():
     """Clear the cache."""
     _clear_cache()
 
