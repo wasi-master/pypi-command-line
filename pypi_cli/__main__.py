@@ -69,27 +69,31 @@ def _format_classifiers(_classifiers: str):
     return output
 
 
-def load_cache(cache_file):
+def load_cache():
     import os  # pylint: disable=import-outside-toplevel
+
+    cache_file = os.path.join(os.path.dirname(__file__), "cache.txt")
 
     try:
         last_refreshed = os.path.getmtime(cache_file)
     except FileNotFoundError:
-        return fill_cache(cache_file, msg="Generating cache")
+        return fill_cache(msg="Generating cache")
     else:
         import time  # pylint: disable=import-outside-toplevel
 
         if time.time() - last_refreshed > 86400:
-            return fill_cache(cache_file, msg="Cache is too old (>1d). Refreshing cache")
+            return fill_cache(msg="Cache is too old (>1d). Refreshing cache")
         with open(cache_file, "r") as cache_file:
             return cache_file.read().splitlines()
 
 
-def fill_cache(cache_file, msg="Fetching cache"):
+def fill_cache(msg="Fetching cache"):
     """Fill the cache with the packages."""
     from rich.progress import Progress  # pylint: disable=import-outside-toplevel
+    import os.path  # pylint: disable=import-outside-toplevel
 
     all_packages_url = "https://pypi.org/simple/"
+    cache_file = os.path.join(os.path.dirname(__file__), "cache.txt")
 
     with Progress(transient=True) as progress:
         response = requests.get(all_packages_url, stream=True)
@@ -115,12 +119,10 @@ def fill_cache(cache_file, msg="Fetching cache"):
 
 
 def refresh_cache():
-    import os.path  # pylint: disable=import-outside-toplevel
 
-    cache_file = os.path.join(os.path.dirname(__file__), "cache.txt")
     with console.status("Getting current cache"):
-        old_cache = load_cache(cache_file)
-    new_cache = fill_cache(cache_file, msg="Fetching new cache")
+        old_cache = load_cache()
+    new_cache = fill_cache(msg="Fetching new cache")
     changed = len(new_cache) - len(old_cache)
     console.print(f"[yellow]Updated the cache, number of new packages:[/] [red]{changed}[/]")
 
@@ -622,10 +624,7 @@ def regex_search(
     compact: bool = Option(False, help="Compact formatting"),
 ) -> None:
     """Search for packages that match the regular expression."""
-    import os  # pylint: disable=import-outside-toplevel
-
-    cache_path = os.path.join(os.path.dirname(__file__), "cache.txt")
-    packages = load_cache(cache_path)
+    packages = load_cache()
 
     import re  # pylint: disable=import-outside-toplevel
 
