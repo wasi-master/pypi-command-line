@@ -18,6 +18,7 @@ except ImportError:
     from requests import Session
 
     session = Session()
+    session.headers.update({"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"})
 else:
     import os.path  # pylint: disable=import-outside-toplevel
 
@@ -34,12 +35,11 @@ else:
             "https://pypi.org/rss": 60,
             "https://pypistats.org/api/packages/": 21600,
         },
+        headers={"User-Agent": "wasi_master/pypi_cli"},
     )
 # We instantiate a typer app and a rich console for later use
 app = typer.Typer()
 console = Console(theme=Theme({"markdown.link": "#6088ff"}))
-# We will use these headers for every request
-headers = {"User-Agent": "wasi_master/pypi_cli"}
 
 
 class Package:
@@ -196,7 +196,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
         table.add_column("Link", style="cyan", header_style="bold blue")
     table.add_column(pubmsg, style="yellow", header_style="bold yellow")
     with console.status("Fetching packages"):
-        response = session.get(url, headers=headers)
+        response = session.get(url)
     soup = bs4.BeautifulSoup(response.text, "lxml-xml")
     from datetime import timezone  # pylint: disable=import-outside-toplevel
 
@@ -246,7 +246,7 @@ def desc(
     """See the description for a package."""
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
-        response = session.get(url, headers=headers)
+        response = session.get(url)
     parsed_data = json.loads(response.text)["info"]
     if force_github:
         import re  # pylint: disable=import-outside-toplevel
@@ -346,7 +346,7 @@ def largest_files():
     headers = {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
     url = "https://pypi.org/stats/"
     with console.status("Loading largest files..."):
-        response = session.get(url, headers=headers)
+        response = session.get(url)
         data = json.loads(response.text)
     packages = data["top_packages"]
     packages = dict(sorted(packages.items(), key=lambda i: i[1]["size"], reverse=True))
@@ -391,7 +391,7 @@ def search(
     # if classifier:
     #     parameters["c"] = classifier
     with console.status(f"Searching for {name}..."):
-        response = session.get(url, headers=headers, params=parameters)
+        response = session.get(url, params=parameters)
 
     if response.status_code == 404:
         console.print("[bold]The specified page doesn't exist[/]")
@@ -452,7 +452,7 @@ def releases(
     """
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
-        response = session.get(url, headers=headers)
+        response = session.get(url)
     parsed_data = json.loads(response.text)
 
     table = Table()
@@ -502,7 +502,7 @@ def info(
     """See the information about a package."""
     url = f"https://pypi.org/pypi/{quote(package_name)}{f'/{version}' if version else ''}/json"
     with console.status("Getting data from PyPI"):
-        response = session.get(url, headers=headers)
+        response = session.get(url)
 
     if response.status_code != 200:
         if response.status_code == 404:
@@ -561,7 +561,7 @@ def info(
         if repo:
             url = f"https://api.github.com/repos/{quote(repo)}"
             with console.status("Getting data from GitHub"):
-                resp = session.get(url, headers=headers)
+                resp = session.get(url)
             github_data = json.loads(resp.text)
             if github_data.get("message") and github_data["message"] == "Not Found":
                 metadata.add_row(
@@ -767,7 +767,7 @@ def rtfd(
             if resp:
                 url = f"https://pypi.org/pypi/{quote(package_name)}/json"
                 with console.status("Getting data from PyPI"):
-                    response = session.get(url, headers=headers)
+                    response = session.get(url)
 
                 if response.status_code != 200:
                     if response.status_code == 404:
@@ -806,7 +806,7 @@ def browse(package_name: str = Argument(...)):
 
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
-        response = session.get(url, headers=headers)
+        response = session.get(url)
 
     if response.status_code != 200:
         if response.status_code == 404:
