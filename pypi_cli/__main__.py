@@ -51,6 +51,31 @@ try:
 except ImportError:
     lxml = None
 
+
+def __color_error_message():
+    """Override click.UsageError.show to show colored output"""
+    import click
+    from click._compat import get_text_stderr
+    from rich.markup import escape
+
+    def show(self, file=None):
+        if file is None:
+            file = get_text_stderr()
+        color = None
+        hint = ""
+        if self.ctx is not None and self.ctx.command.get_help_option(self.ctx) is not None:
+            hint = f"[magenta]Try '[blue]{self.ctx.command_path} [bold]{self.ctx.help_option_names[-1]}[/bold][/blue]' or visit [cyan]https://wasi-master.github.io/pypi-command-line/usage#{self.ctx.command.name.replace('-', '')}[/cyan] for help.[/magenta]"
+            hint = f"{hint}\n"
+        if self.ctx is not None:
+            color = self.ctx.color
+            console.print(
+                f"{(self.ctx.get_usage().replace('...', '').replace('Usage: ', '[green]Usage: [/]').replace('[OPTIONS]', '[bright_black]'+ escape('[OPTIONS…]') + '[/]').replace('[ARGS]', '[bright_black]'+ escape('[ARGS…]') + '[/]'))}\n{hint}"
+            )
+        console.print(f"[bold][red]Error[/bold]: {self.format_message()}[/red]")
+
+    click.exceptions.UsageError.show = show
+
+
 if click_help_colors is not None:
 
     class CustomHelpColorsGroup(HelpColorsGroup):
@@ -80,6 +105,7 @@ if click_help_colors is not None:
 else:
     app = typer.Typer()
 console = Console(theme=Theme({"markdown.link": "#6088ff"}))
+__color_error_message()  # makes the error messages colored
 
 
 class Package:
