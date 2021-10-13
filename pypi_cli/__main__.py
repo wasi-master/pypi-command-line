@@ -60,7 +60,6 @@ def __color_error_message():
     def show(self, file=None):
         if file is None:
             file = get_text_stderr()
-        color = None
         hint = ""
         if self.ctx is not None and self.ctx.command.get_help_option(self.ctx) is not None:
             hint = f"[magenta]Try '[blue]{self.ctx.command_path} [bold]{self.ctx.help_option_names[-1]}[/bold][/blue]' or visit [cyan]https://wasi-master.github.io/pypi-command-line/usage#{self.ctx.command.name.replace('-', '')}[/cyan] for help.[/magenta]"
@@ -162,15 +161,26 @@ class AliasedGroup(Group):
         elif len(matches) == 1:
             console.print(f"[cyan]Info:[/] Found shortened name '{cmd_name}', using '{matches[0]}'")
             return click.Group.get_command(self, ctx, matches[0])
+        formatted_matches = ", ".join(sorted(f"[red]{match}[/]" for match in matches))
         try:
             import questionary
         except ImportError:
-            ctx.fail(f"Found Too many matches for '{cmd_name}': {', '.join(sorted(matches))}")
+            ctx.fail(f"Found Too many matches for '{cmd_name}': {formatted_matches}")
         else:
-            console.print(f"[red]Attention:[/] Found Too many matches for '{cmd_name}': {', '.join(sorted(matches))}")
-            return click.Group.get_command(
-                self, ctx, questionary.select("Select one to continue", choices=sorted(matches)).ask()
-            )
+            console.print(f"[red]Attention:[/] Found Too many matches for '{cmd_name}': {formatted_matches}")
+            command = questionary.select(
+                "Select one to continue",
+                choices=sorted(matches),
+                style=questionary.Style(
+                    [
+                        ("text", "red"),
+                        ("highlighted", "bg:ansibrightred"),
+                    ]
+                ),
+            ).ask()
+            if not command:
+                raise typer.Exit()
+            return click.Group.get_command(self, ctx, command)
 
     def resolve_command(self, ctx, args):
         # always return the full command name
