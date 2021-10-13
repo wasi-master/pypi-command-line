@@ -14,6 +14,13 @@ from rich.theme import Theme
 from typer import Argument, Option
 
 try:
+    import click_help_colors
+    from click_help_colors import HelpColorsGroup, HelpColorsCommand
+except ImportError:
+    click_help_colors = None
+
+
+try:
     from requests_cache.session import CachedSession
 except ImportError:
     from requests import Session
@@ -44,8 +51,34 @@ try:
 except ImportError:
     lxml = None
 
-# We instantiate a typer app and a rich console for later use
-app = typer.Typer()
+if click_help_colors is not None:
+
+    class CustomHelpColorsGroup(HelpColorsGroup):
+        def __init__(self, *args, **kwargs) -> None:
+            super().__init__(*args, **kwargs)
+            self.help_headers_color = "red"
+            self.help_options_color = "yellow"
+            self.context_settings = {"help_option_names": ["-h", "--help"]}
+
+    class CustomHelpColorsCommand(HelpColorsCommand):
+        def __init__(self, *args, **kwargs) -> None:
+            super().__init__(*args, **kwargs)
+            self.help_headers_color = "red"
+            self.help_options_color = "yellow"
+
+    class PypiTyper(typer.Typer):
+        """A custom subclassed version of typer.Typer to allow colored help"""
+
+        def __init__(self, *args, cls=CustomHelpColorsGroup, **kwargs) -> None:
+            super().__init__(*args, cls=cls, **kwargs)
+
+        def command(self, *args, cls=CustomHelpColorsCommand, **kwargs) -> typer.Typer.command:
+            return super().command(*args, cls=cls, **kwargs)
+
+    # We instantiate a cutom typer app for colored help
+    app = PypiTyper()
+else:
+    app = typer.Typer()
 console = Console(theme=Theme({"markdown.link": "#6088ff"}))
 
 

@@ -44,6 +44,7 @@ setuptools.setup(
         "humanize",
         "bs4",
         "questionary",
+        "click-help-colors",
         "rich-rst",
         "packaging",
     ],
