@@ -945,7 +945,11 @@ def rtfd(
                     console.print("[bold]Documentation url not found on PyPI[/]")
                     raise typer.Exit()
                 else:
-                    url = url + "/search.html"
+                    import os.path  # pylint: disable=import-outside-toplevel
+
+                    if "readthedocs.io" in url:
+                        url = os.path.join(url, "en/stable/")
+                    url = os.path.join(url, "search.html")
             else:
                 console.print("[dim grey]Cancelled![/]")
                 raise typer.Exit()
