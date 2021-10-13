@@ -72,6 +72,59 @@ def __color_error_message():
                 f"{(self.ctx.get_usage().replace('...', '').replace('Usage: ', '[green]Usage: [/]').replace('[OPTIONS]', '[bright_black]'+ escape('[OPTIONS…]') + '[/]').replace('[ARGS]', '[bright_black]'+ escape('[ARGS…]') + '[/]'))}\n{hint}"
             )
         console.print(f"[bold][red]Error[/bold]: {self.format_message()}[/red]")
+        try:
+            import questionary  # pylint: disable=import-outside-toplevel
+            from questionary import Choice, Style
+        except ImportError:
+            pass
+        else:
+            style = Style(
+                [
+                    ("link", "cyan"),
+                    ("command", "blue"),
+                    ("cancel", "gray"),
+                ]
+            )
+            resp = questionary.select(
+                "What do you want to do",
+                choices=[
+                    Choice(
+                        [
+                            ("class:text", "Run '"),
+                            ("class:command", f"{self.ctx.command_path} {self.ctx.help_option_names[-1]}"),
+                            ("class:text", "'"),
+                        ],
+                        value=0,
+                    ),
+                    Choice(
+                        [
+                            ("class:text", "Open "),
+                            (
+                                "class:link",
+                                f"https://wasi-master.github.io/pypi-command-line/usage#{self.ctx.command.name.replace('-', '')}",
+                            ),
+                        ],
+                        value=1,
+                    ),
+                    Choice([("class:cancel", "Cancel")], value=2),
+                ],
+                use_shortcuts=True,
+                style=style,
+            ).ask()
+            if resp == 0:
+                import os  # pylint: disable=import-outside-toplevel
+
+                console.print(f"[blue]❯ [/]{self.ctx.command_path} {self.ctx.help_option_names[-1]}")
+
+                os.system(f"{self.ctx.command_path} {self.ctx.help_option_names[-1]}")
+            elif resp == 1:
+                import webbrowser  # pylint: disable=import-outside-toplevel
+
+                webbrowser.open(
+                    f"https://wasi-master.github.io/pypi-command-line/usage#{self.ctx.command.name.replace('-', '')}"
+                )
+            else:
+                return
 
     click.exceptions.UsageError.show = show
 
