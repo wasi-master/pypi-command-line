@@ -200,7 +200,7 @@ class PypiTyper(typer.Typer):
 
 # We instantiate a cutom typer app
 app = PypiTyper()
-console = Console(theme=Theme({"markdown.link": "#6088ff"}))
+console = Console(theme=Theme({"markdown.link": "#6088ff"}), emoji=True, emoji_variant="emoji")
 __color_error_message()  # makes the error messages colored
 
 
