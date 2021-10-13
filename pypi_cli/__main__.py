@@ -710,7 +710,7 @@ def releases(
 @app.command()
 def info(
     package_name: str = Argument(...),
-    version: str = Option(None),
+    version: str = Option(None, help="The version of the package to show info for"),
     show_classifiers: bool = Option(False, metavar="classifiers", help="Show the classifiers"),
     hide_project_urls: bool = Option(False, metavar="project_urls", help="Hide the project urls"),
     hide_requirements: bool = Option(False, metavar="requirements", help="Hide the requirements"),
