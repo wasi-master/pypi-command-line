@@ -1,9 +1,9 @@
 """The main file."""
-from dataclasses import astuple
 import json
 from datetime import datetime
 from urllib.parse import quote
 
+import click
 import humanize
 import rich
 import typer
@@ -54,9 +54,8 @@ except ImportError:
 
 def __color_error_message():
     """Override click.UsageError.show to show colored output"""
-    import click
-    from click._compat import get_text_stderr
-    from rich.markup import escape
+    from click._compat import get_text_stderr  # pylint: disable=import-outside-toplevel
+    from rich.markup import escape  # pylint: disable=import-outside-toplevel
 
     def show(self, file=None):
         if file is None:
@@ -145,19 +144,52 @@ if click_help_colors is not None:
             self.help_headers_color = "red"
             self.help_options_color = "yellow"
 
-    class PypiTyper(typer.Typer):
-        """A custom subclassed version of typer.Typer to allow colored help"""
-
-        def __init__(self, *args, cls=CustomHelpColorsGroup, **kwargs) -> None:
-            super().__init__(*args, cls=cls, **kwargs)
-
-        def command(self, *args, cls=CustomHelpColorsCommand, **kwargs) -> typer.Typer.command:
-            return super().command(*args, cls=cls, **kwargs)
-
-    # We instantiate a cutom typer app for colored help
-    app = PypiTyper()
+    Group = CustomHelpColorsGroup
+    Command = CustomHelpColorsCommand
 else:
-    app = typer.Typer()
+    Group = click.Group
+    Command = click.Command
+
+
+class AliasedGroup(Group):
+    def get_command(self, ctx, cmd_name):
+        rv = click.Group.get_command(self, ctx, cmd_name)
+        if rv is not None:
+            return rv
+        matches = [x for x in self.list_commands(ctx) if x.startswith(cmd_name)]
+        if not matches:
+            return None
+        elif len(matches) == 1:
+            console.print(f"[cyan]Info:[/] Found shortened name '{cmd_name}', using '{matches[0]}'")
+            return click.Group.get_command(self, ctx, matches[0])
+        try:
+            import questionary
+        except ImportError:
+            ctx.fail(f"Found Too many matches for '{cmd_name}': {', '.join(sorted(matches))}")
+        else:
+            console.print(f"[red]Attention:[/] Found Too many matches for '{cmd_name}': {', '.join(sorted(matches))}")
+            return click.Group.get_command(
+                self, ctx, questionary.select("Select one to continue", choices=sorted(matches)).ask()
+            )
+
+    def resolve_command(self, ctx, args):
+        # always return the full command name
+        _, cmd, args = super().resolve_command(ctx, args)
+        return cmd.name, cmd, args
+
+
+class PypiTyper(typer.Typer):
+    """A custom subclassed version of typer.Typer to allow colored help"""
+
+    def __init__(self, *args, cls=AliasedGroup, **kwargs) -> None:
+        super().__init__(*args, cls=cls, **kwargs)
+
+    def command(self, *args, cls=Command, **kwargs) -> typer.Typer.command:
+        return super().command(*args, cls=cls, **kwargs)
+
+
+# We instantiate a cutom typer app
+app = PypiTyper()
 console = Console(theme=Theme({"markdown.link": "#6088ff"}))
 __color_error_message()  # makes the error messages colored
 
