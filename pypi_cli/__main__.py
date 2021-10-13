@@ -85,6 +85,7 @@ def __color_error_message():
                     ("cancel", "gray"),
                 ]
             )
+            print("\n")
             resp = questionary.select(
                 "What do you want to do",
                 choices=[
@@ -106,7 +107,7 @@ def __color_error_message():
                         ],
                         value=1,
                     ),
-                    Choice([("class:cancel", "Cancel")], value=2),
+                    Choice([("class:cancel", "Nothing")], value=2),
                 ],
                 use_shortcuts=True,
                 style=style,
