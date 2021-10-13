@@ -259,7 +259,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
 @app.command()
 def desc(
     package_name: str = Argument(..., help="Package to get the description for"),
-    force_github: bool = Argument(False, help="Forcefully get the description from github"),
+    force_github: bool = Option(False, help="Forcefully get the description from github"),
 ):
     """See the description for a package."""
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
