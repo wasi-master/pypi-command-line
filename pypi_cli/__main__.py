@@ -421,6 +421,13 @@ def desc(
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
+
+    if response.status_code != 200:
+        if response.status_code == 404:
+            rich.print("[red]Project not found[/]")
+        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+        raise typer.Exit()
+
     parsed_data = json.loads(response.text)["info"]
     if force_github:
         import re  # pylint: disable=import-outside-toplevel
@@ -658,6 +665,13 @@ def releases(
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
+
+    if response.status_code != 200:
+        if response.status_code == 404:
+            rich.print("[red]Project not found[/]")
+        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+        raise typer.Exit()
+
     parsed_data = json.loads(response.text)
 
     table = Table()
@@ -1019,6 +1033,13 @@ def browse(package_name: str = Argument(...)):
     )
 
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+
+    if response.status_code != 200:
+        if response.status_code == 404:
+            rich.print("[red]Project not found[/]")
+        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+        raise typer.Exit()
+
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
