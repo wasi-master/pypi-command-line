@@ -274,7 +274,7 @@ def desc(
             re.findall(r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
         )
         if len(repos) > 1:
-            console.print("[red]WARNING:[/] I found github repos. ")
+            console.print("[red]WARNING:[/] I found multiple github repos. ")
             import questionary  # pylint: disable=import-outside-toplevel
 
             repo = questionary.select("Please specify the repo you want to use.", choices=list(repos)).ask()
@@ -298,21 +298,34 @@ def desc(
         console.print("[red]No description found on PyPI.[/]")
         import re  # pylint: disable=import-outside-toplevel
 
-        repo = re.findall(r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
-        repo = repo[0][1] if repo else None
-        if repo:
-            console.print(f"[yellow]However, I did find a github repo[/] https://github.com/{repo}.\n")
-            try:
-                import questionary  # pylint: disable=import-outside-toplevel
-            except ImportError:
-                from rich.prompt import Confirm
+        repos = set(
+            re.findall(r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
+        )
+        if repos:
+            if len(repos) == 1:
+                repo = next(iter(repos))
+                console.print(f"[yellow]However, I did find a github repo[/] https://github.com/{repo}.\n")
 
-                resp = Confirm.ask("Do you want to get the description from there?")
-            else:
-                resp = questionary.confirm("Do you want to get the description from there?").ask()
-            if not resp:
-                console.print("[dim gray]Cancelled![/]")
-                raise typer.Exit()
+                try:
+                    import questionary  # pylint: disable=import-outside-toplevel
+                except ImportError:
+                    from rich.prompt import Confirm  # pylint: disable=import-outside-toplevel
+
+                    resp = Confirm.ask("Do you want to get the description from there?")
+                else:
+                    resp = questionary.confirm("Do you want to get the description from there?").ask()
+
+                if not resp:
+                    console.print("[dim gray]Cancelled![/]")
+                    raise typer.Exit()
+            elif len(repos) > 1:
+                console.print("[red]WARNING:[/] I did find some github repos. ")
+                import questionary  # pylint: disable=import-outside-toplevel
+
+                repo = questionary.select(
+                    "Please specify the repo you want to see the descripton from (Ctrl+C to cancel).",
+                    choices=list(repos),
+                ).ask()
             readme, filename = _get_github_readme(repo)
             if not readme or not filename:
                 console.print("[red]I could not find a readme inside the GitHub repository[/]")
@@ -324,6 +337,11 @@ def desc(
                 parsed_data["description_content_type"] = "text/x-rst"
             else:
                 parsed_data["description_content_type"] = "text/markdown"
+        else:
+            console.print(
+                "[red]The PyPI page doesn't have a description nor a GitHub repository that I could've used[/]"
+            )
+            raise typer.Exit()
 
     if parsed_data["description_content_type"] == "text/markdown":
         from rich.markdown import Markdown  # pylint: disable=import-outside-toplevel
