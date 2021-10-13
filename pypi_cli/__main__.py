@@ -72,7 +72,7 @@ def __color_error_message():
         console.print(f"[bold][red]Error[/bold]: {self.format_message()}[/red]")
         try:
             import questionary  # pylint: disable=import-outside-toplevel
-            from questionary import Choice, Style
+            from questionary import Choice, Style  # pylint: disable=import-outside-toplevel
         except ImportError:
             pass
         else:
