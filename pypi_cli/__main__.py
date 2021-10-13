@@ -1,4 +1,5 @@
 """The main file."""
+from dataclasses import astuple
 import json
 from datetime import datetime
 from urllib.parse import quote
@@ -180,7 +181,7 @@ def _clear_cache():
 def _get_github_readme(repo):
     readme = session.get(f"https://api.github.com/repos/{repo}/readme").json()
     if readme.get("message") == "Not Found":
-        console.print("[/]Could not find readme[/]")
+        console.print(f"[red]Could not find readme for[/] [yellow]{repo}[/]")
         raise typer.Exit()
     content = session.get(f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
     if content.status_code == 200:
@@ -269,9 +270,17 @@ def desc(
     if force_github:
         import re  # pylint: disable=import-outside-toplevel
 
-        repo = re.findall(r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
-        repo = repo[0][1] if repo else None
-        if not repo:
+        repos = set(
+            re.findall(r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
+        )
+        if len(repos) > 1:
+            console.print("[red]WARNING:[/] I found github repos. ")
+            import questionary  # pylint: disable=import-outside-toplevel
+
+            repo = questionary.select("Please specify the repo you want to use.", choices=list(repos)).ask()
+        elif len(repos) == 1:
+            repo = next(iter(repos))
+        else:
             console.print("[red]I could not find a GitHub repository[/]")
             raise typer.Exit()
         readme, filename = _get_github_readme(repo)
