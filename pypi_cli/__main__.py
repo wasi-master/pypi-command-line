@@ -153,12 +153,11 @@ def fill_cache(msg="Fetching cache"):
 
 
 def _refresh_cache():
-
     with console.status("Getting current cache"):
         old_cache = load_cache()
     new_cache = fill_cache(msg="Fetching new cache")
     changed = len(new_cache) - len(old_cache)
-    console.print(f"[yellow]Updated the cache, number of new packages:[/] [red]{changed}[/]")
+    console.print(f"[yellow]Updated the cache, number of new packages till last refresh:[/] [red]{changed}[/]")
 
 
 def _clear_cache():
@@ -888,8 +887,10 @@ def cache_info():
     requests_cache = os.path.join(os.path.dirname(__file__), "cache", "requests.sqlite")
     try:
         packages_size = os.path.getsize(packages_cache)
+        packages_last_refreshed = os.path.getmtime(packages_cache)
     except FileNotFoundError:
         packages_size = None
+        packages_last_refreshed = None
         console.print("[bold red]Packages cache not available[/]")
     try:
         requests_size = os.path.getsize(requests_cache)
@@ -901,7 +902,15 @@ def cache_info():
             raise typer.Exit()
 
     console.print(f"Packages cache size: {humanize.naturalsize(packages_size or 0, binary=True)}")
+
     console.print(f"Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
+    console.print(f"Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
+    if packages_last_refreshed:
+        from datetime import datetime
+
+        console.print(
+            f"Requests cache last updated: {humanize.naturaltime(datetime.fromtimestamp(packages_last_refreshed))}"
+        )
 
     if requests_size:
         table = Table(title="All cached requests")
