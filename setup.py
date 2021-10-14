@@ -44,15 +44,17 @@ setuptools.setup(
         "humanize",
         "bs4",
         "questionary",
-        "click-help-colors",
         "rich-rst",
         "packaging",
+        "click-help-colors",
+        "thefuzz",
     ],
     extras_require={
         "speedups": [
             "requests_cache",  # For faster web requests
             "shellingham",  # For automatic terminal detection for typer
             "lxml",  # For faster html and xml parsing
+            "rapidfuzz",  # For faster fuzzy matching
         ]
     },
     entry_points={

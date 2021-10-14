@@ -15,5 +15,5 @@ requests
 rich-rst
 # For colored help command
 click-help-colors
-# For parsing version numbers (should already be installed with setuptools but just in case)
+# For parsing version numbers
 packaging
