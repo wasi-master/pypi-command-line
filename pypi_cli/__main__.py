@@ -658,7 +658,7 @@ def largest_files():
 
 @app.command()
 def search(
-    name: str = Argument(..., help="The name of the package to search for"),
+    package_name: str = Argument(..., help="The name of the package to search for"),
     page: int = Option(1, min=1, max=500, help="The page of the search results to show."),
     # classifier: List[str] = Option(
     #     None, help="Can be used multiple times to specify a list of classifiers to filter the results."
@@ -667,12 +667,12 @@ def search(
     """Search for a package on PyPI."""
     url = "https://pypi.org/search/"
     parameters = {
-        "q": name,
+        "q": package_name,
         "page": page,
     }
     # if classifier:
     #     parameters["c"] = classifier
-    with console.status(f"Searching for {name}..."):
+    with console.status(f"Searching for {package_name}..."):
         response = session.get(url, params=parameters)
 
     if response.status_code == 404:
@@ -701,7 +701,7 @@ def search(
 
     table = Table(
         show_header=True,
-        title=f"[bold]Search results for {name}[/]",
+        title=f"[bold]Search results for {package_name}[/]",
         show_lines=True,
         caption=f"Page {page} of {amount_of_pages}",
     )
