@@ -167,33 +167,61 @@ class AliasedGroup(Group):
 
                 print("rapidfuzz")
                 # print(cmd, commands)
-                get_closest_match = lambda cmd: (
-                    rapidfuzz.process.extractOne(
-                        cmd, commands, scorer=rapidfuzz.fuzz.WRatio, score_cutoff=50, processor=processor
+                get_closest_match = lambda cmd: [
+                    i[0]
+                    for i in rapidfuzz.process.extract(
+                        cmd, commands, scorer=rapidfuzz.fuzz.WRatio, score_cutoff=50, processor=processor, limit=5
                     )
-                    or [None]
-                )[0]
+                ]
             except ImportError:
                 try:
                     import thefuzz.process  # pylint: disable=import-outside-toplevel
                     import thefuzz.fuzz  # pylint: disable=import-outside-toplevel
 
                     print("thefuzz")
-                    get_closest_match = lambda cmd: (
-                        thefuzz.process.extractOne(cmd, commands, score_cutoff=50, processor=processor) or [None]
-                    )[0]
+                    get_closest_match = lambda cmd: [
+                        i[0]
+                        for i in thefuzz.process.extractBests(
+                            cmd, commands, score_cutoff=50, processor=processor, limit=5
+                        )
+                    ]
+
                 except ImportError:
                     import difflib  # pylint: disable=import-outside-toplevel
 
                     print("difflib")
-                    get_closest_match = lambda cmd: (
-                        difflib.get_close_matches(cmd, commands, n=1, cutoff=0.5) or [None]
-                    )[0]
-            match = get_closest_match(cmd_name)
-            if match is None:
+                    get_closest_match = lambda cmd: difflib.get_close_matches(cmd, commands, n=5, cutoff=0.5) or [None]
+        if len(matches) == 0:
+            closest_matches = get_closest_match(cmd_name)
+            if not closest_matches:
+                # No match is more than 50% similar to the used name
                 return None
-            console.print(f"[cyan]Info:[/] Found shortened name '{cmd_name}', using '{match}'")
-            return click.Group.get_command(self, ctx, match)
+
+            try:
+                import questionary  # pylint: disable=import-outside-toplevel
+            except ImportError:
+                console.print(
+                    f"""[cyan]Info:[/] Found invalid command '{cmd_name}', did you mean any of these: {', '.join(f"'[red]{match}[/]'" for match in closest_matches)}"""
+                )
+                raise typer.Exit()
+            else:
+                console.print(
+                    f"""[cyan]Info:[/] Found invalid command '{cmd_name}', closest matches: {', '.join(f"'[red]{match}[/]'" for match in closest_matches)}"""
+                )
+                resp = questionary.select(
+                    "Which one did you want to run?",
+                    choices=closest_matches,
+                    style=questionary.Style(
+                        [
+                            ("text", "red"),
+                            ("highlighted", "bg:ansibrightred"),
+                        ]
+                    ),
+                ).ask()
+
+            if not resp:
+                raise typer.Exit()
+            return click.Group.get_command(self, ctx, resp)
         elif len(matches) == 1:
             console.print(f"[cyan]Info:[/] Found shortened name '{cmd_name}', using '{matches[0]}'")
             return click.Group.get_command(self, ctx, matches[0])
@@ -208,7 +236,7 @@ class AliasedGroup(Group):
             console.print(f"[red]Attention:[/] Found Too many matches for '{cmd_name}': {formatted_matches}")
             command = questionary.select(
                 "Select one to continue",
-                choices=difflib.get_close_matches(cmd_name, matches),
+                choices=difflib.get_close_matches(cmd_name, matches, cutoff=0.0),
                 style=questionary.Style(
                     [
                         ("text", "red"),
