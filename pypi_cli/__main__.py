@@ -805,7 +805,10 @@ def information(
     releases = parsed_data["releases"]
     urls = parsed_data["urls"]
 
-    from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
+    try:
+        from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
+    except ImportError:
+        from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
 
     # HACK: should use fromisotime
     release_time = datetime.strptime(urls[-1]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ")
@@ -1168,13 +1171,14 @@ def cache_info():
     except FileNotFoundError:
         packages_size = None
         packages_last_refreshed = None
-        console.print("[bold red]Packages cache not available[/]")
+        console.print("[bold yellow]Packages cache not available[/]")
     try:
         requests_size = os.path.getsize(requests_cache)
     except FileNotFoundError:
         requests_size = None
-        console.print("[bold red]Requests cache not available[/]")
+        console.print("[bold yellow]Requests cache not available[/]")
         if not packages_size:
+            console.print("[bold red]No cache available![/]")
             # If both the caches are unavailable, then we can't do anything
             raise typer.Exit()
 
