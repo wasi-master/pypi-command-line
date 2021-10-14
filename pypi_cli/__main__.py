@@ -528,8 +528,8 @@ def desc(
 
 @app.command()
 def new_packages(
-    _author: bool = Option(False, metavar="author", help="Show the project author of not"),
-    _link: bool = Option(True, metavar="link", help="Show the project link of not"),
+    _author: bool = Option(False, metavar="author", help="Show the project author or not"),
+    _link: bool = Option(True, metavar="link", help="Show the project link or not"),
 ):
     """See the top 40 newly added packages."""
     _format_xml_packages(
@@ -544,8 +544,8 @@ def new_packages(
 
 @app.command()
 def new_releases(
-    _author: bool = Option(False, metavar="author", help="Show the project author of not"),
-    _link: bool = Option(True, metavar="link", help="Show the project link of not"),
+    _author: bool = Option(False, metavar="author", help="Show the project author or not"),
+    _link: bool = Option(True, metavar="link", help="Show the project link or not"),
 ):
     """See the top 100 newly updated packages."""
     _format_xml_packages(
