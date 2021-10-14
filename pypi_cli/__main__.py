@@ -155,27 +155,32 @@ class AliasedGroup(Group):
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
             return rv
-        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs")}
+        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"), "rs": "rsearch"}
         if cmd_name in alias_mapping:
             return click.Group.get_command(self, ctx, alias_mapping[cmd_name])
-        commands = [i.replace("-", "") for i in self.list_commands(ctx)]
+        commands = self.list_commands(ctx)
         matches = [x for x in commands if x.startswith(cmd_name)]
         if not matches:
+            processor = lambda x: x.replace("-", "").lower()
             try:
                 import rapidfuzz  # pylint: disable=import-outside-toplevel
 
                 print("rapidfuzz")
                 # print(cmd, commands)
                 get_closest_match = lambda cmd: (
-                    rapidfuzz.process.extractOne(cmd, commands, scorer=rapidfuzz.fuzz.WRatio, score_cutoff=50) or [None]
+                    rapidfuzz.process.extractOne(
+                        cmd, commands, scorer=rapidfuzz.fuzz.WRatio, score_cutoff=50, processor=processor
+                    )
+                    or [None]
                 )[0]
             except ImportError:
                 try:
-                    import thefuzz.process, thefuzz.fuzz  # pylint: disable=import-outside-toplevel
+                    import thefuzz.process  # pylint: disable=import-outside-toplevel
+                    import thefuzz.fuzz  # pylint: disable=import-outside-toplevel
 
                     print("thefuzz")
                     get_closest_match = lambda cmd: (
-                        thefuzz.process.extractOne(cmd, commands, score_cutoff=50) or [None]
+                        thefuzz.process.extractOne(cmd, commands, score_cutoff=50, processor=processor) or [None]
                     )[0]
                 except ImportError:
                     import difflib  # pylint: disable=import-outside-toplevel
@@ -185,20 +190,7 @@ class AliasedGroup(Group):
                         difflib.get_close_matches(cmd, commands, n=1, cutoff=0.5) or [None]
                     )[0]
             match = get_closest_match(cmd_name)
-            corrections = {
-                "readthedocs": "readthedocs",
-                "cacheclear": "cache-clear",
-                "cache-info": "cache-info",
-                "cacherefresh": "cache-refresh",
-                "largestfiles": "largest-files",
-                "newpackages": "new-packages",
-                "newreleases": "new-releases",
-                "readthedocs": "read-the-docs",
-                "regexsearch": "regex-search",
-            }
-            if match in corrections:
-                match = corrections[match]
-            elif match is None:
+            if match is None:
                 return None
             console.print(f"[cyan]Info:[/] Found shortened name '{cmd_name}', using '{match}'")
             return click.Group.get_command(self, ctx, match)
