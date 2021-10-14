@@ -396,7 +396,7 @@ def _clear_cache():
             if os.path.isfile(file_path):
                 os.remove(file_path)
         except Exception as exc:
-            print(f"Failed to delete {file_path}. Reason: {exc}")
+            console.print(f"[red]Failed to delete {file_path}. Reason: {exc}[/]")
 
 
 def _get_github_readme(repo):
