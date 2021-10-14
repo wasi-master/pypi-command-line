@@ -155,9 +155,53 @@ class AliasedGroup(Group):
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
             return rv
-        matches = [x for x in self.list_commands(ctx) if x.startswith(cmd_name)]
+        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs")}
+        if cmd_name in alias_mapping:
+            return click.Group.get_command(self, ctx, alias_mapping[cmd_name])
+        commands = [i.replace("-", "") for i in self.list_commands(ctx)]
+        matches = [x for x in commands if x.startswith(cmd_name)]
         if not matches:
-            return None
+            try:
+                import rapidfuzz  # pylint: disable=import-outside-toplevel
+
+                print("rapidfuzz")
+                # print(cmd, commands)
+                get_closest_match = lambda cmd: (
+                    rapidfuzz.process.extractOne(cmd, commands, scorer=rapidfuzz.fuzz.WRatio, score_cutoff=50) or [None]
+                )[0]
+            except ImportError:
+                try:
+                    import thefuzz.process, thefuzz.fuzz  # pylint: disable=import-outside-toplevel
+
+                    print("thefuzz")
+                    get_closest_match = lambda cmd: (
+                        thefuzz.process.extractOne(cmd, commands, score_cutoff=50) or [None]
+                    )[0]
+                except ImportError:
+                    import difflib  # pylint: disable=import-outside-toplevel
+
+                    print("difflib")
+                    get_closest_match = lambda cmd: (
+                        difflib.get_close_matches(cmd, commands, n=1, cutoff=0.5) or [None]
+                    )[0]
+            match = get_closest_match(cmd_name)
+            corrections = {
+                "readthedocs": "readthedocs",
+                "cacheclear": "cache-clear",
+                "cache-info": "cache-info",
+                "cacherefresh": "cache-refresh",
+                "largestfiles": "largest-files",
+                "newpackages": "new-packages",
+                "newreleases": "new-releases",
+                "readthedocs": "read-the-docs",
+                "regexsearch": "regex-search",
+            }
+            if match in corrections:
+                match = corrections[match]
+            elif match is None:
+                return None
+            console.print(f"[cyan]Info:[/] Found shortened name '{cmd_name}', using '{match}'")
+            return click.Group.get_command(self, ctx, match)
         elif len(matches) == 1:
             console.print(f"[cyan]Info:[/] Found shortened name '{cmd_name}', using '{matches[0]}'")
             return click.Group.get_command(self, ctx, matches[0])
@@ -415,7 +459,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
 
 
 @app.command()
-def desc(
+def description(
     package_name: str = Argument(..., help="Package to get the description for"),
     force_github: bool = Option(False, help="Forcefully get the description from github"),
 ):
@@ -714,7 +758,7 @@ def releases(
 
 
 @app.command()
-def info(
+def information(
     package_name: str = Argument(...),
     version: str = Option(None, help="The version of the package to show info for"),
     show_classifiers: bool = Option(False, metavar="classifiers", help="Show the classifiers"),
@@ -884,7 +928,7 @@ def info(
     console.print(metadata)
 
 
-@app.command("rsearch")
+@app.command()
 def regex_search(
     regex: str = Argument(..., help="The regular expression to search with"),
     compact: bool = Option(False, help="Compact formatting"),
@@ -922,7 +966,7 @@ def regex_search(
 
 
 @app.command()
-def rtfd(
+def read_the_docs(
     package_name: str = Argument(..., help="The name or link to the docs of the package to show the documentation for"),
     query: str = Argument(
         None, help="The query you want to read the docs for, if not passed goes to the main docs page"
