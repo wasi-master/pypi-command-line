@@ -65,11 +65,11 @@ def __color_error_message():
             hint = f"[magenta]Try '[blue]{self.ctx.command_path} [bold]{self.ctx.help_option_names[-1]}[/bold][/blue]' or visit [cyan]https://wasi-master.github.io/pypi-command-line/usage#{self.ctx.command.name.replace('-', '')}[/cyan] for help.[/magenta]"
             hint = f"{hint}\n"
         if self.ctx is not None:
-            color = self.ctx.color
+            console.print("[yellow]😥 You did not do this properly[/]")
             console.print(
                 f"{(self.ctx.get_usage().replace('...', '').replace('Usage: ', '[green]Usage: [/]').replace('[OPTIONS]', '[bright_black]'+ escape('[OPTIONS…]') + '[/]').replace('[ARGS]', '[bright_black]'+ escape('[ARGS…]') + '[/]'))}\n{hint}"
             )
-        console.print(f"[bold][red]Error[/bold]: {self.format_message()}[/red]")
+        console.print(f"❗ [bold][red]Error[/bold]: {self.format_message()}[/red]")
         try:
             import questionary  # pylint: disable=import-outside-toplevel
             from questionary import Choice, Style  # pylint: disable=import-outside-toplevel
@@ -201,12 +201,12 @@ class AliasedGroup(Group):
                 import questionary  # pylint: disable=import-outside-toplevel
             except ImportError:
                 console.print(
-                    f"""[cyan]Info:[/] Found invalid command '{cmd_name}', did you mean any of these: {', '.join(f"'[red]{match}[/]'" for match in closest_matches)}"""
+                    f"""[cyan]ℹ️ Info:[/] Found invalid command '{cmd_name}', did you mean any of these: {', '.join(f"'[red]{match}[/]'" for match in closest_matches)}"""
                 )
                 raise typer.Exit()
             else:
                 console.print(
-                    f"""[cyan]Info:[/] Found invalid command '{cmd_name}', closest matches: {', '.join(f"'[red]{match}[/]'" for match in closest_matches)}"""
+                    f"""[cyan]ℹ️ Info:[/] Found invalid command '{cmd_name}', closest matches: {', '.join(f"'[red]{match}[/]'" for match in closest_matches)}"""
                 )
                 resp = questionary.select(
                     "Which one did you want to run?",
@@ -223,7 +223,7 @@ class AliasedGroup(Group):
                 raise typer.Exit()
             return click.Group.get_command(self, ctx, resp)
         elif len(matches) == 1:
-            console.print(f"[cyan]Info:[/] Found shortened name '{cmd_name}', using '{matches[0]}'")
+            console.print(f"[cyan]ℹ️ Info:[/] Found shortened name '{cmd_name}', using '{matches[0]}'")
             return click.Group.get_command(self, ctx, matches[0])
         formatted_matches = ", ".join(sorted(f"[red]{match}[/]" for match in matches))
         try:
@@ -233,7 +233,7 @@ class AliasedGroup(Group):
         else:
             import difflib  # pylint: disable=import-outside-toplevel
 
-            console.print(f"[red]Attention:[/] Found Too many matches for '{cmd_name}': {formatted_matches}")
+            console.print(f"[red]⚠️ Attention:[/] Found Too many matches for '{cmd_name}': {formatted_matches}")
             command = questionary.select(
                 "Select one to continue",
                 choices=difflib.get_close_matches(cmd_name, matches, cutoff=0.0),
@@ -379,7 +379,7 @@ def _refresh_cache():
         old_cache = load_cache()
     new_cache = fill_cache(msg="Fetching new cache")
     changed = len(new_cache) - len(old_cache)
-    console.print(f"[yellow]Updated the cache, number of new packages till last refresh:[/] [red]{changed}[/]")
+    console.print(f"[yellow]🔁 Updated the cache, number of new packages till last refresh:[/] [red]{changed}[/]")
 
 
 def _clear_cache():
@@ -396,13 +396,13 @@ def _clear_cache():
             if os.path.isfile(file_path):
                 os.remove(file_path)
         except Exception as exc:
-            console.print(f"[red]Failed to delete {file_path}. Reason: {exc}[/]")
+            console.print(f"[red]❌ Failed to delete {file_path}. Reason: {exc}[/]")
 
 
 def _get_github_readme(repo):
     readme = session.get(f"https://api.github.com/repos/{repo}/readme").json()
     if readme.get("message") == "Not Found":
-        console.print(f"[red]Could not find readme for[/] [yellow]{repo}[/]")
+        console.print(f"[red]❌ Could not find readme for[/] [yellow]{repo}[/]")
         raise typer.Exit()
     content = session.get(f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
     if content.status_code == 200:
@@ -473,7 +473,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
     console.print(table)
     if not lxml:
         console.print(
-            "[bold yellow]WARNING: There is a known bug that occurs when lxml is not installed. It"
+            "[bold yellow]⚠️ WARNING: There is a known bug that occurs when lxml is not installed. It"
             "doesn't show descriptions in some cases. Please install lxml using `pip install lxml`."
         )
 
@@ -490,8 +490,8 @@ def description(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]Project not found[/]")
-        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+            rich.print("[red]🚫 Project not found[/]")
+        rich.print(f"[orange]❕ Some error occured. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)["info"]
@@ -503,7 +503,7 @@ def description(
         )
         repos = {"https://github.com/wasi-master/package-x", "https://github.com/some-dude/some-other-repo"}
         if len(repos) > 1:
-            console.print("[red]WARNING:[/] I found multiple github repos. ")
+            console.print("[red]⚠️ WARNING:[/] I found multiple github repos. ")
             import questionary  # pylint: disable=import-outside-toplevel
 
             repo = questionary.select(
@@ -513,11 +513,11 @@ def description(
         elif len(repos) == 1:
             repo = next(iter(repos))
         else:
-            console.print("[red]I could not find a GitHub repository[/]")
+            console.print("[red]❌ I could not find a GitHub repository[/]")
             raise typer.Exit()
         readme, filename = _get_github_readme(repo)
         if not readme or not filename:
-            console.print("[red]I could not find a readme inside the GitHub repository[/]")
+            console.print("[red]❌ I could not find a readme inside the GitHub repository[/]")
             raise typer.Exit()
         parsed_data["description"] = readme
         if filename.endswith((".md", ".md.txt")):
@@ -527,7 +527,7 @@ def description(
         else:
             parsed_data["description_content_type"] = "text/markdown"
     if not parsed_data["description"] or parsed_data["description"] == "UNKNOWN":
-        console.print("[red]No description found on PyPI.[/]")
+        console.print("[red]❌ No description found on PyPI.[/]")
         import re  # pylint: disable=import-outside-toplevel
 
         repos = set(
@@ -536,7 +536,7 @@ def description(
         if repos:
             if len(repos) == 1:
                 repo = next(iter(repos))
-                console.print(f"[yellow]However, I did find a github repo[/] https://github.com/{repo}.\n")
+                console.print(f"[yellow]ℹ️ INFO:[/] However, I did find a github repo[/] https://github.com/{repo}.\n")
 
                 try:
                     import questionary  # pylint: disable=import-outside-toplevel
@@ -548,10 +548,10 @@ def description(
                     resp = questionary.confirm("Do you want to get the description from there?").ask()
 
                 if not resp:
-                    console.print("[dim gray]Cancelled![/]")
+                    console.print("[dim gray]🆗 Cancelled![/]")
                     raise typer.Exit()
             elif len(repos) > 1:
-                console.print("[red]WARNING:[/] I did find some github repos. ")
+                console.print("[red]⚠️ WARNING:[/] I did find some github repos. ")
                 import questionary  # pylint: disable=import-outside-toplevel
 
                 repo = questionary.select(
@@ -560,7 +560,7 @@ def description(
                 ).ask()
             readme, filename = _get_github_readme(repo)
             if not readme or not filename:
-                console.print("[red]I could not find a readme inside the GitHub repository[/]")
+                console.print("[red]❌ I could not find a readme inside the GitHub repository[/]")
                 raise typer.Exit()
             parsed_data["description"] = readme
             if filename.endswith((".md", ".md.txt")):
@@ -571,7 +571,7 @@ def description(
                 parsed_data["description_content_type"] = "text/markdown"
         else:
             console.print(
-                "[red]The PyPI page doesn't have a description nor a GitHub repository that I could've used[/]"
+                "[red]❌ The PyPI page doesn't have a description nor a GitHub repository that I could've used[/]"
             )
             raise typer.Exit()
 
@@ -676,7 +676,7 @@ def search(
         response = session.get(url, params=parameters)
 
     if response.status_code == 404:
-        console.print("[bold]The specified page doesn't exist[/]")
+        console.print("[bold🚫 The specified page doesn't exist[/]")
         raise typer.Exit()
 
     with console.status("Parsing data..."):
@@ -738,8 +738,8 @@ def releases(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]Project not found[/]")
-        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+            rich.print("[red]🚫 Project not found[/]")
+        rich.print(f"[orange]❕ Some error occured. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -795,8 +795,8 @@ def information(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]Project not found[/]")
-        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+            rich.print("[red]🚫 Project not found[/]")
+        rich.print(f"[orange]❕ Some error occured. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -985,7 +985,7 @@ def regex_search(
                 )
         console.print(table)
         if table.row_count > 50:
-            console.print("[yellow]There are more than 50 matches, consider using the --compact flag")
+            console.print("[yellow]⚠️ WARNING:[/] There are more than 50 matches, consider using the --compact flag")
 
 
 @app.command()
@@ -1065,14 +1065,14 @@ def read_the_docs(
 
                 if response.status_code != 200:
                     if response.status_code == 404:
-                        rich.print("[red]Project not found[/]")
-                    rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+                        rich.print("[red]🚫 Project not found[/]")
+                    rich.print(f"[orange]❕ Some error occured. response code {response.status_code}[/]")
                     raise typer.Exit()
 
                 parsed_data = json.loads(response.text)
                 url = parsed_data["info"].get("project_urls", {}).get("Documentation", None)
                 if not url:
-                    console.print("[bold]Documentation url not found on PyPI[/]")
+                    console.print("[bold]❌ Documentation url not found on PyPI[/]")
                     raise typer.Exit()
                 else:
                     import os.path  # pylint: disable=import-outside-toplevel
@@ -1081,7 +1081,7 @@ def read_the_docs(
                         url = os.path.join(url, "en/stable/")
                     url = os.path.join(url, "search.html")
             else:
-                console.print("[dim grey]Cancelled![/]")
+                console.print("[dim grey]🆗 Cancelled![/]")
                 raise typer.Exit()
 
     if not query:
@@ -1112,8 +1112,8 @@ def browse(package_name: str = Argument(...)):
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]Project not found[/]")
-        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+            rich.print("[red]🚫 Project not found[/]")
+        rich.print(f"[orange]❕ Some error occured. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -1165,26 +1165,26 @@ def cache_info():
     except FileNotFoundError:
         packages_size = None
         packages_last_refreshed = None
-        console.print("[bold yellow]Packages cache not available[/]")
+        console.print("[bold yellow]🚫 Packages cache not available[/]")
     try:
         requests_size = os.path.getsize(requests_cache)
     except FileNotFoundError:
         requests_size = None
-        console.print("[bold yellow]Requests cache not available[/]")
+        console.print("[bold yellow]🚫 Requests cache not available[/]")
         if not packages_size:
-            console.print("[bold red]No cache available![/]")
+            console.print("[bold red]⚠️🚫 No cache available![/]")
             # If both the caches are unavailable, then we can't do anything
             raise typer.Exit()
 
-    console.print(f"Packages cache size: {humanize.naturalsize(packages_size or 0, binary=True)}")
+    console.print(f"ℹ️ Packages cache size: {humanize.naturalsize(packages_size or 0, binary=True)}")
 
-    console.print(f"Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
-    console.print(f"Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
+    console.print(f"ℹ️ Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
+    console.print(f"ℹ️ Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
     if packages_last_refreshed:
         from datetime import datetime
 
         console.print(
-            f"Requests cache last updated: {humanize.naturaltime(datetime.fromtimestamp(packages_last_refreshed))}"
+            f"⏰ Requests cache last updated: {humanize.naturaltime(datetime.fromtimestamp(packages_last_refreshed))}"
         )
 
     if requests_size:
