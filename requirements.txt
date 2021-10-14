@@ -11,6 +11,8 @@ beautifulsoup4
 lxml
 # For HTTP requests
 requests
+# For fuzzy string matching
+thefuzz
 # For reStructuredText pretty printing
 rich-rst
 # For colored help command
