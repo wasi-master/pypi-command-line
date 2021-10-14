@@ -1107,12 +1107,6 @@ def browse(package_name: str = Argument(...)):
 
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
 
-    if response.status_code != 200:
-        if response.status_code == 404:
-            rich.print("[red]Project not found[/]")
-        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
-        raise typer.Exit()
-
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
