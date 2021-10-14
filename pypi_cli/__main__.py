@@ -167,10 +167,12 @@ class AliasedGroup(Group):
         except ImportError:
             ctx.fail(f"Found Too many matches for '{cmd_name}': {formatted_matches}")
         else:
+            import difflib  # pylint: disable=import-outside-toplevel
+
             console.print(f"[red]Attention:[/] Found Too many matches for '{cmd_name}': {formatted_matches}")
             command = questionary.select(
                 "Select one to continue",
-                choices=sorted(matches),
+                choices=difflib.get_close_matches(cmd_name, matches),
                 style=questionary.Style(
                     [
                         ("text", "red"),
@@ -418,23 +420,23 @@ def desc(
     force_github: bool = Option(False, help="Forcefully get the description from github"),
 ):
     """See the description for a package."""
-    # url = f"https://pypi.org/pypi/{quote(package_name)}/json"
-    # with console.status("Getting data from PyPI"):
-    #     response = session.get(url)
+    url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+    with console.status("Getting data from PyPI"):
+        response = session.get(url)
 
-    # if response.status_code != 200:
-    #     if response.status_code == 404:
-    #         rich.print("[red]Project not found[/]")
-    #     rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
-    #     raise typer.Exit()
+    if response.status_code != 200:
+        if response.status_code == 404:
+            rich.print("[red]Project not found[/]")
+        rich.print(f"[orange]Some error occured. response code {response.status_code}[/]")
+        raise typer.Exit()
 
-    # parsed_data = json.loads(response.text)["info"]
+    parsed_data = json.loads(response.text)["info"]
     if force_github:
         import re  # pylint: disable=import-outside-toplevel
 
-        # repos = set(
-        #     re.findall(r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
-        # )
+        repos = set(
+            re.findall(r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
+        )
         repos = {"https://github.com/wasi-master/package-x", "https://github.com/some-dude/some-other-repo"}
         if len(repos) > 1:
             console.print("[red]WARNING:[/] I found multiple github repos. ")
