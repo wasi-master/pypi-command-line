@@ -409,8 +409,8 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
     console.print(table)
     if not lxml:
         console.print(
-            "[bold yellow]WARNING: There is a known bug that occurs when lxml is not installed. "
-            "It doesn't descriptions in some cases. Please install lxml using `pip install lxml`."
+            "[bold yellow]WARNING: There is a known bug that occurs when lxml is not installed. It"
+            "doesn't show descriptions in some cases. Please install lxml using `pip install lxml`."
         )
 
 
