@@ -1,6 +1,8 @@
 # pypi-command-line
 
  A powerful command line interface for <https://pypi.org>
+ 
+ Detailed Documentation available at <https://wasi-master.github.io/pypi-command-line/>
 
 ## Features
 
