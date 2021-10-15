@@ -7,28 +7,6 @@ title: Notes
 
 This page explains certain aspects of the code.
 
-- [Notes](#notes)
-  - [Optimizations](#optimizations)
-    - [Imports outside top level](#imports-outside-top-level)
-    - [Compiling regex in `regex-search`](#compiling-regex-in-regex-search)
-    - [Speedups](#speedups)
-      - [**shellingham**<sup>[<a title="Link to shellingham's PyPI page" href="https://pypi.org/project/shellingham/" target="_blank">↑</a>]</sup>](#shellinghamsupsup)
-      - [**lxml**<sup>[<a title="Link to lxml's PyPI page" href="https://pypi.org/project/lxml/" target="_blank">↑</a>]</sup>](#lxmlsupsup)
-      - [**requests-cache**<sup>[<a title="Link to requests-cache's PyPI page" href="https://pypi.org/project/requests-cache/" target="_blank">↑</a>]</sup>](#requests-cachesupsup)
-      - [**rapidfuzz**<sup>[<a title="Link to rapidfuzz's PyPI page" href="https://pypi.org/project/rapidfuzz/" target="_blank">↑</a>]</sup>](#rapidfuzzsupsup)
-  - [Dependencies](#dependencies)
-    - [Rich](#rich)
-    - [Typer](#typer)
-    - [Requests](#requests)
-    - [Questionary](#questionary)
-    - [Humanize](#humanize)
-    - [bs4 (BeautifulSoup)](#bs4-beautifulsoup)
-    - [TheFuzz](#thefuzz)
-    - [Rich RST](#rich-rst)
-    - [Packaging](#packaging)
-  - [Dependency Installation Notes](#dependency-installation-notes)
-  - [Cache](#cache)
-
 ## Optimizations
 
 ### Imports outside top level
@@ -53,7 +31,7 @@ We compile the regex because it's almost twice as fast.
 
 ### Speedups
 
-You may have seen that you can do `pip install pypi-command-line[speedups]` and you may have wondered what that actually does.
+You may have seen that you can do `#!sh pip install pypi-command-line[speedups]` and you may have wondered what that actually does.
 If you see the source code you can see these lines
 
 <script src="https://emgithub.com/embed.js?target=https%3A%2F%2Fgithub.com%2Fwasi-master%2Fpypi-command-line%2Fblob%2Fmain%2Fsetup.py%23L50-L56&style=atom-one-dark&showBorder=on&showLineNumbers=on&showFileMeta=on&showCopy=off"></script>
@@ -62,7 +40,7 @@ Now I think those comments explain what those do pretty well but here's a detail
 
 #### **shellingham**<sup>[<a title="Link to shellingham's PyPI page" href="https://pypi.org/project/shellingham/" target="_blank">↑</a>]</sup>
 
-This does not really speed up anything but adds auto shell detection for autocomplete installation using the `--install-completion ` command. This technically lowers the amount of time taken to install autocompletion because it makes it so that you don't have to manually provide what terminal/shell you're using
+This does not really speed up anything but adds auto shell detection for autocomplete installation using the `#!sh --install-completion ` command. This technically lowers the amount of time taken to install autocompletion because it makes it so that you don't have to manually provide what terminal/shell you're using
 
 #### **lxml**<sup>[<a title="Link to lxml's PyPI page" href="https://pypi.org/project/lxml/" target="_blank">↑</a>]</sup>
 

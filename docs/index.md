@@ -1,6 +1,6 @@
 ---
 layout: page
-title: pypi-command-line documentation
+title: Documentation
 ---
 
 # Welcome to pypi-command-line documentation

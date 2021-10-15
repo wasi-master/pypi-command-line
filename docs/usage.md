@@ -8,89 +8,6 @@ title: Usage
 
 > Note: You'll have to install the package first. See <https://wasi-master.github.io/pypi-command-line/installation> for instructions.
 
-<details open>
-<summary>Table of contents</summary>
-
-- [Usage](#usage)
-- [Options](#options)
-  - [-h, --help](#-h---help)
-    - [**Usage**](#usage-1)
-  - [--install-completion](#--install-completion)
-    - [**Demo**](#demo)
-    - [**Usage**](#usage-2)
-  - [--show-completion](#--show-completion)
-    - [**Demo**](#demo-1)
-    - [**Usage**](#usage-3)
-- [Commands](#commands)
-  - [browse](#browse)
-    - [**Demo**](#demo-2)
-    - [**Usage**](#usage-4)
-    - [**Options**](#options-1)
-  - [cache-clear](#cache-clear)
-    - [**Usage**](#usage-5)
-    - [**Errors and Warnings**](#errors-and-warnings)
-      - [<span style="color: red">E:</span> Failed to delete \<file_path\>](#e-failed-to-delete-file_path)
-  - [cache-information](#cache-information)
-    - [**Errors and Warnings**](#errors-and-warnings-1)
-      - [<span style="color: yellow">W:</span> Packages cache not available](#w-packages-cache-not-available)
-      - [<span style="color: yellow">W:</span> Requests cache not available](#w-requests-cache-not-available)
-    - [**Usage**](#usage-6)
-  - [cache-refresh](#cache-refresh)
-    - [**Usage**](#usage-7)
-  - [description](#description)
-    - [**Demo**](#demo-3)
-    - [**Usage**](#usage-8)
-    - [**Options**](#options-2)
-    - [Errors and Warnings](#errors-and-warnings-2)
-      - [<span style="color: red">E:</span> Project not found](#e-project-not-found)
-      - [<span style="color: red">E:</span> ReadMe not found](#e-readme-not-found)
-      - [<span style="color: yellow">W:</span> Multiple github repos](#w-multiple-github-repos)
-  - [information](#information)
-    - [**Demo**](#demo-4)
-    - [**Usage**](#usage-9)
-    - [**Options**](#options-3)
-    - [**Errors and Warnings**](#errors-and-warnings-3)
-      - [<span style="color: red">E:</span> Project not found](#e-project-not-found-1)
-  - [largest-files](#largest-files)
-    - [**Demo**](#demo-5)
-    - [**Usage**](#usage-10)
-    - [**Options**](#options-4)
-    - [**Errors and Warnings**](#errors-and-warnings-4)
-      - [<span style="color: red">E:</span> Project not found](#e-project-not-found-2)
-  - [new-packages](#new-packages)
-    - [**Usage**](#usage-11)
-    - [**Options**](#options-5)
-    - [**Errors and Warnings**](#errors-and-warnings-5)
-      - [<span style="color: yellow">W:</span> `lxml` not installed](#w-lxml-not-installed)
-  - [new-releases](#new-releases)
-    - [**Usage**](#usage-12)
-    - [**Options**](#options-6)
-    - [**Errors and Warnings**](#errors-and-warnings-6)
-      - [<span style="color: yellow">W:</span> `lxml` not installed](#w-lxml-not-installed-1)
-  - [releases](#releases)
-    - [**Usage**](#usage-13)
-    - [**Options**](#options-7)
-    - [**Errors and Warnings**](#errors-and-warnings-7)
-      - [<span style="color: red">E:</span> Project not found](#e-project-not-found-3)
-  - [regex-search](#regex-search)
-    - [**Demo**](#demo-6)
-    - [**Usage**](#usage-14)
-    - [**Options**](#options-8)
-  - [releases](#releases-1)
-    - [**Demo**](#demo-7)
-    - [**Usage**](#usage-15)
-    - [**Options**](#options-9)
-    - [**Errors and Warnings**](#errors-and-warnings-8)
-      - [<span style="color: red">E:</span> Project not found](#e-project-not-found-4)
-  - [search](#search)
-    - [**Demo**](#demo-8)
-    - [**Usage**](#usage-16)
-    - [**Options**](#options-10)
-    - [**Errors and Warnings**](#errors-and-warnings-9)
-      - [<span style="color: red">E:</span> Project not found](#e-project-not-found-5)
-
-</details>
-
 # Options
 
 ## -h, --help
@@ -143,7 +60,7 @@ This gets the package information, and shows a list containing it's project urls
 
 ![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse.gif)
 
-You can cancel using Ctrl+C if you don't find your desired link
+You can cancel using ++ctrl+c++ if you don't find your desired link
 
 ![Demo of cancelling](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse%20but%20cancel.gif)
 
