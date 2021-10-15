@@ -21,8 +21,10 @@
 - 🤯 Open source.
 - 📚 Extensive documentation.
 
+## Screenshots
+
 <details open>
-<summary><h1>Screenshots</h1></summary>
+<summary>Click to hide screenshots</summary>
 
 Command name and parameter autocompletion
 ![Autocomplete](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/autocomplete%20example.gif "Autocomplete")
