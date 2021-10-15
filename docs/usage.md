@@ -6,7 +6,7 @@ title: Usage
 
 # Usage
 
-> Note: You'll have to install the package first. See <https://wasi-master.github.io/pypi-command-line/installation> for instructions.
+> Note: You'll have to install the package first. See <https://wasi-master.github.io/pypi-command-line/install> for instructions.
 
 # Options
 
