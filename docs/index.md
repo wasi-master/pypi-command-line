@@ -10,17 +10,18 @@ It's a command line interface<sup>[<a title="A command-line interface (CLI) proc
 
 There are [a few alternatives](#alternatives "List containing 2 alternatives") that I've come across but none of those offer the same amount of functionality and beautifulness<sup>[<a title="The qualities in something that give pleasure to the senses" href="https://www.merriam-webster.com/thesaurus/beautifulness" target="_blank">?</a>]</sup> or even the same [amount of speed](#benchmarks-for-speed "Benchmarks for Speed").
 
-## Usage
+## Installation and Usage
 
+For installation instructions see [installation](https://wasi-master.github.io/pypi-command-line/installation) for instructions.\
 For usage details see [usage](https://wasi-master.github.io/pypi-command-line/usage "Page containing usage instructions")
 
 ## Alternatives
 
 ### [pypi-cli](https://pypi.org/project/pypi-cli/ "pypi-cli")
 
-Now this probably was the best option before `pypi-command-line` came out and even it has some flaws. The `info` command is pretty minimal, there's no way of seeing the github info, The download count doesn't work, the long descriptions aren't formatted at all. The search feature doesn't even work at all. It used to use the xml-rpc<sup>[<a title="XML-RPC is a remote procedure call (RPC) protocol which uses XML to encode its calls and HTTP as a transport mechanism." href="https://en.wikipedia.org/wiki/XML-RPC" target="_blank">?</a>]</sup> API that is discontinued therefore the feature doesn't work anymore. The stat command is broken and is badly formatted for screens that are not ultra high resolution.
+Now this probably was the best option before `pypi-command-line` came out and even it has some flaws. The `information` command is pretty minimal, there's no way of seeing the github information, The download count doesn't work, the long descriptions aren't formatted at all. The search feature doesn't even work at all. It used to use the xml-rpc<sup>[<a title="XML-RPC is a remote procedure call (RPC) protocol which uses XML to encode its calls and HTTP as a transport mechanism." href="https://en.wikipedia.org/wiki/XML-RPC" target="_blank">?</a>]</sup> API that is discontinued therefore the feature doesn't work anymore. The stat command is broken and is badly formatted for screens that are not ultra high resolution.
 
-**TL;DR** The `stat` and `search` commands don't work anymore, the info command kinda works but the download count doesn't work, can't see github info.
+**TL;DR** The `stat` and `search` commands don't work anymore, the information command kinda works but the download count doesn't work, can't see github information.
 
 ### [pypi-client](https://pypi.org/project/pypi-client/ "pypi-client")
 
@@ -39,13 +40,13 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
 - pypi-client - **7.4170682**
 
-    Takes 7 secs to get all packages and show ones containing discord, `pypi-command-line` can achieve the same result in `1.22`<sup>[<a title="Real Speed is 1.2205886" href="javascript: void(0)">*</a>]</sup> seconds using `pypi rsearch discord` (r stands for regex, the command allows you to search with regex)
+    Takes 7 secs to get all packages and show ones containing discord, `pypi-command-line` can achieve the same result in `1.22`<sup>[<a title="Real Speed is 1.2205886" href="javascript: void(0)">*</a>]</sup> seconds using `pypi regex-search discord` (the command allows you to search with regex)
 
 - pypi-cli - **doesn't work** anymore
 
     The command doesn't work anymore since pypi has discontinued it's xml-rpc api<sup><a title=Reference href="https://status.python.org/incidents/grk0k7sz6zkp" target="_blank">‾</a></sup>
 
-### `… info django`
+### `… information django`
 
 - pypi-cli - **0.9757808**
 
@@ -55,8 +56,8 @@ Takes too long (≈7 mins), Needs github authorization, badly formatted for non 
 
     This does take longer but it's using that time to get not only the pypi stats but the *proper* download stats and github stats along with the pypi stats, disabling those lowers this time to `1.35`<sup>[<a title="Real Speed is 1.3591562" href="javascript: void(0)">*</a>]</sup> seconds.
 
-- pypi-client - **can't see info**
+- pypi-client - **can't see information**
 
-    You can't see project info with this package, you can only search for stuff.
+    You can't see project information with this package, you can only search for stuff.
 
 Notes: <https://wasi-master.github.io/pypi-command-line/notes>
