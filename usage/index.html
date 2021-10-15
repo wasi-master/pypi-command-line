@@ -1,0 +1,811 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="canonical" href="https://wasi-master.github.io/pypi-command-line/usage/">
+      
+      <link rel="icon" href="../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.5">
+    
+    
+      
+        <title>Usage - pypi-command-line</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.be71726b.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+      <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#usage" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="pypi-command-line" class="md-header__button md-logo" aria-label="pypi-command-line" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            pypi-command-line
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Usage
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/wasi-master/pypi-command-line" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    wasi-master/pypi-command-line
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href=".." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../install/" class="md-tabs__link">
+      Installation
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="./" class="md-tabs__link md-tabs__link--active">
+      Usage
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../notes/" class="md-tabs__link">
+      Notes
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../smart_features/" class="md-tabs__link">
+      Smart Features
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="pypi-command-line" class="md-nav__button md-logo" aria-label="pypi-command-line" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    pypi-command-line
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/wasi-master/pypi-command-line" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    wasi-master/pypi-command-line
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        Installation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Usage
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notes/" class="md-nav__link">
+        Notes
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../smart_features/" class="md-nav__link">
+        Smart Features
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <!-- markdownlint-disable MD024 MD025 MD033-->
+
+<h1 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Note: You'll have to install the package first. See <a href="https://wasi-master.github.io/pypi-command-line/installation">https://wasi-master.github.io/pypi-command-line/installation</a> for instructions.</p>
+</blockquote>
+<h1 id="options">Options<a class="headerlink" href="#options" title="Permanent link">&para;</a></h1>
+<h2 id="-h-help">-h, --help<a class="headerlink" href="#-h-help" title="Permanent link">&para;</a></h2>
+<p>Sends a help message, each command also has this flag that you can use to see the help about that specific command</p>
+<h3 id="usage_1"><strong>Usage</strong><a class="headerlink" href="#usage_1" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi -h\
+pypi --help</p>
+</blockquote>
+<p>For comamnd specific help (<a href="#search"><code>search</code></a> in this case)</p>
+<blockquote>
+<p>pypi search --help</p>
+</blockquote>
+<h2 id="-install-completion">--install-completion<a class="headerlink" href="#-install-completion" title="Permanent link">&para;</a></h2>
+<p>Installs autocompletion for the current shell.</p>
+<h3 id="demo"><strong>Demo</strong><a class="headerlink" href="#demo" title="Permanent link">&para;</a></h3>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20--install-completion.gif" /></p>
+<h3 id="usage_2"><strong>Usage</strong><a class="headerlink" href="#usage_2" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi --install-completion</p>
+</blockquote>
+<h2 id="-show-completion">--show-completion<a class="headerlink" href="#-show-completion" title="Permanent link">&para;</a></h2>
+<p>See code for autocompletion for the current shell, to copy it or customize the installation.</p>
+<h3 id="demo_1"><strong>Demo</strong><a class="headerlink" href="#demo_1" title="Permanent link">&para;</a></h3>
+<p>The output will be different depending on the shell</p>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20--show-completion.gif" /></p>
+<h3 id="usage_3"><strong>Usage</strong><a class="headerlink" href="#usage_3" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi --show-completion</p>
+</blockquote>
+<h1 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h1>
+<h2 id="browse">browse<a class="headerlink" href="#browse" title="Permanent link">&para;</a></h2>
+<p>Browse for a package's URLs.</p>
+<p>This gets the package information, and shows a list containing it's project urls. If the project has a maintainer email set then it also shows that as a mailto<sup>[<a title="mailto is a Uniform Resource Identifier (URI) scheme for email addresses. It is used to produce hyperlinks on websites that allow users to send an email to a specific address directly from an HTML document, without having to copy it and entering it into an email client." href="https://en.wikipedia.org/wiki/Mailto" target="_blank">?</a>]</sup> that you can press to send a email via your default email client. This gets all the project urls from PyPI and then shows them, there is a known bug where PyPI in some cases shows UNKNOWN for some url so that also gets shown.</p>
+<h3 id="demo_2"><strong>Demo</strong><a class="headerlink" href="#demo_2" title="Permanent link">&para;</a></h3>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse.gif" /></p>
+<p>You can cancel using <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-c">C</kbd></span> if you don't find your desired link</p>
+<p><img alt="Demo of cancelling" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse%20but%20cancel.gif" /></p>
+<h3 id="usage_4"><strong>Usage</strong><a class="headerlink" href="#usage_4" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi browse PACKAGE_NAME</p>
+</blockquote>
+<h3 id="options_1"><strong>Options</strong><a class="headerlink" href="#options_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><code>PACKAGE_NAME</code>
+  The name of the package to show the urls for.</p>
+</li>
+<li>
+<p><code>-h</code>, <code>--help</code></p>
+</li>
+</ul>
+<p>Show the melp message.</p>
+<h2 id="cache-clear">cache-clear<a class="headerlink" href="#cache-clear" title="Permanent link">&para;</a></h2>
+<p>Clears the local packages and requests cache, see <a href="https://wasi-master.github.io/pypi-command-line/notes#cache">notes</a> for more information about the cache.</p>
+<h3 id="usage_5"><strong>Usage</strong><a class="headerlink" href="#usage_5" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi cache-clear</p>
+</blockquote>
+<h3 id="errors-and-warnings"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings" title="Permanent link">&para;</a></h3>
+<h4 id="e-failed-to-delete-file_path"><span style="color: red">E:</span> Failed to delete \&lt;file_path><a class="headerlink" href="#e-failed-to-delete-file_path" title="Permanent link">&para;</a></h4>
+<p>Shown when it cannot delete a file due to some other process using it or not having enough permissions</p>
+<h2 id="cache-information">cache-information<a class="headerlink" href="#cache-information" title="Permanent link">&para;</a></h2>
+<p>Shows the size for the packages cache and the size and additionally the websites cached with their creation date and expiry date, see <a href="https://wasi-master.github.io/pypi-command-line/notes#cache">notes</a> for more information about the cache.</p>
+<h3 id="errors-and-warnings_1"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_1" title="Permanent link">&para;</a></h3>
+<h4 id="w-packages-cache-not-available"><span style="color: yellow">W:</span> Packages cache not available<a class="headerlink" href="#w-packages-cache-not-available" title="Permanent link">&para;</a></h4>
+<p>Shown when the packages cache doesn't exist due to it not being created yet or being deleted recently. You can rebuild that cache using <a href="#cache-refresh"><code>cache-refresh</code></a></p>
+<h4 id="w-requests-cache-not-available"><span style="color: yellow">W:</span> Requests cache not available<a class="headerlink" href="#w-requests-cache-not-available" title="Permanent link">&para;</a></h4>
+<p>Shown when the requests cache doesn't exist due to the <code>requests-cache</code> package not being installed</p>
+<h3 id="usage_6"><strong>Usage</strong><a class="headerlink" href="#usage_6" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi cache-information</p>
+</blockquote>
+<h2 id="cache-refresh">cache-refresh<a class="headerlink" href="#cache-refresh" title="Permanent link">&para;</a></h2>
+<p>Reloads the packages cache and shows the number of new packages added after the last refresh, see <a href="https://wasi-master.github.io/pypi-command-line/notes#cache">notes</a> for more information about the cache.</p>
+<h3 id="usage_7"><strong>Usage</strong><a class="headerlink" href="#usage_7" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi cache-refresh</p>
+</blockquote>
+<h2 id="description">description<a class="headerlink" href="#description" title="Permanent link">&para;</a></h2>
+<p>Shows the description of a package as gotten from PyPI or GitHub.</p>
+<p>This first gets the information about the package and then finds the descripton. If the package has a descripton it gets the description format, if it's reStructuredText or Markdown then it shows the description formatted according to the format.</p>
+<p>If it doesn't get a description in PyPI then it looks for github repos mentioned in the json response gotten from the pypi api. this makes sure it gets the repo if it is supplied no matter where it is. If it finds multiple repos then it asks the user to pick one. Then it uses the github api to find the name of the readme file of the repo, this uses the api instead of manually finding it just in case. Then it reads the contents from the readme file and determines the format using the file extension then it shows the description formatted according to the format.</p>
+<h3 id="demo_3"><strong>Demo</strong><a class="headerlink" href="#demo_3" title="Permanent link">&para;</a></h3>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc.gif" /></p>
+<p>Demo of getting description from github if pypi does not have one</p>
+<p><img alt="Demo of it finding github repo and getting the description from there" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc%20github.gif" /></p>
+<h3 id="usage_8"><strong>Usage</strong><a class="headerlink" href="#usage_8" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi description [OPTIONS] PACKAGE_NAME</p>
+</blockquote>
+<h3 id="options_2"><strong>Options</strong><a class="headerlink" href="#options_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>PACKAGE_NAME</code></li>
+</ul>
+<p>Package to get the description for <span style="color: red">[required]</span>
+- <code>--force-github</code> / <code>--no-force-github</code></p>
+<p>Forcefully get the description from github [<span style="color: blue">default:</span> no-force-github]</p>
+<p>This will make sure that it doesn't get the description from pypi but get it from github by reading the readme file of that project's repository
+- <code>-h</code>, <code>--help</code></p>
+<p>Show the help message.</p>
+<h3 id="errors-and-warnings_2">Errors and Warnings<a class="headerlink" href="#errors-and-warnings_2" title="Permanent link">&para;</a></h3>
+<h4 id="e-project-not-found"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found" title="Permanent link">&para;</a></h4>
+<p>Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist</p>
+<h4 id="e-readme-not-found"><span style="color: red">E:</span> ReadMe not found<a class="headerlink" href="#e-readme-not-found" title="Permanent link">&para;</a></h4>
+<p>Shown when <code>--force-github</code> is enabled or the PyPI page doesn't have a description and the github page also doesn't have a readme</p>
+<h4 id="w-multiple-github-repos"><span style="color: yellow">W:</span> Multiple github repos<a class="headerlink" href="#w-multiple-github-repos" title="Permanent link">&para;</a></h4>
+<p>Shown when <code>--force-github</code> is enabled or the PyPI page doesn't have a description. If this is shown it will ask you to pick one</p>
+<h2 id="information">information<a class="headerlink" href="#information" title="Permanent link">&para;</a></h2>
+<p>The information command gets data from <a href="https://pypi.org">PyPI</a> and <a href="https://github.com">GitHub</a> and <a href="https://pypistats.org">PyPIStats</a> and shows them to the console</p>
+<h3 id="demo_4"><strong>Demo</strong><a class="headerlink" href="#demo_4" title="Permanent link">&para;</a></h3>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info.gif" /></p>
+<p>You can also see classifiers if you want to</p>
+<p><img alt="Demo with classifiers" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif" /></p>
+<h3 id="usage_9"><strong>Usage</strong><a class="headerlink" href="#usage_9" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi information [OPTIONS] PACKAGE_NAME</p>
+</blockquote>
+<h3 id="options_3"><strong>Options</strong><a class="headerlink" href="#options_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>PACKAGE_NAME <span style="color: red">[required]</span></li>
+<li>--version TEXT</li>
+</ul>
+<p>The version of the package to show information for
+- <code>--show-classifiers</code> / <code>--no-show-classifiers</code></p>
+<p>Show the classifiers  [<span style="color: blue">default:</span> no-show-classifiers]
+   <img alt="Example of this flag" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif" />
+- <code>--hide-project-urls</code> / <code>--no-hide-project-urls</code></p>
+<p>Hide the project urls  [<span style="color: blue">default:</span> no-hide-project-urls]
+- <code>--hide-requirements</code> / <code>--no-hide-requirements</code></p>
+<p>Hide the requirements  [<span style="color: blue">default:</span> no-hide-requirements]
+- <code>--hide-github</code> / <code>--no-hide-github</code></p>
+<p>Hide the github  [<span style="color: blue">default:</span> no-hide-github]
+- <code>--hide-stats</code> / <code>--no-hide-stats</code></p>
+<p>Hide the stats  [<span style="color: blue">default:</span> no-hide-stats]
+- <code>--hide-meta</code> / <code>--no-hide-meta</code></p>
+<p>Hide the metadata  [<span style="color: blue">default:</span> no-hide-meta]
+- <code>-h</code>, <code>--help</code></p>
+<p>Show the melp message.</p>
+<h3 id="errors-and-warnings_3"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_3" title="Permanent link">&para;</a></h3>
+<h4 id="e-project-not-found_1"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_1" title="Permanent link">&para;</a></h4>
+<p>Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist</p>
+<h2 id="largest-files">largest-files<a class="headerlink" href="#largest-files" title="Permanent link">&para;</a></h2>
+<p>This command shows the all time largest pypi packages. The layout is simillar to the <a href="https://pypi.org/stats/">one found in PyPI</a></p>
+<h3 id="demo_5"><strong>Demo</strong><a class="headerlink" href="#demo_5" title="Permanent link">&para;</a></h3>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20largest-files.gif" /></p>
+<h3 id="usage_10"><strong>Usage</strong><a class="headerlink" href="#usage_10" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi information [OPTIONS]</p>
+</blockquote>
+<h3 id="options_4"><strong>Options</strong><a class="headerlink" href="#options_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>-h</code>, <code>--help</code></li>
+</ul>
+<p>Show the melp message.</p>
+<h3 id="errors-and-warnings_4"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_4" title="Permanent link">&para;</a></h3>
+<h4 id="e-project-not-found_2"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_2" title="Permanent link">&para;</a></h4>
+<p>Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist</p>
+<h2 id="new-packages">new-packages<a class="headerlink" href="#new-packages" title="Permanent link">&para;</a></h2>
+<p>Shows the top 40 newly added packages. Meaning that the first ever version of those packages were uploaded from pypi a short while ago.</p>
+<h3 id="usage_11"><strong>Usage</strong><a class="headerlink" href="#usage_11" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi new-packages [OPTIONS]</p>
+</blockquote>
+<h3 id="options_5"><strong>Options</strong><a class="headerlink" href="#options_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>-h</code>, <code>--help</code></li>
+</ul>
+<p>Show the melp message.</p>
+<ul>
+<li><code>---author</code> / <code>--no--author</code></li>
+</ul>
+<p>Whether to show the project author or not  [<span style="color: blue">default:</span> no--author]</p>
+<p>This usually shows the author's email.</p>
+<p><code>---link</code> / <code>--no--link</code></p>
+<p>Whether to show the project link or not  [<span style="color: blue">default:</span> -link]</p>
+<h3 id="errors-and-warnings_5"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_5" title="Permanent link">&para;</a></h3>
+<h4 id="w-lxml-not-installed"><span style="color: yellow">W:</span> <code>lxml</code> not installed<a class="headerlink" href="#w-lxml-not-installed" title="Permanent link">&para;</a></h4>
+<p>There is a known bug that occurs when lxml is not installed. It doesn't show descriptions in some cases. Please install lxml using <code>pip install lxml</code>.</p>
+<h2 id="new-releases">new-releases<a class="headerlink" href="#new-releases" title="Permanent link">&para;</a></h2>
+<p>Shows the top 100 newly updated packages. Meaning that the latest version of those packages were uploaded from pypi short while ago.</p>
+<h3 id="usage_12"><strong>Usage</strong><a class="headerlink" href="#usage_12" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi new-releases [OPTIONS]</p>
+</blockquote>
+<h3 id="options_6"><strong>Options</strong><a class="headerlink" href="#options_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>-h</code>, <code>--help</code></li>
+</ul>
+<p>Show the melp message.</p>
+<ul>
+<li><code>---author</code> / <code>--no--author</code></li>
+</ul>
+<p>Whether to show the project author or not  [<span style="color: blue">default:</span> no--author]</p>
+<p>This usually shows the author's email.</p>
+<p><code>---link</code> / <code>--no--link</code></p>
+<p>Whether to show the project link or not  [<span style="color: blue">default:</span> -link]</p>
+<h3 id="errors-and-warnings_6"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_6" title="Permanent link">&para;</a></h3>
+<h4 id="w-lxml-not-installed_1"><span style="color: yellow">W:</span> <code>lxml</code> not installed<a class="headerlink" href="#w-lxml-not-installed_1" title="Permanent link">&para;</a></h4>
+<p>There is a known bug that occurs when lxml is not installed. It doesn't show descriptions in some cases. Please install lxml using <code>pip install lxml</code>.</p>
+<h2 id="releases">releases<a class="headerlink" href="#releases" title="Permanent link">&para;</a></h2>
+<p>Shows all the available releases for a package.</p>
+<p>The --link argument can be used to also show the link of the releases. This
+is turned off by default and the link is added as a hyperlink to the package
+name on supported terminals</p>
+<h3 id="usage_13"><strong>Usage</strong><a class="headerlink" href="#usage_13" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi releases [OPTIONS] PACKAGE_NAME</p>
+</blockquote>
+<h3 id="options_7"><strong>Options</strong><a class="headerlink" href="#options_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>PACKAGE_NAME</code></li>
+</ul>
+<p>The name of the package to show releases for</p>
+<ul>
+<li><code>-h</code>, <code>--help</code></li>
+</ul>
+<p>Show the melp message.</p>
+<ul>
+<li><code>---author</code> / <code>--no--author</code></li>
+</ul>
+<p>Whether to show the project author or not  [<span style="color: blue"><span style="color: blue">default:</span></span> no--author]</p>
+<p>This usually shows the author's email.</p>
+<ul>
+<li><code>---link</code> / <code>--no--link</code></li>
+</ul>
+<p>Whether to show the project link or not  [<span style="color: blue">default:</span> -link]</p>
+<h3 id="errors-and-warnings_7"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_7" title="Permanent link">&para;</a></h3>
+<h4 id="e-project-not-found_3"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_3" title="Permanent link">&para;</a></h4>
+<p>Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist</p>
+<h2 id="regex-search">regex-search<a class="headerlink" href="#regex-search" title="Permanent link">&para;</a></h2>
+<p>Regex stands for Regular Expressions. It allows you to search for all packages in PyPI and only show ones that match a specific Regular Expression<sup>[<a title="A regular expression (shortened as regex or regexp) is a sequence of characters that specifies a search pattern. Usually such patterns are used by string-searching algorithms." href="https://en.wikipedia.org/wiki/Regular_expression" target="_blank">?</a>]</p>
+<p>If the packages cache is empty it then loads the packages first, the cache is kept for 1 day meaning your data is at most 1 day old. if you want to refresh you may do so by using the <a href="#cache-refresh">cache-refresh</a> command. For more information about this cache see <a href="https://wasi-master.github.io/pypi-command-line/notes#cache">notes</a>.</p>
+<h3 id="demo_6"><strong>Demo</strong><a class="headerlink" href="#demo_6" title="Permanent link">&para;</a></h3>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20rsearch.gif" /></p>
+<h3 id="usage_14"><strong>Usage</strong><a class="headerlink" href="#usage_14" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi regex-search [OPTIONS] REGEX</p>
+</blockquote>
+<h3 id="options_8"><strong>Options</strong><a class="headerlink" href="#options_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><code>REGEX</code>
+  The regular expression to search with  <span style="color: red">[required]</span></p>
+</li>
+<li>
+<p><code>--compact</code> / <code>--no-compact</code>
+  Compact formatting  [<span style="color: blue">default:</span> no-compact]</p>
+</li>
+</ul>
+<p>This removes the table and just shows the package names seperated by commands, it also adds hyperlinks on supported terminals</p>
+<ul>
+<li><code>-h</code>, <code>--help</code>
+  Show the help message.</li>
+</ul>
+<h2 id="releases_1">releases<a class="headerlink" href="#releases_1" title="Permanent link">&para;</a></h2>
+<p>Shows all the available releases for a package.</p>
+<p>This can help you determine what versions of a package are available on PyPI.</p>
+<h3 id="demo_7"><strong>Demo</strong><a class="headerlink" href="#demo_7" title="Permanent link">&para;</a></h3>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20releases.gif" /></p>
+<h3 id="usage_15"><strong>Usage</strong><a class="headerlink" href="#usage_15" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi releases [OPTIONS] PACKAGE_NAME</p>
+</blockquote>
+<h3 id="options_9"><strong>Options</strong><a class="headerlink" href="#options_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><code>PACKAGE_NAME</code>
+  The name of package to show releases for <span style="color: red">[required]</span></p>
+</li>
+<li>
+<p><code>---link</code> / <code>--no--link</code>
+  Display the links to the releases  [<span style="color: blue">default:</span> no--link]</p>
+</li>
+</ul>
+<p>This is mostly not required unless you want to download that specific releases too but in that case <code>pip install PACKAGE_NAME==x.x.x</code> is better. And the link is already shown as a hyperlink on supported terminals.</p>
+<ul>
+<li>-h, --help
+  Show the help message.</li>
+</ul>
+<h3 id="errors-and-warnings_8"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_8" title="Permanent link">&para;</a></h3>
+<h4 id="e-project-not-found_4"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_4" title="Permanent link">&para;</a></h4>
+<p>Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist</p>
+<h2 id="search">search<a class="headerlink" href="#search" title="Permanent link">&para;</a></h2>
+<p>Search for a package on PyPI.</p>
+<h3 id="demo_8"><strong>Demo</strong><a class="headerlink" href="#demo_8" title="Permanent link">&para;</a></h3>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search.gif" /></p>
+<h3 id="usage_16"><strong>Usage</strong><a class="headerlink" href="#usage_16" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi search [OPTIONS] PACKAGE_NAME</p>
+</blockquote>
+<h3 id="options_10"><strong>Options</strong><a class="headerlink" href="#options_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><code>NAME</code>
+  The name of the package to search for  <span style="color: red">[required]</span></p>
+</li>
+<li>
+<p><code>--page INTEGER RANGE</code>
+  The page of the search results to show. [<span style="color: blue">default:</span> 1; <span style="color: green">1&lt;=x&lt;=500</span>]</p>
+</li>
+</ul>
+<p><img alt="Demo of the flag" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search%20with%20page.gif" /></p>
+<ul>
+<li>-h, --help
+  Shows the help message.</li>
+</ul>
+<h3 id="errors-and-warnings_9"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_9" title="Permanent link">&para;</a></h3>
+<h4 id="e-project-not-found_5"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_5" title="Permanent link">&para;</a></h4>
+<p>Shown when the pypi api returns a 404 response meaning the page number specified most likely doesn't exist</p>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../install/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Installation" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Installation
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../notes/" class="md-footer__link md-footer__link--next" aria-label="Next: Notes" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Notes
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2021 Arian Mollik Wasi
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/wasi-master" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tabs", "navigation.top", "header.autohide", "toc.integrate", "content.tabs.link"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.409db549.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.56a63758.min.js"></script>
+      
+    
+  </body>
+</html>
