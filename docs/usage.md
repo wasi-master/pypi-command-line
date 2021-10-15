@@ -9,31 +9,31 @@
 
 - [Usage](#usage)
 - [Options](#options)
-  - [`-h`, `--help`](#-h---help)
+  - [-h`, `--help](#-h---help)
     - [**Usage**](#usage-1)
-  - [`--install-completion`](#--install-completion)
+  - [--install-completion](#--install-completion)
     - [**Demo**](#demo)
     - [**Usage**](#usage-2)
-  - [`--show-completion`](#--show-completion)
+  - [--show-completion](#--show-completion)
     - [**Demo**](#demo-1)
     - [**Usage**](#usage-3)
 - [Commands](#commands)
-  - [`browse`](#browse)
+  - [browse](#browse)
     - [**Demo**](#demo-2)
     - [**Usage**](#usage-4)
     - [**Options**](#options-1)
-  - [`cache-clear`](#cache-clear)
+  - [cache-clear](#cache-clear)
     - [**Usage**](#usage-5)
     - [**Errors and Warnings**](#errors-and-warnings)
       - [<span style="color: red">E:</span> Failed to delete \<file_path\>](#e-failed-to-delete-file_path)
-  - [`cache-information`](#cache-information)
+  - [cache-information](#cache-information)
     - [**Errors and Warnings**](#errors-and-warnings-1)
       - [<span style="color: yellow">W:</span> Packages cache not available](#w-packages-cache-not-available)
       - [<span style="color: yellow">W:</span> Requests cache not available](#w-requests-cache-not-available)
     - [**Usage**](#usage-6)
-  - [`cache-refresh`](#cache-refresh)
+  - [cache-refresh](#cache-refresh)
     - [**Usage**](#usage-7)
-  - [`description`](#description)
+  - [description](#description)
     - [**Demo**](#demo-3)
     - [**Usage**](#usage-8)
     - [**Options**](#options-2)
@@ -41,44 +41,44 @@
       - [<span style="color: red">E:</span> Project not found](#e-project-not-found)
       - [<span style="color: red">E:</span> ReadMe not found](#e-readme-not-found)
       - [<span style="color: yellow">W:</span> Multiple github repos](#w-multiple-github-repos)
-  - [`information`](#information)
+  - [information](#information)
     - [**Demo**](#demo-4)
     - [**Usage**](#usage-9)
     - [**Options**](#options-3)
     - [**Errors and Warnings**](#errors-and-warnings-3)
       - [<span style="color: red">E:</span> Project not found](#e-project-not-found-1)
-  - [`largest-files`](#largest-files)
+  - [largest-files](#largest-files)
     - [**Demo**](#demo-5)
     - [**Usage**](#usage-10)
     - [**Options**](#options-4)
     - [**Errors and Warnings**](#errors-and-warnings-4)
       - [<span style="color: red">E:</span> Project not found](#e-project-not-found-2)
-  - [`new-packages`](#new-packages)
+  - [new-packages](#new-packages)
     - [**Usage**](#usage-11)
     - [**Options**](#options-5)
     - [**Errors and Warnings**](#errors-and-warnings-5)
       - [<span style="color: yellow">W:</span> `lxml` not installed](#w-lxml-not-installed)
-  - [`new-releases`](#new-releases)
+  - [new-releases](#new-releases)
     - [**Usage**](#usage-12)
     - [**Options**](#options-6)
     - [**Errors and Warnings**](#errors-and-warnings-6)
       - [<span style="color: yellow">W:</span> `lxml` not installed](#w-lxml-not-installed-1)
-  - [`releases`](#releases)
+  - [releases](#releases)
     - [**Usage**](#usage-13)
     - [**Options**](#options-7)
     - [**Errors and Warnings**](#errors-and-warnings-7)
       - [<span style="color: red">E:</span> Project not found](#e-project-not-found-3)
-  - [`regex-search`](#regex-search)
+  - [regex-search](#regex-search)
     - [**Demo**](#demo-6)
     - [**Usage**](#usage-14)
     - [**Options**](#options-8)
-  - [`releases`](#releases-1)
+  - [releases](#releases-1)
     - [**Demo**](#demo-7)
     - [**Usage**](#usage-15)
     - [**Options**](#options-9)
     - [**Errors and Warnings**](#errors-and-warnings-8)
       - [<span style="color: red">E:</span> Project not found](#e-project-not-found-4)
-  - [`search`](#search)
+  - [search](#search)
     - [**Demo**](#demo-8)
     - [**Usage**](#usage-16)
     - [**Options**](#options-10)
@@ -89,7 +89,7 @@
 
 # Options
 
-## `-h`, `--help`
+## -h`, `--help
 
 Sends a help message, each command also has this flag that you can use to see the help about that specific command
 
@@ -101,7 +101,7 @@ Sends a help message, each command also has this flag that you can use to see th
 For comamnd specific help ([`search`](#search) in this case)
 > pypi search --help
 
-## `--install-completion`
+## --install-completion
 
 Installs autocompletion for the current shell.
 
@@ -113,7 +113,7 @@ Installs autocompletion for the current shell.
 
 > pypi --install-completion
 
-## `--show-completion`
+## --show-completion
 
 See code for autocompletion for the current shell, to copy it or customize the installation.
 
@@ -129,7 +129,7 @@ The output will be different depending on the shell
 
 # Commands
 
-## `browse`
+## browse
 
 Browse for a package's URLs.
 
@@ -156,7 +156,7 @@ You can cancel using Ctrl+C if you don't find your desired link
 
   Show the melp message.
 
-## `cache-clear`
+## cache-clear
 
 Clears the local packages and requests cache, see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) for more information about the cache.
 
@@ -170,7 +170,7 @@ Clears the local packages and requests cache, see [notes](https://wasi-master.gi
 
 Shown when it cannot delete a file due to some other process using it or not having enough permissions
 
-## `cache-information`
+## cache-information
 
 Shows the size for the packages cache and the size and additionally the websites cached with their creation date and expiry date, see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) for more information about the cache.
 
@@ -189,7 +189,7 @@ Shown when the requests cache doesn't exist due to the `requests-cache` package 
 
 > pypi cache-information
 
-## `cache-refresh`
+## cache-refresh
 
 Reloads the packages cache and shows the number of new packages added after the last refresh, see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) for more information about the cache.
 
@@ -197,7 +197,7 @@ Reloads the packages cache and shows the number of new packages added after the 
 
 > pypi cache-refresh
 
-## `description`
+## description
 
 Shows the description of a package as gotten from PyPI or GitHub.
 
@@ -245,7 +245,7 @@ Shown when `--force-github` is enabled or the PyPI page doesn't have a descripti
 
 Shown when `--force-github` is enabled or the PyPI page doesn't have a description. If this is shown it will ask you to pick one
 
-## `information`
+## information
 
 The information command gets data from [PyPI](https://pypi.org) and [GitHub](https://github.com) and [PyPIStats](https://pypistats.org) and shows them to the console
 
@@ -296,7 +296,7 @@ You can also see classifiers if you want to
 
 Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
 
-## `largest-files`
+## largest-files
 
 This command shows the all time largest pypi packages. The layout is simillar to the [one found in PyPI](https://pypi.org/stats/)
 
@@ -320,7 +320,7 @@ This command shows the all time largest pypi packages. The layout is simillar to
 
 Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
 
-## `new-packages`
+## new-packages
 
 Shows the top 40 newly added packages. Meaning that the first ever version of those packages were uploaded from pypi a short while ago.
 
@@ -350,7 +350,7 @@ Shows the top 40 newly added packages. Meaning that the first ever version of th
 
 There is a known bug that occurs when lxml is not installed. It doesn't show descriptions in some cases. Please install lxml using `pip install lxml`.
 
-## `new-releases`
+## new-releases
 
 Shows the top 100 newly updated packages. Meaning that the latest version of those packages were uploaded from pypi short while ago.
 
@@ -380,7 +380,7 @@ Shows the top 100 newly updated packages. Meaning that the latest version of tho
 
 There is a known bug that occurs when lxml is not installed. It doesn't show descriptions in some cases. Please install lxml using `pip install lxml`.
 
-## `releases`
+## releases
 
 Shows all the available releases for a package.
 
@@ -418,7 +418,7 @@ name on supported terminals
 
 Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
 
-## `regex-search`
+## regex-search
 
 Regex stands for Regular Expressions. It allows you to search for all packages in PyPI and only show ones that match a specific Regular Expression<sup>[<a title="A regular expression (shortened as regex or regexp) is a sequence of characters that specifies a search pattern. Usually such patterns are used by string-searching algorithms." href="https://en.wikipedia.org/wiki/Regular_expression" target="_blank">?</a>]
 
@@ -445,7 +445,7 @@ If the packages cache is empty it then loads the packages first, the cache is ke
 - `-h`, `--help`
   Show the help message.
 
-## `releases`
+## releases
 
 Shows all the available releases for a package.
 
@@ -478,7 +478,7 @@ This can help you determine what versions of a package are available on PyPI.
 
 Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
 
-## `search`
+## search
 
 Search for a package on PyPI.
 
