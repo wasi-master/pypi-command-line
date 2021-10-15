@@ -1,3 +1,8 @@
+---
+layout: page
+title: Notes
+---
+
 # Notes
 
 This page explains certain aspects of the code.

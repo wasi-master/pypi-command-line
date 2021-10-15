@@ -1,3 +1,7 @@
+---
+layout: page
+title: Usage
+---
 <!-- markdownlint-disable MD024 MD025 MD033-->
 
 # Usage

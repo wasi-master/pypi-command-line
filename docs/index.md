@@ -1,3 +1,8 @@
+---
+layout: page
+title: pypi-command-line documentation
+---
+
 # Welcome to pypi-command-line documentation
 
 `pypi-command-line` is a A powerful command line interface for [pypi.org](https://pypi.org "The Python Package Index (PyPI) is a repository of software for the Python programming language.")

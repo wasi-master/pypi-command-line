@@ -1,3 +1,8 @@
+---
+layout: page
+title: Smart Features
+---
+
 # The smartness of `pypi-command-line`
 
 ## Autocompletion
