@@ -21,6 +21,40 @@
 - 🤯 Open source.
 - 📚 Extensive documentation.
 
+<details open>
+<summary><h1>Screenshots</h1></summary>
+
+Command name and parameter autocompletion
+![Autocomplete](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/autocomplete%20example.gif "Autocomplete")
+Smart error handling
+![Error Handling](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/error%20handling.gif "Error Handling")
+Auto command aliases
+![Smart Command Aliasing](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/smart_alias.png "Smart Command Aliasing")
+Search feature that gives the same results as on PyPI
+![Search for a package using PyPI](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search.gif "Search for a package using PyPI")
+See detailed information about a project
+![See project information](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info.gif "See project information")
+View the project description right in your terminal with rich Markdown and reStructuredText formatting
+![Get description from PyPI](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc.gif "Get description from PyPI")
+View the project readme from github
+![Get readme content from GitHub](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc%20github.gif "Get readme content from GitHub")
+Search for packages using regular expresssions
+![Search for packages using regex](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20rsearch.gif "Search for packages using regex")
+Open the package's URLs gotten from PyPI
+![Browse for URLs](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse%20alligned.gif "Browse for URLs")
+See the project information with classifiers
+![See project information with classifiers](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif "See !project information with classifiers")
+See the all time largest projects in PyPI
+![See all time largest projects in PyPI](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20largest-files.gif "See all time largest !projects in PyPI")
+Install autocompletion for the current shell
+![Install Completion](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20--install-completion.gif "Install Completion")
+See the source code for the autocompletion
+![Show Completion](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20--show-completion.gif "Show Completion")
+See a specific page of the search results
+![Specify a page to search to](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search%20with%20page.gif "Specify a page to search to")
+
+</details>
+
 ## Installation
 
 - Installing from PyPI (recommended).
@@ -29,10 +63,22 @@
   pip install pypi-command-line
   ```
 
+  If you want to also install [speed dependencies](https://wasi-master.github.io/pypi-command-line/notes#speedups)
+
+  ```sh
+  pip install pypi-command-line[speedups]
+  ```
+
 - Installing from source.
 
   ```sh
   pip install git+https://github.com/wasi-master/pypi-command-line.git
+  ```
+
+  If you want to also install [speed dependencies](https://wasi-master.github.io/pypi-command-line/notes#speedups)
+
+  ```sh
+  pip install "pypi-command-line[speedups] @ git+https://github.com/wasi-master/pypi-command-line.git"
   ```
 
 ## Usage
@@ -49,4 +95,4 @@ For more information on a certain command use `pypi <command_name> --help`. For 
 pypi search --help
 ```
 
-For a full guide see the wiki.
+For a full guide see <https://wasi-master.github.io/pypi-command-line/usage>.
