@@ -8,7 +8,7 @@
 ![Number of issues](https://img.shields.io/github/issues/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)
 ![Number of pull requests](https://img.shields.io/github/issues-pr-closed/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)
 ![Number of stars on GitHub](https://img.shields.io/github/stars/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)
-![Supported python versions](https://img.shields.io/pypi/pyversions/pypi-command-line?label=supported%20python%20vesrions&style=flat-square&logo=python&logoColor=white)
+![Supported python versions](https://img.shields.io/pypi/pyversions/pypi-command-line?label=supported%20python%20versions&style=flat-square&logo=python&logoColor=white)
 ![Python Implementation](https://img.shields.io/pypi/implementation/pypi-command-line?label=python%20implementation&style=flat-square&logo=python&logoColor=white)
 ![PyPI Wheel availability](https://img.shields.io/pypi/wheel/pypi-command-line?label=pypi%20wheel%20availabile%3F&style=flat-square&logo=pypi&logoColor=white)
 ![Documentation status](https://img.shields.io/website?down_color=red&down_message=not%20working&label=docs&logo=github&style=flat-square&up_color=blue&up_message=working&url=https%3A%2F%2Fwasi-master.github.io%2Fpypi-command-line%2F)
