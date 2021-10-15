@@ -17,8 +17,8 @@ There are [a few alternatives](#alternatives "List containing 2 alternatives") t
 
 ## Installation and Usage
 
-For installation instructions see [installation](https://wasi-master.github.io/pypi-command-line/install) for instructions.\
-For usage details see [usage](https://wasi-master.github.io/pypi-command-line/usage "Page containing usage instructions")
+- For installation instructions see [installation](https://wasi-master.github.io/pypi-command-line/install) for instructions.
+- For usage details see [usage](https://wasi-master.github.io/pypi-command-line/usage "Page containing usage instructions")
 
 ## Alternatives
 

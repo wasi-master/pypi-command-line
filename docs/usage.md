@@ -16,7 +16,8 @@ Sends a help message, each command also has this flag that you can use to see th
 
 ### **Usage**
 
-> pypi -h\
+> pypi -h
+
 > pypi --help
 
 For comamnd specific help ([`search`](#search) in this case)
