@@ -164,9 +164,7 @@ class AliasedGroup(Group):
             processor = lambda x: x.replace("-", "").lower()
             try:
                 import rapidfuzz  # pylint: disable=import-outside-toplevel
-
-                print("rapidfuzz")
-                # print(cmd, commands)
+                
                 get_closest_match = lambda cmd: [
                     i[0]
                     for i in rapidfuzz.process.extract(
@@ -178,7 +176,6 @@ class AliasedGroup(Group):
                     import thefuzz.process  # pylint: disable=import-outside-toplevel
                     import thefuzz.fuzz  # pylint: disable=import-outside-toplevel
 
-                    print("thefuzz")
                     get_closest_match = lambda cmd: [
                         i[0]
                         for i in thefuzz.process.extractBests(
@@ -189,7 +186,6 @@ class AliasedGroup(Group):
                 except ImportError:
                     import difflib  # pylint: disable=import-outside-toplevel
 
-                    print("difflib")
                     get_closest_match = lambda cmd: difflib.get_close_matches(cmd, commands, n=5, cutoff=0.5) or [None]
         if len(matches) == 0:
             closest_matches = get_closest_match(cmd_name)
