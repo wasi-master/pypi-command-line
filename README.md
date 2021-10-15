@@ -5,9 +5,10 @@
 ## Features
 
 - 🚀 Extremely fast and easy to use.
-- 🌟 Beautiful UI with pleasant colors.
+- 🌟 Beautiful UI with pleasant colors *everywhere*.
+- 😁 Emojis in responses and errors.
 - 📰 Great Markdown and reStructuredText support for viewing project descriptions.
-- 😎 Many features (There are optional parameters for extra info too!).
+- 😎 Many features (There are optional parameters for extra information too!).
   - See in-depth information about a package including it's download count and github repo stats.
   - See beautifully rendered markdown/rst/plain text description of a package
   - Search for packages with the same information as pypi and even filter them.
