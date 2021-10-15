@@ -9,7 +9,7 @@
 
 - [Usage](#usage)
 - [Options](#options)
-  - [-h`, `--help](#-h---help)
+  - [-h, --help](#-h---help)
     - [**Usage**](#usage-1)
   - [--install-completion](#--install-completion)
     - [**Demo**](#demo)
@@ -89,7 +89,7 @@
 
 # Options
 
-## -h`, `--help
+## -h, --help
 
 Sends a help message, each command also has this flag that you can use to see the help about that specific command
 
