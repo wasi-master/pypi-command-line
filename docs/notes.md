@@ -34,7 +34,7 @@ We compile the regex because it's almost twice as fast.
 You may have seen that you can do `#!sh pip install pypi-command-line[speedups]` and you may have wondered what that actually does.
 If you see the source code you can see these lines
 
-<script src="https://emgithub.com/embed.js?target=https%3A%2F%2Fgithub.com%2Fwasi-master%2Fpypi-command-line%2Fblob%2Fmain%2Fsetup.py%23L50-L56&style=atom-one-dark&showBorder=on&showLineNumbers=on&showFileMeta=on&showCopy=off"></script>
+<script src="https://emgithub.com/embed.js?target=https%3A%2F%2Fgithub.com%2Fwasi-master%2Fpypi-command-line%2Fblob%2Fmain%2Fsetup.py%23L52-L58&style=atom-one-dark&showBorder=on&showLineNumbers=on&showFileMeta=on&showCopy=off"></script>
 
 Now I think those comments explain what those do pretty well but here's a detailed explanation
 
