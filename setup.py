@@ -8,12 +8,14 @@ setuptools.setup(
     version="1.0.0",
     author="Wasi Master",
     author_email="arianmollik323@gmail.com",
-    description="A beautiful command line interface for the Python Package Index",
+    description=
+    "A beautiful command line interface for the Python Package Index",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://wasi-master.github.io/pypi-command-line/",
     project_urls={
-        "Bug Tracker": "https://github.com/wasi-master/pypi-command-line/issues",
+        "Bug Tracker":
+        "https://github.com/wasi-master/pypi-command-line/issues",
         "Source": "https://github.com/wasi-master/pypi-command-line",
         "Documentation": "https://wasi-master.github.io/pypi-command-line/",
         "Say Thanks": "https://saythanks.io/to/arianmollik323@gmail.com",
