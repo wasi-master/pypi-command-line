@@ -164,7 +164,7 @@ class AliasedGroup(Group):
             processor = lambda x: x.replace("-", "").lower()
             try:
                 import rapidfuzz  # pylint: disable=import-outside-toplevel
-                
+
                 get_closest_match = lambda cmd: [
                     i[0]
                     for i in rapidfuzz.process.extract(
@@ -262,7 +262,23 @@ class PypiTyper(typer.Typer):
 
 # We instantiate a cutom typer app
 app = PypiTyper()
-console = Console(theme=Theme({"markdown.link": "#6088ff"}), emoji=True, emoji_variant="emoji", tab_size=4)
+console = Console(
+    theme=Theme(
+        {
+            "markdown.link": "#6088ff",
+            "wheel.distribution": "#92EC5A",
+            "wheel.version": "#F2C259",
+            "wheel.build_tag": "#FFF075",
+            "wheel.python_tag": "#FF6EF8",
+            "wheel.abi_tag": "#9263FB",
+            "wheel.platform_tag": "#33F1C8",
+            "wheel.file_extension": "#4AA0FC",
+        }
+    ),
+    emoji=True,
+    emoji_variant="emoji",
+    tab_size=4,
+)
 __color_error_message()  # makes the error messages colored
 
 
@@ -774,8 +790,93 @@ def releases(
 
 
 @app.command()
+def wheels(
+    package_name: str = Argument(..., help="The name of the package to show wheel info for"),
+    version: str = Argument(None, help="The version of the package to show info for, defaults to latest"),
+):
+    """See detailed information about all the wheels of a release of a package"""
+    url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+    with console.status("Getting data from PyPI"):
+        response = session.get(url)
+
+    if response.status_code != 200:
+        if response.status_code == 404:
+            rich.print("[red]:no_entry_sign: Project or version not found[/]")
+        rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+        raise typer.Exit()
+
+    parsed_data = json.loads(response.text)
+
+    # from packaging.tags import sys_tags, parse_tag  # pylint: disable=import-outside-toplevel
+    from packaging.version import parse as parse_version  # pylint: disable=import-outside-toplevel
+
+    from rich.text import Text  # pylint: disable=import-outside-toplevel
+
+    # def is_wheel_supported(wheel_name):
+    #     try:
+    #         tag = parse_tag("-".join(wheel_name.split("-")[2:]))
+    #     except Exception as e:
+    #         return "white"
+    #     if not tag:
+    #         return "white"
+    #     else:
+    #         if list(tag)[-1] in sys_tags():
+    #             return "green"
+    #         else:
+    #             return "red"
+
+    releases = parsed_data["releases"]
+
+    if not version:
+        latest_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0]
+        release = releases[str(latest_version)]
+    else:
+        try:
+            release = releases[str(version)]
+        except KeyError:
+            rich.print("[red]:no_entry_sign: Version not found[/]")
+            raise typer.Exit()
+    from itertools import cycle  # pylint: disable=import-outside-toplevel
+
+    colors = cycle(["green", "blue", "magenta", "cyan", "yellow", "red"])
+    wheel_panels = []
+    for wheel in release:
+        # color = is_wheel_supported(wheel["filename"])
+        wheel_name = Text(wheel["filename"])
+        wheel_name.highlight_regex(
+            r"^(?P<distribution>\w+)-(?P<version>[A-Za-z0-9\.\-]+)(?P<build_tag>-\w{0,3})?-(?P<python_tag>[a-z]{2}[0-9]{0,3})-(?P<abi_tag>\w+)-(?P<platform_tag>.+)(?P<file_extension>\.whl)$",
+            style_prefix="wheel.",
+        )
+        wheel_panels.append(
+            Panel(
+                "\n".join(
+                    filter(
+                        None,
+                        [
+                            f"[blue]Comment:[/] {wheel['comment_text']}" if wheel["comment_text"] else None,
+                            f"[magenta]Has Signature[/]: {wheel['has_sig']}",
+                            f"[cyan]Package Type:[/] {wheel['packagetype']}",
+                            f"[green]Requires Python:[/] {wheel['requires_python']}"
+                            if not wheel["requires_python"] is None
+                            else None,
+                            f"[yellow]Size:[/] {humanize.naturalsize(wheel['size'], binary=True)}",
+                            f"[bright_cyan]Yanked Reason[/]: {wheel['yanked_reason']}" if wheel["yanked"] else None,
+                            f"[red]Upload Time[/]: {humanize.naturaltime(datetime.strptime(wheel['upload_time_iso_8601'], '%Y-%m-%dT%H:%M:%S.%fZ'))}",
+                        ],
+                    )
+                ),
+                title=wheel_name,
+                border_style=next(colors),
+            )
+        )
+    from rich.columns import Columns  # pylint: disable=import-outside-toplevel
+
+    console.print(Columns(wheel_panels))
+
+
+@app.command()
 def information(
-    package_name: str = Argument(...),
+    package_name: str = Argument(..., help="The name of the package to show information for"),
     version: str = Option(None, help="The version of the package to show info for"),
     show_classifiers: bool = Option(False, metavar="classifiers", help="Show the classifiers"),
     hide_project_urls: bool = Option(False, metavar="project_urls", help="Hide the project urls"),
@@ -785,7 +886,7 @@ def information(
     hide_meta: bool = Option(False, metavar="meta", help="Hide the metadata"),
 ):
     """See the information about a package."""
-    url = f"https://pypi.org/pypi/{quote(package_name)}{f'/{version}' if version else ''}/json"
+    url = f"https://pypi.org/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
@@ -811,7 +912,6 @@ def information(
     natural_time = release_time.strftime("%b %d, %Y")
     description = info["summary"]
     latest_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0]
-    latest_stable_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0]
     version_comment = (
         "[green]Latest Version[/]"
         if str(latest_version) == str(info["version"])
