@@ -254,7 +254,7 @@ Shows the top 40 newly added packages. Meaning that the first ever version of th
 
 - `-h`, `--help`
 
-  Show the melp message.
+  Show the help message.
 
 - `---author` / `--no--author`
 
@@ -284,7 +284,7 @@ Shows the top 100 newly updated packages. Meaning that the latest version of tho
 
 - `-h`, `--help`
 
-  Show the melp message.
+  Show the help message.
 
 - `---author` / `--no--author`
 
@@ -414,7 +414,7 @@ Search for a package on PyPI.
 
 ### **Options**
 
-- `NAME`
+- `PACKAGE_NAME`
   The name of the package to search for  <span style="color: red">[required]</span>
 
 - `--page INTEGER RANGE`
@@ -445,10 +445,10 @@ See the available wheels of a release on PyPI. The wheel names are color coded a
 
 ### **Options**
 
-- `NAME`
+- `PACKAGE_NAME`
   The name of the package to show wheel info for  <span style="color: red">[required]</span>
 
-- `--page INTEGER RANGE`
+- `VERSION`
   The version of the package to show info for, defaults to latest
 
 - -h, --help
