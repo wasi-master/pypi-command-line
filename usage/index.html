@@ -428,18 +428,38 @@
 <p>pypi --show-completion</p>
 </blockquote>
 <h1 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h1>
+<h2 id="version">version<a class="headerlink" href="#version" title="Permanent link">&para;</a></h2>
+<p>See the latest version of the package or pypi-command-line</p>
+<p>How this works if if you specify a package name then it shows the top <em>limit</em> latest versions of that specified package, otherwise it shows the current version of pypi-command-line</p>
+<h3 id="demo_2"><strong>Demo</strong><a class="headerlink" href="#demo_2" title="Permanent link">&para;</a></h3>
+<p>TODO: Add demo</p>
+<h3 id="usage_4"><strong>Usage</strong><a class="headerlink" href="#usage_4" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi version [PACKAGE_NAME]</p>
+</blockquote>
+<h3 id="options_1"><strong>Options</strong><a class="headerlink" href="#options_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><code>PACKAGE_NAME</code>
+  The name of the package to show the latest version(s) for. [<span style="color: blue">default:</span> None]</p>
+</li>
+<li>
+<p><code>-h</code>, <code>--help</code></p>
+</li>
+</ul>
+<p>Show the help message.</p>
 <h2 id="browse">browse<a class="headerlink" href="#browse" title="Permanent link">&para;</a></h2>
 <p>Browse for a package's URLs.</p>
 <p>This gets the package information, and shows a list containing it's project urls. If the project has a maintainer email set then it also shows that as a mailto<sup>[<a title="mailto is a Uniform Resource Identifier (URI) scheme for email addresses. It is used to produce hyperlinks on websites that allow users to send an email to a specific address directly from an HTML document, without having to copy it and entering it into an email client." href="https://en.wikipedia.org/wiki/Mailto" target="_blank">?</a>]</sup> that you can press to send a email via your default email client. This gets all the project urls from PyPI and then shows them, there is a known bug where PyPI in some cases shows UNKNOWN for some url so that also gets shown.</p>
-<h3 id="demo_2"><strong>Demo</strong><a class="headerlink" href="#demo_2" title="Permanent link">&para;</a></h3>
+<h3 id="demo_3"><strong>Demo</strong><a class="headerlink" href="#demo_3" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse.gif" /></p>
 <p>You can cancel using <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-c">C</kbd></span> if you don't find your desired link</p>
 <p><img alt="Demo of cancelling" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse%20but%20cancel.gif" /></p>
-<h3 id="usage_4"><strong>Usage</strong><a class="headerlink" href="#usage_4" title="Permanent link">&para;</a></h3>
+<h3 id="usage_5"><strong>Usage</strong><a class="headerlink" href="#usage_5" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi browse PACKAGE_NAME</p>
 </blockquote>
-<h3 id="options_1"><strong>Options</strong><a class="headerlink" href="#options_1" title="Permanent link">&para;</a></h3>
+<h3 id="options_2"><strong>Options</strong><a class="headerlink" href="#options_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
 <p><code>PACKAGE_NAME</code>
@@ -449,10 +469,10 @@
 <p><code>-h</code>, <code>--help</code></p>
 </li>
 </ul>
-<p>Show the melp message.</p>
+<p>Show the help message.</p>
 <h2 id="cache-clear">cache-clear<a class="headerlink" href="#cache-clear" title="Permanent link">&para;</a></h2>
 <p>Clears the local packages and requests cache, see <a href="https://wasi-master.github.io/pypi-command-line/notes#cache">notes</a> for more information about the cache.</p>
-<h3 id="usage_5"><strong>Usage</strong><a class="headerlink" href="#usage_5" title="Permanent link">&para;</a></h3>
+<h3 id="usage_6"><strong>Usage</strong><a class="headerlink" href="#usage_6" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi cache-clear</p>
 </blockquote>
@@ -466,13 +486,13 @@
 <p>Shown when the packages cache doesn't exist due to it not being created yet or being deleted recently. You can rebuild that cache using <a href="#cache-refresh"><code>cache-refresh</code></a></p>
 <h4 id="w-requests-cache-not-available"><span style="color: yellow">W:</span> Requests cache not available<a class="headerlink" href="#w-requests-cache-not-available" title="Permanent link">&para;</a></h4>
 <p>Shown when the requests cache doesn't exist due to the <code>requests-cache</code> package not being installed</p>
-<h3 id="usage_6"><strong>Usage</strong><a class="headerlink" href="#usage_6" title="Permanent link">&para;</a></h3>
+<h3 id="usage_7"><strong>Usage</strong><a class="headerlink" href="#usage_7" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi cache-information</p>
 </blockquote>
 <h2 id="cache-refresh">cache-refresh<a class="headerlink" href="#cache-refresh" title="Permanent link">&para;</a></h2>
 <p>Reloads the packages cache and shows the number of new packages added after the last refresh, see <a href="https://wasi-master.github.io/pypi-command-line/notes#cache">notes</a> for more information about the cache.</p>
-<h3 id="usage_7"><strong>Usage</strong><a class="headerlink" href="#usage_7" title="Permanent link">&para;</a></h3>
+<h3 id="usage_8"><strong>Usage</strong><a class="headerlink" href="#usage_8" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi cache-refresh</p>
 </blockquote>
@@ -480,15 +500,15 @@
 <p>Shows the description of a package as gotten from PyPI or GitHub.</p>
 <p>This first gets the information about the package and then finds the descripton. If the package has a descripton it gets the description format, if it's reStructuredText or Markdown then it shows the description formatted according to the format.</p>
 <p>If it doesn't get a description in PyPI then it looks for github repos mentioned in the json response gotten from the pypi api. this makes sure it gets the repo if it is supplied no matter where it is. If it finds multiple repos then it asks the user to pick one. Then it uses the github api to find the name of the readme file of the repo, this uses the api instead of manually finding it just in case. Then it reads the contents from the readme file and determines the format using the file extension then it shows the description formatted according to the format.</p>
-<h3 id="demo_3"><strong>Demo</strong><a class="headerlink" href="#demo_3" title="Permanent link">&para;</a></h3>
+<h3 id="demo_4"><strong>Demo</strong><a class="headerlink" href="#demo_4" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc.gif" /></p>
 <p>Demo of getting description from github if pypi does not have one</p>
 <p><img alt="Demo of it finding github repo and getting the description from there" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc%20github.gif" /></p>
-<h3 id="usage_8"><strong>Usage</strong><a class="headerlink" href="#usage_8" title="Permanent link">&para;</a></h3>
+<h3 id="usage_9"><strong>Usage</strong><a class="headerlink" href="#usage_9" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi description [OPTIONS] PACKAGE_NAME</p>
 </blockquote>
-<h3 id="options_2"><strong>Options</strong><a class="headerlink" href="#options_2" title="Permanent link">&para;</a></h3>
+<h3 id="options_3"><strong>Options</strong><a class="headerlink" href="#options_3" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>PACKAGE_NAME</code></li>
 </ul>
@@ -507,15 +527,15 @@
 <p>Shown when <code>--force-github</code> is enabled or the PyPI page doesn't have a description. If this is shown it will ask you to pick one</p>
 <h2 id="information">information<a class="headerlink" href="#information" title="Permanent link">&para;</a></h2>
 <p>The information command gets data from <a href="https://pypi.org">PyPI</a> and <a href="https://github.com">GitHub</a> and <a href="https://pypistats.org">PyPIStats</a> and shows them to the console</p>
-<h3 id="demo_4"><strong>Demo</strong><a class="headerlink" href="#demo_4" title="Permanent link">&para;</a></h3>
+<h3 id="demo_5"><strong>Demo</strong><a class="headerlink" href="#demo_5" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info.gif" /></p>
 <p>You can also see classifiers if you want to</p>
 <p><img alt="Demo with classifiers" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif" /></p>
-<h3 id="usage_9"><strong>Usage</strong><a class="headerlink" href="#usage_9" title="Permanent link">&para;</a></h3>
+<h3 id="usage_10"><strong>Usage</strong><a class="headerlink" href="#usage_10" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi information [OPTIONS] PACKAGE_NAME</p>
 </blockquote>
-<h3 id="options_3"><strong>Options</strong><a class="headerlink" href="#options_3" title="Permanent link">&para;</a></h3>
+<h3 id="options_4"><strong>Options</strong><a class="headerlink" href="#options_4" title="Permanent link">&para;</a></h3>
 <ul>
 <li>PACKAGE_NAME <span style="color: red">[required]</span></li>
 <li>--version TEXT</li>
@@ -535,33 +555,33 @@
 - <code>--hide-meta</code> / <code>--no-hide-meta</code></p>
 <p>Hide the metadata  [<span style="color: blue">default:</span> no-hide-meta]
 - <code>-h</code>, <code>--help</code></p>
-<p>Show the melp message.</p>
+<p>Show the help message.</p>
 <h3 id="errors-and-warnings_3"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_3" title="Permanent link">&para;</a></h3>
 <h4 id="e-project-not-found_1"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_1" title="Permanent link">&para;</a></h4>
 <p>Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist</p>
 <h2 id="largest-files">largest-files<a class="headerlink" href="#largest-files" title="Permanent link">&para;</a></h2>
 <p>This command shows the all time largest pypi packages. The layout is simillar to the <a href="https://pypi.org/stats/">one found in PyPI</a></p>
-<h3 id="demo_5"><strong>Demo</strong><a class="headerlink" href="#demo_5" title="Permanent link">&para;</a></h3>
+<h3 id="demo_6"><strong>Demo</strong><a class="headerlink" href="#demo_6" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20largest-files.gif" /></p>
-<h3 id="usage_10"><strong>Usage</strong><a class="headerlink" href="#usage_10" title="Permanent link">&para;</a></h3>
+<h3 id="usage_11"><strong>Usage</strong><a class="headerlink" href="#usage_11" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi information [OPTIONS]</p>
 </blockquote>
-<h3 id="options_4"><strong>Options</strong><a class="headerlink" href="#options_4" title="Permanent link">&para;</a></h3>
+<h3 id="options_5"><strong>Options</strong><a class="headerlink" href="#options_5" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>-h</code>, <code>--help</code></li>
 </ul>
-<p>Show the melp message.</p>
+<p>Show the help message.</p>
 <h3 id="errors-and-warnings_4"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_4" title="Permanent link">&para;</a></h3>
 <h4 id="e-project-not-found_2"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_2" title="Permanent link">&para;</a></h4>
 <p>Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist</p>
 <h2 id="new-packages">new-packages<a class="headerlink" href="#new-packages" title="Permanent link">&para;</a></h2>
 <p>Shows the top 40 newly added packages. Meaning that the first ever version of those packages were uploaded from pypi a short while ago.</p>
-<h3 id="usage_11"><strong>Usage</strong><a class="headerlink" href="#usage_11" title="Permanent link">&para;</a></h3>
+<h3 id="usage_12"><strong>Usage</strong><a class="headerlink" href="#usage_12" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi new-packages [OPTIONS]</p>
 </blockquote>
-<h3 id="options_5"><strong>Options</strong><a class="headerlink" href="#options_5" title="Permanent link">&para;</a></h3>
+<h3 id="options_6"><strong>Options</strong><a class="headerlink" href="#options_6" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>-h</code>, <code>--help</code></li>
 </ul>
@@ -578,11 +598,11 @@
 <p>There is a known bug that occurs when lxml is not installed. It doesn't show descriptions in some cases. Please install lxml using <code>pip install lxml</code>.</p>
 <h2 id="new-releases">new-releases<a class="headerlink" href="#new-releases" title="Permanent link">&para;</a></h2>
 <p>Shows the top 100 newly updated packages. Meaning that the latest version of those packages were uploaded from pypi short while ago.</p>
-<h3 id="usage_12"><strong>Usage</strong><a class="headerlink" href="#usage_12" title="Permanent link">&para;</a></h3>
+<h3 id="usage_13"><strong>Usage</strong><a class="headerlink" href="#usage_13" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi new-releases [OPTIONS]</p>
 </blockquote>
-<h3 id="options_6"><strong>Options</strong><a class="headerlink" href="#options_6" title="Permanent link">&para;</a></h3>
+<h3 id="options_7"><strong>Options</strong><a class="headerlink" href="#options_7" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>-h</code>, <code>--help</code></li>
 </ul>
@@ -602,11 +622,11 @@
 <p>The --link argument can be used to also show the link of the releases. This
 is turned off by default and the link is added as a hyperlink to the package
 name on supported terminals</p>
-<h3 id="usage_13"><strong>Usage</strong><a class="headerlink" href="#usage_13" title="Permanent link">&para;</a></h3>
+<h3 id="usage_14"><strong>Usage</strong><a class="headerlink" href="#usage_14" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi releases [OPTIONS] PACKAGE_NAME</p>
 </blockquote>
-<h3 id="options_7"><strong>Options</strong><a class="headerlink" href="#options_7" title="Permanent link">&para;</a></h3>
+<h3 id="options_8"><strong>Options</strong><a class="headerlink" href="#options_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li><code>PACKAGE_NAME</code></li>
 </ul>
@@ -614,7 +634,7 @@ name on supported terminals</p>
 <ul>
 <li><code>-h</code>, <code>--help</code></li>
 </ul>
-<p>Show the melp message.</p>
+<p>Show the help message.</p>
 <ul>
 <li><code>---author</code> / <code>--no--author</code></li>
 </ul>
@@ -630,13 +650,13 @@ name on supported terminals</p>
 <h2 id="regex-search">regex-search<a class="headerlink" href="#regex-search" title="Permanent link">&para;</a></h2>
 <p>Regex stands for Regular Expressions. It allows you to search for all packages in PyPI and only show ones that match a specific Regular Expression<sup>[<a title="A regular expression (shortened as regex or regexp) is a sequence of characters that specifies a search pattern. Usually such patterns are used by string-searching algorithms." href="https://en.wikipedia.org/wiki/Regular_expression" target="_blank">?</a>]</p>
 <p>If the packages cache is empty it then loads the packages first, the cache is kept for 1 day meaning your data is at most 1 day old. if you want to refresh you may do so by using the <a href="#cache-refresh">cache-refresh</a> command. For more information about this cache see <a href="https://wasi-master.github.io/pypi-command-line/notes#cache">notes</a>.</p>
-<h3 id="demo_6"><strong>Demo</strong><a class="headerlink" href="#demo_6" title="Permanent link">&para;</a></h3>
+<h3 id="demo_7"><strong>Demo</strong><a class="headerlink" href="#demo_7" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20rsearch.gif" /></p>
-<h3 id="usage_14"><strong>Usage</strong><a class="headerlink" href="#usage_14" title="Permanent link">&para;</a></h3>
+<h3 id="usage_15"><strong>Usage</strong><a class="headerlink" href="#usage_15" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi regex-search [OPTIONS] REGEX</p>
 </blockquote>
-<h3 id="options_8"><strong>Options</strong><a class="headerlink" href="#options_8" title="Permanent link">&para;</a></h3>
+<h3 id="options_9"><strong>Options</strong><a class="headerlink" href="#options_9" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
 <p><code>REGEX</code>
@@ -655,13 +675,13 @@ name on supported terminals</p>
 <h2 id="releases_1">releases<a class="headerlink" href="#releases_1" title="Permanent link">&para;</a></h2>
 <p>Shows all the available releases for a package.</p>
 <p>This can help you determine what versions of a package are available on PyPI.</p>
-<h3 id="demo_7"><strong>Demo</strong><a class="headerlink" href="#demo_7" title="Permanent link">&para;</a></h3>
+<h3 id="demo_8"><strong>Demo</strong><a class="headerlink" href="#demo_8" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20releases.gif" /></p>
-<h3 id="usage_15"><strong>Usage</strong><a class="headerlink" href="#usage_15" title="Permanent link">&para;</a></h3>
+<h3 id="usage_16"><strong>Usage</strong><a class="headerlink" href="#usage_16" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi releases [OPTIONS] PACKAGE_NAME</p>
 </blockquote>
-<h3 id="options_9"><strong>Options</strong><a class="headerlink" href="#options_9" title="Permanent link">&para;</a></h3>
+<h3 id="options_10"><strong>Options</strong><a class="headerlink" href="#options_10" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
 <p><code>PACKAGE_NAME</code>
@@ -682,13 +702,13 @@ name on supported terminals</p>
 <p>Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist</p>
 <h2 id="search">search<a class="headerlink" href="#search" title="Permanent link">&para;</a></h2>
 <p>Search for a package on PyPI.</p>
-<h3 id="demo_8"><strong>Demo</strong><a class="headerlink" href="#demo_8" title="Permanent link">&para;</a></h3>
+<h3 id="demo_9"><strong>Demo</strong><a class="headerlink" href="#demo_9" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search.gif" /></p>
-<h3 id="usage_16"><strong>Usage</strong><a class="headerlink" href="#usage_16" title="Permanent link">&para;</a></h3>
+<h3 id="usage_17"><strong>Usage</strong><a class="headerlink" href="#usage_17" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi search [OPTIONS] PACKAGE_NAME</p>
 </blockquote>
-<h3 id="options_10"><strong>Options</strong><a class="headerlink" href="#options_10" title="Permanent link">&para;</a></h3>
+<h3 id="options_11"><strong>Options</strong><a class="headerlink" href="#options_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
 <p><code>PACKAGE_NAME</code>
@@ -709,13 +729,13 @@ name on supported terminals</p>
 <p>Shown when the pypi api returns a 404 response meaning the page number specified most likely doesn't exist</p>
 <h2 id="wheels">wheels<a class="headerlink" href="#wheels" title="Permanent link">&para;</a></h2>
 <p>See the available wheels of a release on PyPI. The wheel names are color coded and the information is colored too.</p>
-<h3 id="demo_9"><strong>Demo</strong><a class="headerlink" href="#demo_9" title="Permanent link">&para;</a></h3>
+<h3 id="demo_10"><strong>Demo</strong><a class="headerlink" href="#demo_10" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20wheels.gif" /></p>
-<h3 id="usage_17"><strong>Usage</strong><a class="headerlink" href="#usage_17" title="Permanent link">&para;</a></h3>
+<h3 id="usage_18"><strong>Usage</strong><a class="headerlink" href="#usage_18" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi search [OPTIONS] PACKAGE_NAME [VERSION]</p>
 </blockquote>
-<h3 id="options_11"><strong>Options</strong><a class="headerlink" href="#options_11" title="Permanent link">&para;</a></h3>
+<h3 id="options_12"><strong>Options</strong><a class="headerlink" href="#options_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
 <p><code>PACKAGE_NAME</code>
