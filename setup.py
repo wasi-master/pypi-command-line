@@ -59,6 +59,7 @@ setuptools.setup(
     },
     entry_points={
         "console_scripts": ["pypi=pypi_cli.__main__:run"],
+        "pipx.run": ["pypi-command-line=pypi_cli.__main__:run"],
     },
     keywords=[
         "pypi",
