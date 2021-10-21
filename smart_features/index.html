@@ -441,6 +441,32 @@
     Command specific
   </a>
   
+    <nav class="md-nav" aria-label="Command specific">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wheels" class="md-nav__link">
+    wheels
+  </a>
+  
+    <nav class="md-nav" aria-label="wheels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#format" class="md-nav__link">
+    Format
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -483,7 +509,50 @@
 <h2 id="emojis">Emojis<a class="headerlink" href="#emojis" title="Permanent link">&para;</a></h2>
 <p>It shows emojis for responses that makes it more <em>✨beautiful✨</em></p>
 <h2 id="command-specific">Command specific<a class="headerlink" href="#command-specific" title="Permanent link">&para;</a></h2>
-<!-- TODO: add command specific smart features -->
+<h3 id="wheels"><code>wheels</code><a class="headerlink" href="#wheels" title="Permanent link">&para;</a></h3>
+<p>In the wheels command it colorizes the seperate parts of the wheels for easy understanding</p>
+<p><img alt="Example of this feature" src="https://i.imgur.com/noxWljq.png" /></p>
+<h4 id="format"><strong>Format</strong><a class="headerlink" href="#format" title="Permanent link">&para;</a></h4>
+<p>The wheel filename is <code>{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl</code>.</p>
+<blockquote>
+<p><span style="color: #92EC5A;">distribution</span></p>
+</blockquote>
+<ul>
+<li>Distribution name, e.g. 'django', 'pyramid'.</li>
+</ul>
+<blockquote>
+<p><span style="color: #F2C259;">version</span></p>
+</blockquote>
+<ul>
+<li>Distribution version, e.g. 1.0.</li>
+</ul>
+<blockquote>
+<p><span style="color: #FFF075;">build tag (<b>Optional</b>)</span></p>
+</blockquote>
+<ul>
+<li>build number. Must start with a digit. Acts as a tie-breaker if two wheel file names are the same in all other respects (i.e. name, version, and other tags). Sort as an empty tuple if unspecified, else sort as a two-item tuple with the first item being the initial digits as an <code>int</code>, and the second item being the remainder of the tag as a <code>str</code>.</li>
+</ul>
+<blockquote>
+<p><span style="color: #FF6EF8;">language implementation and version tag</span></p>
+</blockquote>
+<ul>
+<li>E.g. 'py27', 'py2', 'py3'.</li>
+</ul>
+<blockquote>
+<p><span style="color: #9263FB;">abi tag</span></p>
+</blockquote>
+<ul>
+<li>E.g. 'p33m', 'abi3', 'none'.</li>
+</ul>
+<blockquote>
+<p><span style="color: #4AA0FC;">file extension</span></p>
+</blockquote>
+<ul>
+<li>E.g. '.whl'.</li>
+</ul>
+<p>For example, <code>distribution-1.0-1-py27-none-any.whl</code> is the first build of a package called 'distribution', and is compatible with Python 2.7 (any Python 2.7 implementation), with no ABI (pure Python), on any CPU architecture.</p>
+<p>The last three components of the filename before the extension are called "compatibility tags." The compatibility tags express the package's basic interpreter requirements and are detailed in <a href="https://www.python.org/dev/peps/pep-0425/">PEP 425</a>.</p>
+<p>- Gotten from <a href="https://www.python.org/dev/peps/pep-0427/#file-name-convention">https://www.python.org/dev/peps/pep-0427/#file-name-convention</a></p>
                 
                   
                 

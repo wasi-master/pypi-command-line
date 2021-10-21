@@ -707,6 +707,82 @@ name on supported terminals</p>
 <h3 id="errors-and-warnings_9"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_9" title="Permanent link">&para;</a></h3>
 <h4 id="e-project-not-found_5"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_5" title="Permanent link">&para;</a></h4>
 <p>Shown when the pypi api returns a 404 response meaning the page number specified most likely doesn't exist</p>
+<h2 id="wheels">wheels<a class="headerlink" href="#wheels" title="Permanent link">&para;</a></h2>
+<p>See the available wheels of a release on PyPI. The wheel names are color coded and the information is colored too.</p>
+<h3 id="demo_9"><strong>Demo</strong><a class="headerlink" href="#demo_9" title="Permanent link">&para;</a></h3>
+<p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20wheels.gif" /></p>
+<h3 id="usage_17"><strong>Usage</strong><a class="headerlink" href="#usage_17" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi search [OPTIONS] PACKAGE_NAME [VERSION]</p>
+</blockquote>
+<h3 id="options_11"><strong>Options</strong><a class="headerlink" href="#options_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><code>NAME</code>
+  The name of the package to show wheel info for  <span style="color: red">[required]</span></p>
+</li>
+<li>
+<p><code>--page INTEGER RANGE</code>
+  The version of the package to show info for, defaults to latest</p>
+</li>
+<li>
+<p>-h, --help
+  Shows the help message.</p>
+</li>
+</ul>
+<h3 id="wheel-name-syntax">Wheel Name Syntax<a class="headerlink" href="#wheel-name-syntax" title="Permanent link">&para;</a></h3>
+<p>The wheel filename is <code>{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl</code>.</p>
+<p><img alt="Image showing a wheel" src="https://i.imgur.com/6v2ubKU.png" /></p>
+<blockquote>
+<p><span style="color: #92EC5A;">distribution</span></p>
+</blockquote>
+<ul>
+<li>Distribution name, e.g. 'pypi_command_line', 'django'.</li>
+</ul>
+<blockquote>
+<p><span style="color: #F2C259;">version</span></p>
+</blockquote>
+<ul>
+<li>Distribution version, e.g. 1.0.</li>
+</ul>
+<blockquote>
+<p><span style="color: #FFF075;">build tag (<b>Optional</b>)</span></p>
+</blockquote>
+<ul>
+<li>build number. Must start with a digit. Acts as a tie-breaker if two wheel file names are the same in all other respects (i.e. name, version, and other tags). Sort as an empty tuple if unspecified, else sort as a two-item tuple with the first item being the initial digits as an <code>int</code>, and the second item being the remainder of the tag as a <code>str</code>.</li>
+</ul>
+<blockquote>
+<p><span style="color: #FF6EF8;">language implementation and version tag</span></p>
+</blockquote>
+<ul>
+<li>E.g. 'py27', 'py2', 'py3'.</li>
+</ul>
+<blockquote>
+<p><span style="color: #9263FB;">abi tag</span></p>
+</blockquote>
+<ul>
+<li>E.g. 'p33m', 'abi3', 'none'.</li>
+</ul>
+<blockquote>
+<p><span style="color: #33F1C8;">platform tag</span></p>
+</blockquote>
+<ul>
+<li>E.g. 'linux_x86_64', 'any'.</li>
+</ul>
+<blockquote>
+<p><span style="color: #33F1C8;">platform tag</span></p>
+</blockquote>
+<ul>
+<li>E.g. 'linux_x86_64', 'any'.</li>
+</ul>
+<p>For example, <code>distribution-1.0-1-py27-none-any.whl</code> is the first build of a package called 'distribution', and is compatible with Python 2.7 (any Python 2.7 implementation), with no ABI (pure Python), on any CPU architecture.</p>
+<p>The last three components of the filename before the extension are called "compatibility tags." The compatibility tags express the package's basic interpreter requirements and are detailed in <a href="https://www.python.org/dev/peps/pep-0425/">PEP 425</a>.</p>
+<p>- Gotten from <a href="https://www.python.org/dev/peps/pep-0427/#file-name-convention">https://www.python.org/dev/peps/pep-0427/#file-name-convention</a></p>
+<h3 id="errors-and-warnings_10"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_10" title="Permanent link">&para;</a></h3>
+<h4 id="e-project-not-found_6"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_6" title="Permanent link">&para;</a></h4>
+<p>Shown when the pypi api returns a 404 response meaning the project name specified doesn't exist.</p>
+<h4 id="e-version-not-found"><span style="color: red">E:</span> Version not found<a class="headerlink" href="#e-version-not-found" title="Permanent link">&para;</a></h4>
+<p>Shown when the specified version was not found.</p>
                 
                   
                 
