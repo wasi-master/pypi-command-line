@@ -111,11 +111,9 @@ def __color_error_message():
                 style=style,
             ).ask()
             if resp == 0:
-                import os  # pylint: disable=import-outside-toplevel
-
                 console.print(f"[blue]❯ [/]{self.ctx.command_path} {self.ctx.help_option_names[-1]}")
 
-                os.system(f"{self.ctx.command_path} {self.ctx.help_option_names[-1]}")
+                print(self.ctx.get_help())
             elif resp == 1:
                 import webbrowser  # pylint: disable=import-outside-toplevel
 
