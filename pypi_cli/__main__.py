@@ -1192,7 +1192,7 @@ def read_the_docs(
 
 
 @app.command()
-def browse(package_name: str = Argument(...)):
+def browse(package_name: str = Argument(..., help="The name of the package to show links for")):
     """Browse for a package's URLs"""
     import questionary  # pylint: disable=import-outside-toplevel
     import webbrowser  # pylint: disable=import-outside-toplevel
