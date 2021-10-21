@@ -1155,7 +1155,9 @@ def read_the_docs(
         else:
             import questionary  # pylint: disable=import-outside-toplevel
 
-            resp = questionary.confirm("Docs not available.Do you want to search pypi to find the documentation?").ask()
+            resp = questionary.confirm(
+                "Docs not available. Do you want to search pypi to find the documentation?"
+            ).ask()
             if resp:
                 url = f"https://pypi.org/pypi/{quote(package_name)}/json"
                 with console.status("Getting data from PyPI"):
