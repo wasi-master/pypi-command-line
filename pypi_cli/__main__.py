@@ -1302,6 +1302,44 @@ def cache_info():
         console.print(table)
 
 
+@app.command()
+def version(
+    package_name: str = Argument(
+        None, help="The name or link to the docs of the package to show the documentation for"
+    ),
+    limit: int = Option(10, help="Limit the number of versions to show"),
+):
+    """Show the cli's or another package's version and exit"""
+    if not package_name:
+        from .__init__ import __version__  # pylint: disable=import-outside-toplevel
+
+        console.print(f"Current version of [yellow]pypi-command-line[/] is [red]{__version__}[/]")
+        raise typer.Exit()
+
+    url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+    with console.status("Getting data from PyPI"):
+        response = session.get(url)
+
+    if response.status_code != 200:
+        if response.status_code == 404:
+            rich.print("[red]:no_entry_sign: Project not found[/]")
+        rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+        raise typer.Exit()
+
+    parsed_data = json.loads(response.text)
+
+    try:
+        from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
+    except ImportError:
+        from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
+
+    latest_versions = list(sorted(map(parse_version, parsed_data["releases"].keys()), reverse=True))[:limit]
+    output = f"Top {limit} latest versions ordered by version number\n"
+    for n, version in enumerate(latest_versions):
+        output += f"[magenta]{n}.[/] [white]{version}[/]\n"
+    console.print(output)
+
+
 def run():
     """Run the CLI."""
     app()
