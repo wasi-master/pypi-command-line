@@ -430,3 +430,76 @@ Search for a package on PyPI.
 #### <span style="color: red">E:</span> Project not found
 
 Shown when the pypi api returns a 404 response meaning the page number specified most likely doesn't exist
+
+## wheels
+
+See the available wheels of a release on PyPI. The wheel names are color coded and the information is colored too.
+
+### **Demo**
+
+![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20wheels.gif)
+
+### **Usage**
+
+> pypi search [OPTIONS] PACKAGE_NAME [VERSION]
+
+### **Options**
+
+- `NAME`
+  The name of the package to show wheel info for  <span style="color: red">[required]</span>
+
+- `--page INTEGER RANGE`
+  The version of the package to show info for, defaults to latest
+
+- -h, --help
+  Shows the help message.
+
+### Wheel Name Syntax
+
+The wheel filename is `{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl`.
+
+![Image showing a wheel](https://i.imgur.com/6v2ubKU.png)
+
+> <span style="color: #92EC5A;">distribution</span>
+
+- Distribution name, e.g. 'pypi_command_line', 'django'.
+
+> <span style="color: #F2C259;">version</span>
+
+- Distribution version, e.g. 1.0.
+
+> <span style="color: #FFF075;">build tag (<b>Optional</b>)</span>
+
+- build number. Must start with a digit. Acts as a tie-breaker if two wheel file names are the same in all other respects (i.e. name, version, and other tags). Sort as an empty tuple if unspecified, else sort as a two-item tuple with the first item being the initial digits as an `int`, and the second item being the remainder of the tag as a `str`.
+
+> <span style="color: #FF6EF8;">language implementation and version tag</span>
+
+- E.g. 'py27', 'py2', 'py3'.
+
+> <span style="color: #9263FB;">abi tag</span>
+
+- E.g. 'p33m', 'abi3', 'none'.
+
+> <span style="color: #33F1C8;">platform tag</span>
+
+- E.g. 'linux_x86_64', 'any'.
+
+> <span style="color: #33F1C8;">platform tag</span>
+
+- E.g. 'linux_x86_64', 'any'.
+
+For example, `distribution-1.0-1-py27-none-any.whl` is the first build of a package called 'distribution', and is compatible with Python 2.7 (any Python 2.7 implementation), with no ABI (pure Python), on any CPU architecture.
+
+The last three components of the filename before the extension are called "compatibility tags." The compatibility tags express the package's basic interpreter requirements and are detailed in [PEP 425](https://www.python.org/dev/peps/pep-0425/).
+
+\- Gotten from <https://www.python.org/dev/peps/pep-0427/#file-name-convention>
+
+### **Errors and Warnings**
+
+#### <span style="color: red">E:</span> Project not found
+
+Shown when the pypi api returns a 404 response meaning the project name specified doesn't exist.
+
+#### <span style="color: red">E:</span> Version not found
+
+Shown when the specified version was not found.

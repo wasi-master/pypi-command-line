@@ -40,4 +40,42 @@ It shows emojis for responses that makes it more *✨beautiful✨*
 
 ## Command specific
 
-<!-- TODO: add command specific smart features -->
+### `wheels`
+
+In the wheels command it colorizes the seperate parts of the wheels for easy understanding
+
+![Example of this feature](https://i.imgur.com/noxWljq.png)
+
+#### **Format**
+
+The wheel filename is `{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl`.
+
+> <span style="color: #92EC5A;">distribution</span>
+
+- Distribution name, e.g. 'django', 'pyramid'.
+
+> <span style="color: #F2C259;">version</span>
+
+- Distribution version, e.g. 1.0.
+
+> <span style="color: #FFF075;">build tag (<b>Optional</b>)</span>
+
+- build number. Must start with a digit. Acts as a tie-breaker if two wheel file names are the same in all other respects (i.e. name, version, and other tags). Sort as an empty tuple if unspecified, else sort as a two-item tuple with the first item being the initial digits as an `int`, and the second item being the remainder of the tag as a `str`.
+
+> <span style="color: #FF6EF8;">language implementation and version tag</span>
+
+- E.g. 'py27', 'py2', 'py3'.
+
+> <span style="color: #9263FB;">abi tag</span>
+
+- E.g. 'p33m', 'abi3', 'none'.
+
+> <span style="color: #4AA0FC;">file extension</span>
+
+- E.g. '.whl'.
+
+For example, `distribution-1.0-1-py27-none-any.whl` is the first build of a package called 'distribution', and is compatible with Python 2.7 (any Python 2.7 implementation), with no ABI (pure Python), on any CPU architecture.
+
+The last three components of the filename before the extension are called "compatibility tags." The compatibility tags express the package's basic interpreter requirements and are detailed in [PEP 425](https://www.python.org/dev/peps/pep-0425/).
+
+\- Gotten from <https://www.python.org/dev/peps/pep-0427/#file-name-convention>
