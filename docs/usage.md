@@ -51,6 +51,29 @@ The output will be different depending on the shell
 
 # Commands
 
+## version
+
+See the latest version of the package or pypi-command-line
+
+How this works if if you specify a package name then it shows the top *limit* latest versions of that specified package, otherwise it shows the current version of pypi-command-line
+
+### **Demo**
+
+TODO: Add demo
+
+### **Usage**
+
+> pypi version [PACKAGE_NAME]
+
+### **Options**
+
+- `PACKAGE_NAME`
+  The name of the package to show the latest version(s) for. [<span style="color: blue">default:</span> None]
+
+- `-h`, `--help`
+
+  Show the help message.
+
 ## browse
 
 Browse for a package's URLs.
@@ -76,7 +99,7 @@ You can cancel using ++ctrl+c++ if you don't find your desired link
 
 - `-h`, `--help`
 
-  Show the melp message.
+  Show the help message.
 
 ## cache-clear
 
@@ -210,7 +233,7 @@ You can also see classifiers if you want to
   Hide the metadata  [<span style="color: blue">default:</span> no-hide-meta]
 - `-h`, `--help`
 
-  Show the melp message.
+  Show the help message.
 
 ### **Errors and Warnings**
 
@@ -234,7 +257,7 @@ This command shows the all time largest pypi packages. The layout is simillar to
 
 - `-h`, `--help`
 
-  Show the melp message.
+  Show the help message.
 
 ### **Errors and Warnings**
 
@@ -322,7 +345,7 @@ name on supported terminals
 
 - `-h`, `--help`
 
-  Show the melp message.
+  Show the help message.
 
 - `---author` / `--no--author`
 
