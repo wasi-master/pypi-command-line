@@ -49,6 +49,31 @@ The output will be different depending on the shell
 
 > pypi --show-completion
 
+## --cache / --no-cache
+
+Whether to use cache or not for the current command, for more information about the cache see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) [<span style="color: blue">default:</span> cache]
+
+### **Demo**
+
+TODO: Add demo for --no-cache
+
+### **Usage**
+
+> pypi --no-cache <command>
+
+## --repository
+
+Specify a base url for the repository from which the results are taken from. Such as [testpypi](https://test.pypi.org)
+
+### **Demo**
+
+TODO: Add demo for --repository
+
+### **Usage**
+
+> pypi --repository testpypi <command>
+> pypi --repository "https://test.pypi.org" <command>
+
 # Commands
 
 ## version
