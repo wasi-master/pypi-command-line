@@ -115,6 +115,10 @@ For pretty-printing reStructuredText descriptions
 
 For version parsing
 
+### [Wheel Filename](https://github.com/jwodder/wheel-filename)
+
+For parsing wheel filenames
+
 ## Dependency Installation Notes
 
 | Name                      | Applicable Commands                                        | Note                                                                                                                                                                                                                                                     |
@@ -132,6 +136,7 @@ For version parsing
 | requests-cache (optional) | all                                                        |                                                                                                                                                                                                                                                          |
 | rapidfuzz (optional)      | meta (command suggestions when an invalid command is used) | If this is not available then it tries to use thefuzz and if both are not installed it tries to use difflib                                                                                                                                              |
 | packaging                 | wheels, information (optional)                             | In the information command If this is not available then it uses distutils which is buggy at times                                                                                                                                                       |
+| wheel-filename            | wheels (optional)                                          | If the `--supported-only` flag is passed then this is required
 
 ## Cache
 

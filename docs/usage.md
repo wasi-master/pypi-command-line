@@ -477,6 +477,9 @@ See the available wheels of a release on PyPI. The wheel names are color coded a
 - -h, --help
   Shows the help message.
 
+- --supported-only
+  Only show wheels supported on the current platform
+
 ### Wheel Name Syntax
 
 The wheel filename is `{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl`.
