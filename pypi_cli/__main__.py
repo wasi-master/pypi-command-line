@@ -933,11 +933,19 @@ def information(
     )
     import re  # pylint: disable=import-outside-toplevel
 
-    repo = re.findall(
-        r"https://(www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?",
-        str(info),
+    repos = re.findall(
+        r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?", str(info)
     )
-    repo = remove_dot_git(repo[0][1]) if repo else None
+    if len(repos) > 1:
+        repos = list(
+            set(
+                re.findall(
+                    r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?",
+                    str(info["project_urls"]),
+                )
+            )
+        )
+    repo = remove_dot_git(repos[0]) if repos else None
 
     from rich.text import Text  # pylint:disable=import-outside-toplevel
 
