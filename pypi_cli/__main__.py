@@ -15,7 +15,7 @@ from typer import Argument, Option
 
 try:
     import click_help_colors
-    from click_help_colors import HelpColorsGroup, HelpColorsCommand
+    from click_help_colors import HelpColorsCommand, HelpColorsGroup
 except ImportError:
     click_help_colors = None
 
@@ -171,8 +171,8 @@ class AliasedGroup(Group):
                 ]
             except ImportError:
                 try:
-                    import thefuzz.process  # pylint: disable=import-outside-toplevel
                     import thefuzz.fuzz  # pylint: disable=import-outside-toplevel
+                    import thefuzz.process  # pylint: disable=import-outside-toplevel
 
                     get_closest_match = lambda cmd: [
                         i[0]
@@ -351,9 +351,10 @@ def load_cache():
 
 def fill_cache(msg="Fetching cache"):
     """Fill the cache with the packages."""
-    from rich.progress import Progress  # pylint: disable=import-outside-toplevel
-    import requests  # pylint: disable=import-outside-toplevel
     import os  # pylint: disable=import-outside-toplevel
+
+    import requests  # pylint: disable=import-outside-toplevel
+    from rich.progress import Progress  # pylint: disable=import-outside-toplevel
 
     all_packages_url = "https://pypi.org/simple/"
     cache_path = os.path.join(os.path.dirname(__file__), "cache")
@@ -397,7 +398,8 @@ def _clear_cache():
         session.cache.clear()
     except AttributeError:
         pass
-    import os, shutil
+    import os
+    import shutil
 
     folder = os.path.join(os.path.dirname(__file__), "cache")
     for filename in os.listdir(folder):
@@ -1208,8 +1210,9 @@ def read_the_docs(
 @app.command()
 def browse(package_name: str = Argument(..., help="The name of the package to show links for")):
     """Browse for a package's URLs"""
-    import questionary  # pylint: disable=import-outside-toplevel
     import webbrowser  # pylint: disable=import-outside-toplevel
+
+    import questionary  # pylint: disable=import-outside-toplevel
 
     link_style = questionary.Style(
         [
