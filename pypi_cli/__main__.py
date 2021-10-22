@@ -942,7 +942,7 @@ def information(
                 issues = github_data["open_issues"]
                 metadata.add_row(
                     Panel(
-                        f"[light_green link=https://github.com/{repo}]Name[/]: {repo}\n"
+                        f"[light_green]Name[/]: [link=https://github.com/{repo}]{repo}[/]\n"
                         f"[light_green]Size[/]: {size:,} KB\n"
                         f"[light_green]Stargazers[/]: {stars:,}\n"
                         f"[light_green]Issues/Pull Requests[/]: {issues:,}\n"
