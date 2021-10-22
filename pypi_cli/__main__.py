@@ -76,13 +76,7 @@ def __color_error_message():
         except ImportError:
             pass
         else:
-            style = Style(
-                [
-                    ("link", "cyan"),
-                    ("command", "blue"),
-                    ("cancel", "gray"),
-                ]
-            )
+            style = Style([("link", "cyan"), ("command", "blue"), ("cancel", "gray")])
             print("\n")
             resp = questionary.select(
                 "What do you want to do",
@@ -205,12 +199,7 @@ class AliasedGroup(Group):
                 resp = questionary.select(
                     "Which one did you want to run?",
                     choices=closest_matches,
-                    style=questionary.Style(
-                        [
-                            ("text", "red"),
-                            ("highlighted", "bg:ansibrightred"),
-                        ]
-                    ),
+                    style=questionary.Style([("text", "red"), ("highlighted", "bg:ansibrightred")]),
                 ).ask()
 
             if not resp:
@@ -231,12 +220,7 @@ class AliasedGroup(Group):
             command = questionary.select(
                 "Select one to continue",
                 choices=difflib.get_close_matches(cmd_name, matches, cutoff=0.0),
-                style=questionary.Style(
-                    [
-                        ("text", "red"),
-                        ("highlighted", "bg:ansibrightred"),
-                    ]
-                ),
+                style=questionary.Style([("text", "red"), ("highlighted", "bg:ansibrightred")]),
             ).ask()
             if not command:
                 raise typer.Exit()
@@ -468,20 +452,9 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
                 humanize.naturaltime(date),
             )
         elif _link and not _author:
-            table.add_row(
-                f"{index}.",
-                title,
-                description.text if description else "",
-                link,
-                humanize.naturaltime(date),
-            )
+            table.add_row(f"{index}.", title, description.text if description else "", link, humanize.naturaltime(date))
         elif not _link and not _author:
-            table.add_row(
-                f"{index}.",
-                title,
-                description.text if description else "",
-                humanize.naturaltime(date),
-            )
+            table.add_row(f"{index}.", title, description.text if description else "", humanize.naturaltime(date))
     console.print(table)
     if not lxml:
         console.print(
@@ -609,12 +582,7 @@ def new_packages(
 ):
     """See the top 40 newly added packages."""
     _format_xml_packages(
-        "https://pypi.org/rss/packages.xml",
-        "Newly Added Packages",
-        "Published At",
-        _author,
-        _link,
-        split_title=True,
+        "https://pypi.org/rss/packages.xml", "Newly Added Packages", "Published At", _author, _link, split_title=True
     )
 
 
@@ -624,13 +592,7 @@ def new_releases(
     _link: bool = Option(True, metavar="link", help="Show the project link or not"),
 ):
     """See the top 100 newly updated packages."""
-    _format_xml_packages(
-        "https://pypi.org/rss/updates.xml",
-        "Newly Released Packages",
-        "Released At",
-        _author,
-        _link,
-    )
+    _format_xml_packages("https://pypi.org/rss/updates.xml", "Newly Released Packages", "Released At", _author, _link)
 
 
 @app.command()
@@ -644,19 +606,13 @@ def largest_files():
         data = json.loads(response.text)
     packages = data["top_packages"]
     packages = dict(sorted(packages.items(), key=lambda i: i[1]["size"], reverse=True))
-    table = Table(
-        title="Top packages on PyPI based on their size",
-        show_lines=True,
-    )
+    table = Table(title="Top packages on PyPI based on their size", show_lines=True)
     table.add_column("Index", style="magenta", header_style="bold magenta")
     table.add_column("Package", style="green", header_style="bold green")
     table.add_column("Size", style="red", header_style="bold red")
     table.add_column("Link", style="cyan", header_style="bold blue")
     table.add_row(
-        "-",
-        "All Total",
-        humanize.naturalsize(data["total_packages_size"], binary=True) + "\n",
-        style="bold red",
+        "-", "All Total", humanize.naturalsize(data["total_packages_size"], binary=True) + "\n", style="bold red"
     )
     for i, (name, project) in enumerate(packages.items(), 1):
         table.add_row(
@@ -678,10 +634,7 @@ def search(
 ):
     """Search for a package on PyPI."""
     url = "https://pypi.org/search/"
-    parameters = {
-        "q": package_name,
-        "page": page,
-    }
+    parameters = {"q": package_name, "page": page}
     # if classifier:
     #     parameters["c"] = classifier
     with console.status(f"Searching for {package_name}..."):
@@ -840,8 +793,8 @@ def wheels(
     colors = cycle(["green", "blue", "magenta", "cyan", "yellow", "red"])
     wheel_panels = []
     if supported_only:
-        from wheel_filename import parse_wheel_filename, InvalidFilenameError
-        from packaging.tags import sys_tags, parse_tag  # pylint: disable=import-outside-toplevel
+        from packaging.tags import parse_tag, sys_tags  # pylint: disable=import-outside-toplevel
+        from wheel_filename import InvalidFilenameError, parse_wheel_filename
 
         def is_wheel_supported(wheel):
             try:
@@ -1222,13 +1175,7 @@ def browse(package_name: str = Argument(..., help="The name of the package to sh
 
     import questionary  # pylint: disable=import-outside-toplevel
 
-    link_style = questionary.Style(
-        [
-            ("name", "bold red"),
-            ("seperator", "gray"),
-            ("url", "cyan"),
-        ]
-    )
+    link_style = questionary.Style([("name", "bold red"), ("seperator", "gray"), ("url", "cyan")])
 
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
 
