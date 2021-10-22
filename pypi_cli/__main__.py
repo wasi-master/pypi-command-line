@@ -19,6 +19,7 @@ try:
 except ImportError:
     click_help_colors = None
 
+base_url = "https://pypi.org"
 
 try:
     from requests_cache.session import CachedSession
@@ -36,11 +37,11 @@ else:
         backend="sqlite",
         urls_expire_after={
             **dict.fromkeys(
-                ["https://pypi.org/simple", "https://pypi.org/stats", "https://api.github.com/repos/*/readme"], 86400
+                [f"{base_url}/simple", f"{base_url}/stats", "https://api.github.com/repos/*/readme"], 86400
             ),
-            "https://pypi.org/pypi": 10800,
-            "https://pypi.org/search": 3600,
-            "https://pypi.org/rss": 60,
+            f"{base_url}/pypi": 10800,
+            f"{base_url}/search": 3600,
+            f"{base_url}/rss": 60,
             "https://pypistats.org/api/packages/": 21600,
         },
         headers={"User-Agent": "wasi_master/pypi_cli"},
@@ -340,7 +341,7 @@ def fill_cache(msg="Fetching cache"):
     import requests  # pylint: disable=import-outside-toplevel
     from rich.progress import Progress  # pylint: disable=import-outside-toplevel
 
-    all_packages_url = "https://pypi.org/simple/"
+    all_packages_url = f"{base_url}/simple/"
     cache_path = os.path.join(os.path.dirname(__file__), "cache")
     if not os.path.exists(cache_path):
         os.makedirs(cache_path)
@@ -469,7 +470,7 @@ def description(
     force_github: bool = Option(False, help="Forcefully get the description from github"),
 ):
     """See the description for a package."""
-    url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+    url = f"{base_url}/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
@@ -581,7 +582,7 @@ def new_packages(
 ):
     """See the top 40 newly added packages."""
     _format_xml_packages(
-        "https://pypi.org/rss/packages.xml", "Newly Added Packages", "Published At", _author, _link, split_title=True
+        f"{base_url}/rss/packages.xml", "Newly Added Packages", "Published At", _author, _link, split_title=True
     )
 
 
@@ -591,7 +592,7 @@ def new_releases(
     _link: bool = Option(True, metavar="link", help="Show the project link or not"),
 ):
     """See the top 100 newly updated packages."""
-    _format_xml_packages("https://pypi.org/rss/updates.xml", "Newly Released Packages", "Released At", _author, _link)
+    _format_xml_packages(f"{base_url}/rss/updates.xml", "Newly Released Packages", "Released At", _author, _link)
 
 
 @app.command()
@@ -599,7 +600,7 @@ def largest_files():
     """See the top 100 projects with the largest file size."""
 
     headers = {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
-    url = "https://pypi.org/stats/"
+    url = f"{base_url}/stats/"
     with console.status("Loading largest files..."):
         response = session.get(url)
         data = json.loads(response.text)
@@ -616,9 +617,9 @@ def largest_files():
     for i, (name, project) in enumerate(packages.items(), 1):
         table.add_row(
             f"{i}.",
-            f"[link=https://pypi.org/project/{name}]{name}[/]",
+            f"[link={base_url}/project/{name}]{name}[/]",
             humanize.naturalsize(project["size"], binary=True),
-            f"https://pypi.org/project/{name}",
+            f"{base_url}/project/{name}",
         )
     console.print(table)
 
@@ -632,7 +633,7 @@ def search(
     # ),
 ):
     """Search for a package on PyPI."""
-    url = "https://pypi.org/search/"
+    url = f"{base_url}/search/"
     parameters = {"q": package_name, "page": page}
     # if classifier:
     #     parameters["c"] = classifier
@@ -679,7 +680,7 @@ def search(
         table.add_row(
             f"{index}.",
             package.version,
-            f"[link=https://pypi.org/project/{package.name}]{package.name}[/]",
+            f"[link={base_url}/project/{package.name}]{package.name}[/]",
             package.description,
             package.date,
         )
@@ -696,7 +697,7 @@ def releases(
     The --link argument can be used to also show the link of the releases.
     This is turned off by default and the link is added as a hyperlink to the package name on supported terminals
     """
-    url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+    url = f"{base_url}/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
@@ -748,7 +749,7 @@ def wheels(
     supported_only: bool = Option(False, help="Only show wheels supported on the current platform"),
 ):
     """See detailed information about all the wheels of a release of a package"""
-    url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+    url = f"{base_url}/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
@@ -831,7 +832,7 @@ def wheels(
                         ],
                     )
                 ),
-                title=f"[white]{wheel_name}[/]" if supported_only else wheel_name,
+                title=f"[white]{wheel_name}[/]" if not wheel_name.plain.endswith(".whl") else wheel_name,
                 border_style=next(colors),
             )
         )
@@ -852,7 +853,7 @@ def information(
     hide_meta: bool = Option(False, metavar="meta", help="Hide the metadata"),
 ):
     """See the information about a package."""
-    url = f"https://pypi.org/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
+    url = f"{base_url}/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
@@ -978,7 +979,7 @@ def information(
             metadata.add_row(
                 Panel(
                     "\n".join(
-                        f"[light_red link=https://pypi.org/project/{name.split()[0]}]{name}[/]"
+                        f"[light_red link={base_url}/project/{name.split()[0]}]{name}[/]"
                         for name in info["requires_dist"]
                     ),
                     expand=False,
@@ -1037,7 +1038,7 @@ def regex_search(
         matches = []
         for package in packages:
             if _regex.match(package):
-                matches.append(f"[link=https://pypi.org/project/{package}]{package}[/]")
+                matches.append(f"[link={base_url}/project/{package}]{package}[/]")
         console.print(", ".join(matches))
     else:
         table = Table(show_header=True, show_lines=True, title=f"Matches for {regex}")
@@ -1050,8 +1051,8 @@ def regex_search(
                 matches += 1
                 table.add_row(
                     f"{matches}.",
-                    f"[link=https://pypi.org/project/{package}]{package}[/]",
-                    f"https://pypi.org/project/{package}",
+                    f"[link={base_url}/project/{package}]{package}[/]",
+                    f"{base_url}/project/{package}",
                 )
         console.print(table)
         if table.row_count > 50:
@@ -1133,7 +1134,7 @@ def read_the_docs(
                 "Docs not available. Do you want to search pypi to find the documentation?"
             ).ask()
             if resp:
-                url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+                url = f"{base_url}/pypi/{quote(package_name)}/json"
                 with console.status("Getting data from PyPI"):
                     response = session.get(url)
 
@@ -1176,7 +1177,7 @@ def browse(package_name: str = Argument(..., help="The name of the package to sh
 
     link_style = questionary.Style([("name", "bold red"), ("seperator", "gray"), ("url", "cyan")])
 
-    url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+    url = f"{base_url}/pypi/{quote(package_name)}/json"
 
     with console.status("Getting data from PyPI"):
         response = session.get(url)
@@ -1285,7 +1286,7 @@ def version(
         console.print(f"Current version of [yellow]pypi-command-line[/] is [red]{__version__}[/]")
         raise typer.Exit()
 
-    url = f"https://pypi.org/pypi/{quote(package_name)}/json"
+    url = f"{base_url}/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
@@ -1307,6 +1308,27 @@ def version(
     for n, version in enumerate(latest_versions):
         output += f"[magenta]{n}.[/] [white]{version}[/]\n"
     console.print(output)
+
+
+@app.callback()
+def main(
+    cache: bool = Option(True, help="Whether to use cache or not"),
+    repository: str = Option(None, help="The repository to fetch the information from"),
+):
+    """
+    A beautiful command line interface for the Python Package Index
+    """
+    if not cache:
+        from requests import Session
+
+        session = Session()
+        session.headers.update({"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"})
+    if repository:
+        global base_url
+        if repository == "testpypi":
+            base_url = "https://test.pypi.org"
+        else:
+            base_url = repository
 
 
 def run():
