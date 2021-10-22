@@ -486,7 +486,6 @@ def description(
         repos = set(
             re.findall(r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
         )
-        repos = {"https://github.com/wasi-master/package-x", "https://github.com/some-dude/some-other-repo"}
         if len(repos) > 1:
             console.print("[red]:warning: WARNING:[/] I found multiple github repos. ")
             import questionary  # pylint: disable=import-outside-toplevel
