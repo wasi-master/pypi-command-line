@@ -518,6 +518,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#wheel-filename" class="md-nav__link">
+    Wheel Filename
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -650,6 +657,8 @@ From <https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser
 <p>For pretty-printing reStructuredText descriptions</p>
 <h3 id="packaging"><a href="https://packaging.pypa.io/en/latest/">Packaging</a><a class="headerlink" href="#packaging" title="Permanent link">&para;</a></h3>
 <p>For version parsing</p>
+<h3 id="wheel-filename"><a href="https://github.com/jwodder/wheel-filename">Wheel Filename</a><a class="headerlink" href="#wheel-filename" title="Permanent link">&para;</a></h3>
+<p>For parsing wheel filenames</p>
 <h2 id="dependency-installation-notes">Dependency Installation Notes<a class="headerlink" href="#dependency-installation-notes" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -724,6 +733,11 @@ From <https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser
 <td>packaging</td>
 <td>wheels, information (optional)</td>
 <td>In the information command If this is not available then it uses distutils which is buggy at times</td>
+</tr>
+<tr>
+<td>wheel-filename</td>
+<td>wheels (optional)</td>
+<td>If the <code>--supported-only</code> flag is passed then this is required</td>
 </tr>
 </tbody>
 </table>
