@@ -791,6 +791,7 @@ def releases(
 def wheels(
     package_name: str = Argument(..., help="The name of the package to show wheel info for"),
     version: str = Argument(None, help="The version of the package to show info for, defaults to latest"),
+    supported_only: bool = Option(False, help="Only show wheels supported on the current platform"),
 ):
     """See detailed information about all the wheels of a release of a package"""
     url = f"https://pypi.org/pypi/{quote(package_name)}/json"
@@ -805,9 +806,7 @@ def wheels(
 
     parsed_data = json.loads(response.text)
 
-    # from packaging.tags import sys_tags, parse_tag  # pylint: disable=import-outside-toplevel
     from packaging.version import parse as parse_version  # pylint: disable=import-outside-toplevel
-
     from rich.text import Text  # pylint: disable=import-outside-toplevel
 
     # def is_wheel_supported(wheel_name):
@@ -833,14 +832,29 @@ def wheels(
             release = releases[str(version)]
         except KeyError:
             rich.print("[red]:no_entry_sign: Version not found[/]")
-            raise typer.Exit()
+            raise typer.Exit() from KeyError
     from itertools import cycle  # pylint: disable=import-outside-toplevel
 
     colors = cycle(["green", "blue", "magenta", "cyan", "yellow", "red"])
     wheel_panels = []
+    if supported_only:
+        from wheel_filename import parse_wheel_filename, InvalidFilenameError
+        from packaging.tags import sys_tags, parse_tag  # pylint: disable=import-outside-toplevel
+
+        def is_wheel_supported(wheel):
+            try:
+                parsed_wheel_file = parse_wheel_filename(wheel["filename"])
+            except InvalidFilenameError:
+                return True
+            for tag in parsed_wheel_file.tag_triples():
+                if any(tag in sys_tags() for tag in list(parse_tag(tag))):
+                    return True
+            return False
+
+        release = filter(is_wheel_supported, release)
     for wheel in release:
-        # color = is_wheel_supported(wheel["filename"])
         wheel_name = Text(wheel["filename"])
+        # Maybe use the regex in https://github.com/jwodder/wheel-filename/blob/master/src/wheel_filename/__init__.py#L45-L53
         wheel_name.highlight_regex(
             r"^(?P<distribution>\w+)-(?P<version>[A-Za-z0-9\.\-]+)(?P<build_tag>-\w{0,3})?-(?P<python_tag>[a-z]{2}[0-9]{0,3})-(?P<abi_tag>\w+)-(?P<platform_tag>.+)(?P<file_extension>\.whl)$",
             style_prefix="wheel.",
@@ -863,7 +877,7 @@ def wheels(
                         ],
                     )
                 ),
-                title=wheel_name,
+                title=f"[white]{wheel_name}[/]" if supported_only else wheel_name,
                 border_style=next(colors),
             )
         )
