@@ -1315,9 +1315,9 @@ def version(
         from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
 
     latest_versions = list(sorted(map(parse_version, parsed_data["releases"].keys()), reverse=True))[:limit]
-    output = f"Top {limit} latest versions ordered by version number\n"
-    for n, version in enumerate(latest_versions):
-        output += f"[magenta]{n}.[/] [white]{version}[/]\n"
+    output = f"Top {limit} latest versions of [green]{package_name}[/] ordered by version number:\n"
+    for n, version in enumerate(latest_versions, start=1):
+        output += f" [magenta]{n}.[/] [white]{version}[/]\n"
     console.print(output)
 
 
