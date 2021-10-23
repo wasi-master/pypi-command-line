@@ -590,8 +590,8 @@
 <p>From <a href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips#Import_Statement_Overhead">https://wiki.python.org/moin/PythonSpeed/PerformanceTips#Import_Statement_Overhead</a></p>
 <p>Because of this, I've added imports in each function that needs them instead of adding them at the top. since the user is only gonna run one single command the imports required for other commands don't need to be imported. Doing this saves around 500ms.</p>
 <h3 id="compiling-regex-in-regex-search">Compiling regex in <code>regex-search</code><a class="headerlink" href="#compiling-regex-in-regex-search" title="Permanent link">&para;</a></h3>
-<p>We compile the regex because it's almost twice as fast.
-<img alt="6.01 vs 3.92" src="https://i.imgur.com/m4AFfEV.png" title="Times for compiled vs non compiled regex" /></p>
+<p>I compile the regex because it's almost twice as fast.</p>
+<p><img alt="6.01 vs 3.92" src="https://i.imgur.com/m4AFfEV.png" title="Times for compiled vs non compiled regex" /></p>
 <details>
 <summary>Code</summary>
 
