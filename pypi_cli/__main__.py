@@ -43,6 +43,7 @@ else:
             f"{base_url}/search": 3600,
             f"{base_url}/rss": 60,
             "https://pypistats.org/api/packages/": 21600,
+            "https://img.shields.io": 30,
         },
         headers={"User-Agent": "wasi_master/pypi_cli"},
     )
@@ -314,6 +315,13 @@ def _format_classifiers(_classifiers: str):
         for classifier in classifiers:
             output += f"  {classifier}\n"
     return output
+
+
+def get_latest_version():
+    import re
+
+    r = session.get("https://img.shields.io/pypi/v/pypi-command-line")
+    return re.search(r"<text.+>v(.*?)</text>", r.text).group(1)
 
 
 def load_cache():
@@ -1284,6 +1292,9 @@ def version(
         from .__init__ import __version__  # pylint: disable=import-outside-toplevel
 
         console.print(f"Current version of [yellow]pypi-command-line[/] is [red]{__version__}[/]")
+        with console.status("Getting latest version"):
+            latest_version = get_latest_version()
+        console.print(f"Latest  version of [yellow]pypi-command-line[/] is [red]{latest_version}[/]")
         raise typer.Exit()
 
     url = f"{base_url}/pypi/{quote(package_name)}/json"
