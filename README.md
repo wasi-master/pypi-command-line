@@ -1,17 +1,17 @@
 # pypi-command-line
 
-![Version](https://img.shields.io/pypi/v/pypi-command-line?label=pypi%20version&style=flat-square&logo=pypi&logoColor=white)
-![Lines of code](https://img.shields.io/tokei/lines/github/wasi-master/pypi-command-line?style=flat-square&logo=python&logoColor=white)
-![Downloads yesterday](https://img.shields.io/pypi/dd/pypi-command-line?label=pypi%20downloads%20yesterday&style=flat-square&logo=pypi&logoColor=white)
-![Downloads in the last 7 days](https://img.shields.io/pypi/dw/pypi-command-line?label=pypi%20downloads%20in%20the%20last%207%20days&style=flat-square&logo=pypi&logoColor=white)
-![Downloads in the last 30 days](https://img.shields.io/pypi/dm/pypi-command-line?label=pypi%20downloads%20in%20the%20last%2030%20days&style=flat-square&logo=pypi&logoColor=white)
-![Number of issues](https://img.shields.io/github/issues/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)
-![Number of pull requests](https://img.shields.io/github/issues-pr-closed/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)
-![Number of stars on GitHub](https://img.shields.io/github/stars/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)
-![Supported python versions](https://img.shields.io/pypi/pyversions/pypi-command-line?label=supported%20python%20versions&style=flat-square&logo=python&logoColor=white)
-![Python Implementation](https://img.shields.io/pypi/implementation/pypi-command-line?label=python%20implementation&style=flat-square&logo=python&logoColor=white)
-![PyPI Wheel availability](https://img.shields.io/pypi/wheel/pypi-command-line?label=pypi%20wheel%20availabile%3F&style=flat-square&logo=pypi&logoColor=white)
-![Documentation status](https://img.shields.io/website?down_color=red&down_message=not%20working&label=docs&logo=github&style=flat-square&up_color=blue&up_message=working&url=https%3A%2F%2Fwasi-master.github.io%2Fpypi-command-line%2F)
+[![Version](https://img.shields.iopypi/v/pypi-command-line?label=pypi%20version&style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/pypi-command-line/)
+[![Lines of code](https://img.shields.io/tokei/lines/github/wasi-master/pypi-command-line?style=flat-square&logo=python&logoColor=white)](https://github.com/wasi-master/pypi-command-line/)
+[![Downloads yesterday](https://img.shields.io/pypi/dd/pypi-command-line?label=pypi%20downloads%20yesterday&style=flat-square&logo=pypi&logoColor=white)](https://pypistats.org/packages/pypi-command-line)
+[![Downloads in the last 7 days](https://img.shields.io/pypi/dw/pypi-command-line?label=pypi%20downloads%20in%20the%20last%207%20days&style=flat-square&logo=pypi&logoColor=white)](https://pypistats.org/packages/pypi-command-line)
+[![Downloads in the last 30 days](https://img.shields.io/pypi/dm/pypi-command-line?label=pypi%20downloads%20in%20the%20last%2030%20days&style=flat-square&logo=pypi&logoColor=white)](https://pypistats.org/packages/pypi-command-line)
+[![Number of issues](https://img.shields.io/github/issues/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)](https://github.com/wasi-master/pypi-command-line/issues)
+[![Number of pull requests](https://img.shields.io/github/issues-pr-closed/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)](https://github.com/wasi-master/pypi-command-line/pulls)
+[![Number of stars on GitHub](https://img.shields.io/github/stars/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)](https://github.com/wasi-master/pypi-command-line/stargazers)
+[![Supported python versions](https://img.shields.io/pypi/pyversions/pypi-command-line?label=supported%20python%20versions&style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pypi-command-line/#:~:text=requires%3A%20python%20%3E%3D3.6)
+[![Python Implementation](https://img.shields.io/pypi/implementation/pypi-command-line?label=python%20implementation&style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pypi-command-line/#:~:text=programming%20language)
+[![PyPI Wheel availability](https://img.shields.io/pypi/wheel/pypi-command-line?label=pypi%20wheel%20availabile%3F&style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/pypi-command-line/#files)
+[![Documentation status](https://img.shields.io/website?down_color=red&down_message=not%20working&label=docs&logo=github&style=flat-square&up_color=blue&up_message=working&url=https%3A%2F%2Fwasi-master.github.io%2Fpypi-command-line%2F)](https://wasi-master.github.io/pypi-command-line)
 
 A powerful command line interface for <https://pypi.org>
 
