@@ -83,7 +83,7 @@ See a specific page of the search results
   If you want to also install [speed dependencies](https://wasi-master.github.io/pypi-command-line/notes#speedups)
 
   ```sh
-  pip install pypi-command-line[speedups]
+  pip install "pypi-command-line[speedups]"
   ```
 
 - Installing from source.

@@ -30,7 +30,7 @@ If you want to make it fast then you can do
 === "From PyPI"
 
     ```shell
-    pip install pypi-command-line[speedups]
+    pip install "pypi-command-line[speedups]"
     ```
 
 === "From GitHub"
