@@ -37,7 +37,7 @@ If you see the source code you can see these lines
 
 <script src="https://emgithub.com/embed.js?target=https%3A%2F%2Fgithub.com%2Fwasi-master%2Fpypi-command-line%2Fblob%2Fmain%2Fsetup.cfg%23L80-L84&style=atom-one-dark&showBorder=on&showLineNumbers=on&showFileMeta=on&showCopy=off"></script>
 
-Now I think those comments explain what those do pretty well but here's a detailed explanation
+Here's a detailed explanation
 
 #### **shellingham**<sup>[<a title="Link to shellingham's PyPI page" href="https://pypi.org/project/shellingham/" target="_blank">↑</a>]</sup>
 
