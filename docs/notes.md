@@ -19,7 +19,8 @@ Because of this, I've added imports in each function that needs them instead of 
 
 ### Compiling regex in `regex-search`
 
-We compile the regex because it's almost twice as fast.
+I compile the regex because it's almost twice as fast.
+
 ![6.01 vs 3.92](https://i.imgur.com/m4AFfEV.png "Times for compiled vs non compiled regex")
 <details>
 <summary>Code</summary>
