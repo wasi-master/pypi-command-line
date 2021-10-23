@@ -290,7 +290,7 @@ class Package:
 
 def utc_to_local(utc_dt, tzinfo):
     """Convert a datetime from utc to local time."""
-    return utc_dt.replace(tzinfo=tzinfo).astimezone(tz=None)
+    return utc_dt.replace(tzinfo=tzinfo).astimezone(tz=None).replace(tzinfo=None)
 
 
 def remove_dot_git(text):
@@ -448,9 +448,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
         description = package.find("description")
         link = package.find("link").text
 
-        date = utc_to_local(
-            datetime.strptime(package.find("pubDate").text, "%a, %d %b %Y %H:%M:%S GMT"), timezone.utc
-        ).replace(tzinfo=None)
+        date = utc_to_local(datetime.strptime(package.find("pubDate").text, "%a, %d %b %Y %H:%M:%S GMT"), timezone.utc)
         if _link and _author:
             table.add_row(
                 f"{index}.",
@@ -458,12 +456,23 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
                 author.text if author else None,
                 description.text if description else "",
                 link,
-                humanize.naturaltime(date),
+                humanize.naturaltime(utc_to_local(date, timezone.utc)),
             )
         elif _link and not _author:
-            table.add_row(f"{index}.", title, description.text if description else "", link, humanize.naturaltime(date))
+            table.add_row(
+                f"{index}.",
+                title,
+                description.text if description else "",
+                link,
+                humanize.naturaltime(utc_to_local(date, timezone.utc)),
+            )
         elif not _link and not _author:
-            table.add_row(f"{index}.", title, description.text if description else "", humanize.naturaltime(date))
+            table.add_row(
+                f"{index}.",
+                title,
+                description.text if description else "",
+                humanize.naturaltime(utc_to_local(date, timezone.utc)),
+            )
     console.print(table)
     if not lxml:
         console.print(
@@ -815,6 +824,8 @@ def wheels(
             return False
 
         release = filter(is_wheel_supported, release)
+    from datetime import timezone  # pylint: disable=import-outside-toplevel
+
     for wheel in release:
         wheel_name = Text(wheel["filename"])
         # Maybe use the regex in https://github.com/jwodder/wheel-filename/blob/master/src/wheel_filename/__init__.py#L45-L53
@@ -836,7 +847,7 @@ def wheels(
                             else None,
                             f"[yellow]Size:[/] {humanize.naturalsize(wheel['size'], binary=True)}",
                             f"[bright_cyan]Yanked Reason[/]: {wheel['yanked_reason']}" if wheel["yanked"] else None,
-                            f"[red]Upload Time[/]: {humanize.naturaltime(datetime.strptime(wheel['upload_time_iso_8601'], '%Y-%m-%dT%H:%M:%S.%fZ'))}",
+                            f"[red]Upload Time[/]: {humanize.naturaltime(utc_to_local(datetime.strptime(wheel['upload_time_iso_8601'], '%Y-%m-%dT%H:%M:%S.%fZ'), timezone.utc))}",
                         ],
                     )
                 ),
