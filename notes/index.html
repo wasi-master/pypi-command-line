@@ -595,8 +595,8 @@
 <details>
 <summary>Code</summary>
 
-![Source code for non compiled regex](https://i.imgur.com/SWlo2zA.png "Source code for non compiled regex")
-![Source code for compiled regex](https://i.imgur.com/Wr8bWUM.png "Source code for compiled regex")
+<img src="https://i.imgur.com/SWlo2zA.png" title="Source code for non compiled regex">
+<img src="https://i.imgur.com/Wr8bWUM.png" title="Source code for compiled regex">
 
 </details>
 
@@ -613,12 +613,81 @@ If you see the source code you can see these lines</p>
 <details>
 <summary>Table with parser comparisons supported by BeautifulSoup</summary>
 
-| Parser               | Typical usage                                                      | Advantages                                                                                                             | Disadvantages                                                      |
-| -------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Python's html.parser | `BeautifulSoup(markup, "html.parser")`                             | <ul><li>Batteries included </li><li>Decent speed </li><li>Lenient (As of Python 2.7.3 and 3.2.)</li></ul>              | <ul><li>Not as fast as lxml, less lenient than html5lib.</li></ul> |
-| lxml's HTML parser   | `BeautifulSoup(markup, "lxml")`                                    | <ul><li>Very fast</li><li>Lenient</li></ul>                                                                            | <ul><li>External C dependency</li></ul>                            |
-| lxml's XML parser    | `BeautifulSoup(markup, "lxml-xml")` `BeautifulSoup(markup, "xml")` | <ul><li>Very fast </li><li>The only currently supported XML parser</li></ul>                                           | <ul><li>External C dependency</li></ul>                            |
-| html5lib             | `BeautifulSoup(markup, "html5lib")`                                | <ul><li>Extremely lenient </li><li>Parses pages the same way a web browser does </li><li>Creates valid HTML5</li></ul> | <ul><li>Very slow</li><li>External Python dependency</li></ul>     |
+<table>
+  <thead>
+    <tr>
+      <th>Parser</th>
+      <th>Typical usage</th>
+      <th>Advantages</th>
+      <th>Disadvantages</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Python&#39;s html.parser</td>
+      <td><code>BeautifulSoup(markup, &quot;html.parser&quot;)</code></td>
+      <td>
+        <ul>
+          <li>Batteries included </li>
+          <li>Decent speed </li>
+          <li>Lenient (As of Python 2.7.3 and 3.2.)</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Not as fast as lxml, less lenient than html5lib.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>lxml&#39;s HTML parser</td>
+      <td><code>BeautifulSoup(markup, &quot;lxml&quot;)</code></td>
+      <td>
+        <ul>
+          <li>Very fast</li>
+          <li>Lenient</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>External C dependency</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>lxml&#39;s XML parser</td>
+      <td><code>BeautifulSoup(markup, &quot;lxml-xml&quot;)</code> <code>BeautifulSoup(markup, &quot;xml&quot;)</code></td>
+      <td>
+        <ul>
+          <li>Very fast </li>
+          <li>The only currently supported XML parser</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>External C dependency</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>html5lib</td>
+      <td><code>BeautifulSoup(markup, &quot;html5lib&quot;)</code></td>
+      <td>
+        <ul>
+          <li>Extremely lenient </li>
+          <li>Parses pages the same way a web browser does </li>
+          <li>Creates valid HTML5</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Very slow</li>
+          <li>External Python dependency</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 From <https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser>
 </details>
