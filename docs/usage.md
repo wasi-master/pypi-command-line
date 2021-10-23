@@ -78,13 +78,17 @@ TODO: Add demo for --repository
 
 ## version
 
-See the latest version of the package or pypi-command-line
+See the latest version of any package or pypi-command-line if no package was specified
 
-How this works if if you specify a package name then it shows the top *limit* latest versions of that specified package, otherwise it shows the current version of pypi-command-line
+How this works is if you specify a package name then it shows the top *limit* latest versions of that specified package, otherwise it shows the current version of pypi-command-line and the latest version of pypi-command-line
 
 ### **Demo**
 
-TODO: Add demo
+Seeing the current and latest version of pypi-command-line
+![Seeing the current and latest version of pypi-command-line](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20without%20package.png)
+
+Seeing the latest versions of another package
+![Seeing the latest versions of another package](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20package.png)
 
 ### **Usage**
 
