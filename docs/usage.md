@@ -84,10 +84,12 @@ How this works is if you specify a package name then it shows the top *limit* la
 
 ### **Demo**
 
-Seeing the current and latest version of pypi-command-line
+Seeing the current and latest version of pypi-command-line:
+
 ![Seeing the current and latest version of pypi-command-line](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20without%20package.png)
 
-Seeing the latest versions of another package
+Seeing the latest versions of another package:
+
 ![Seeing the latest versions of another package](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20package.png)
 
 ### **Usage**
