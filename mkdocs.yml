@@ -8,6 +8,7 @@ nav:
   - Usage: usage.md
   - Notes: notes.md
   - Smart Features: smart_features.md
+  - Testimonials: testimonials.md
 theme:
   name: material
   features:
