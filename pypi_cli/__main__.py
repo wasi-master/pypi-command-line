@@ -46,6 +46,7 @@ else:
             "https://img.shields.io": 30,
         },
         headers={"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"},
+        cache_control=True,
     )
 
 try:
