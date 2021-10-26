@@ -1,0 +1,5 @@
+pypi-command-line   # The CLI itself
+pytest-clarity      # For clearer error messages
+pytest-sugar        # For clearer progression and formatting
+pytest-picked       # For test selection based on unchanged files
+pytest-xdist        # For parallel testing
