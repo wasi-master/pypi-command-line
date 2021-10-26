@@ -719,6 +719,7 @@ def releases(
         help="The name of package to show releases for, this can "
         "also include the version with this syntax: `package_name==version`",
     ),
+    version: str = Option(None, help="The version of the package to show releases for"),
     _link: bool = Option(False, metavar="link", help="Display the links to the releases"),
 ):
     """See all the available releases for a package.
