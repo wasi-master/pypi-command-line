@@ -45,7 +45,7 @@ else:
             "https://pypistats.org/api/packages/": 21600,
             "https://img.shields.io": 30,
         },
-        headers={"User-Agent": "wasi_master/pypi_cli"},
+        headers={"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"},
     )
 
 try:
@@ -626,7 +626,8 @@ def largest_files():
     headers = {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
     url = f"{base_url}/stats/"
     with console.status("Loading largest files..."):
-        response = session.get(url)
+        response = session.get(url, headers=headers)
+        print(response.text)
         data = json.loads(response.text)
     packages = data["top_packages"]
     packages = dict(sorted(packages.items(), key=lambda i: i[1]["size"], reverse=True))
