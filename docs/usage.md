@@ -240,6 +240,9 @@ You can also see classifiers if you want to
 ### **Options**
 
 - PACKAGE_NAME <span style="color: red">[required]</span>
+  The name of the package to show information for
+  This can also include the version with this format: `package_name==version`
+
 - --version TEXT
 
   The version of the package to show information for
@@ -468,8 +471,9 @@ Search for a package on PyPI.
 
 ### **Options**
 
-- `PACKAGE_NAME`
-  The name of the package to search for  <span style="color: red">[required]</span>
+- PACKAGE_NAME <span style="color: red">[required]</span>
+  The name of the package to show wheels for
+  This can also include the version with this format: `package_name==version`
 
 - `--page INTEGER RANGE`
   The page of the search results to show. [<span style="color: blue">default:</span> 1; <span style="color: green">1<=x<=500</span>]
@@ -541,9 +545,9 @@ The wheel filename is `{distribution}-{version}(-{build tag})?-{python tag}-{abi
 
 - E.g. 'linux_x86_64', 'any'.
 
-> <span style="color: #33F1C8;">platform tag</span>
+> <span style="color: #33F1C8;">file extension</span>
 
-- E.g. 'linux_x86_64', 'any'.
+- E.g. '.whl'.
 
 For example, `distribution-1.0-1-py27-none-any.whl` is the first build of a package called 'distribution', and is compatible with Python 2.7 (any Python 2.7 implementation), with no ABI (pure Python), on any CPU architecture.
 
