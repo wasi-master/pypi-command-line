@@ -1,1 +1,2 @@
 exclude images/ docs/ .github/ mkdocs.yml publish.ps1
+include tests/
