@@ -1098,14 +1098,19 @@ def read_the_docs(
     query: str = Argument(
         None, help="The query you want to read the docs for, if not passed goes to the main docs page"
     ),
+    url_only: bool = Option(True, help="Only print the url to the console instead of opening it in a browser"),
 ):
     """Search the documentation for an item of a package."""
     import webbrowser  # pylint: disable=import-outside-toplevel
 
     docs_mapping = {
-        **dict.fromkeys(["py", "python", "python3"], "https://docs.python.org/3/search.html"),
-        **dict.fromkeys(["py2", "python2"], "https://docs.python.org/2/search.html"),
-        **dict.fromkeys(["pil", "pillow"], "https://pillow.readthedocs.io/en/stable/search.html"),
+        "py": "https://docs.python.org/3/search.html",
+        "python": "https://docs.python.org/3/search.html",
+        "python3": "https://docs.python.org/3/search.html",
+        "py2": "https://docs.python.org/2/search.html",
+        "python2": "https://docs.python.org/2/search.html",
+        "pil": "https://pillow.readthedocs.io/en/stable/search.html",
+        "pillow": "https://pillow.readthedocs.io/en/stable/search.html",
         "aiohttp": "https://docs.aiohttp.org/en/stable/search.html",
         "attrs": "https://www.attrs.org/en/stable/search.html",
         "babel": "https://babel.readthedocs.io/en/latest/search.html",
