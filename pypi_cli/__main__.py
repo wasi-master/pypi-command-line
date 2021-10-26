@@ -169,14 +169,21 @@ class AliasedGroup(Group):
                 try:
                     import thefuzz.fuzz  # pylint: disable=import-outside-toplevel
                     import thefuzz.process  # pylint: disable=import-outside-toplevel
+                    import warnings  # pylint: disable=import-outside-toplevel
 
-                    get_closest_match = lambda cmd: [
-                        i[0]
-                        for i in thefuzz.process.extractBests(
-                            cmd, commands, score_cutoff=50, processor=processor, limit=5
+                    warnings.filterwarnings("error")
+                    try:
+                        get_closest_match = lambda cmd: [
+                            i[0]
+                            for i in thefuzz.process.extractBests(
+                                cmd, commands, score_cutoff=50, processor=processor, limit=5
+                            )
+                        ]
+                    except UserWarning:
+                        console.print(
+                            "[yellow]WARNING:[/] Using slow [red]thefuzz[/] and [red]]difflib.SequenceMatcher[/]. "
+                            "Consider installing `=[red]rapidfuzz[/] or [red]python-levenstein[/]"
                         )
-                    ]
-
                 except ImportError:
                     import difflib  # pylint: disable=import-outside-toplevel
 
