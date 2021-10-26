@@ -1246,9 +1246,8 @@ def browse(
     urls["Mail to"] = ("mailto:" + info["maintainer_email"]) if info.get("maintainer_email") else None
 
     if url_only:
-        return console.print(
-            "\n".join(f"[red]{name:15}[/] [grey46]-[/] [cyan]{url}[/]" for name, url in urls.items() if url)
-        )
+        console.print("\n".join(f"[red]{name:15}[/] [grey46]-[/] [cyan]{url}[/]" for name, url in urls.items() if url))
+        raise typer.Exit()
 
     answer = questionary.select(
         "Which link do you want to to open?",
