@@ -584,8 +584,14 @@ pypi --repository "https://test.pypi.org" <command></p>
 </blockquote>
 <h3 id="options_4"><strong>Options</strong><a class="headerlink" href="#options_4" title="Permanent link">&para;</a></h3>
 <ul>
-<li>PACKAGE_NAME <span style="color: red">[required]</span></li>
-<li>--version TEXT</li>
+<li>
+<p>PACKAGE_NAME <span style="color: red">[required]</span>
+  The name of the package to show information for
+  This can also include the version with this format: <code>package_name==version</code></p>
+</li>
+<li>
+<p>--version TEXT</p>
+</li>
 </ul>
 <p>The version of the package to show information for
 - <code>--show-classifiers</code> / <code>--no-show-classifiers</code></p>
@@ -758,8 +764,9 @@ name on supported terminals</p>
 <h3 id="options_11"><strong>Options</strong><a class="headerlink" href="#options_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><code>PACKAGE_NAME</code>
-  The name of the package to search for  <span style="color: red">[required]</span></p>
+<p>PACKAGE_NAME <span style="color: red">[required]</span>
+  The name of the package to show wheels for
+  This can also include the version with this format: <code>package_name==version</code></p>
 </li>
 <li>
 <p><code>--page INTEGER RANGE</code>
@@ -841,10 +848,10 @@ name on supported terminals</p>
 <li>E.g. 'linux_x86_64', 'any'.</li>
 </ul>
 <blockquote>
-<p><span style="color: #33F1C8;">platform tag</span></p>
+<p><span style="color: #33F1C8;">file extension</span></p>
 </blockquote>
 <ul>
-<li>E.g. 'linux_x86_64', 'any'.</li>
+<li>E.g. '.whl'.</li>
 </ul>
 <p>For example, <code>distribution-1.0-1-py27-none-any.whl</code> is the first build of a package called 'distribution', and is compatible with Python 2.7 (any Python 2.7 implementation), with no ABI (pure Python), on any CPU architecture.</p>
 <p>The last three components of the filename before the extension are called "compatibility tags." The compatibility tags express the package's basic interpreter requirements and are detailed in <a href="https://www.python.org/dev/peps/pep-0425/">PEP 425</a>.</p>
