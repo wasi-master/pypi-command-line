@@ -1198,9 +1198,15 @@ def read_the_docs(
                 raise typer.Exit()
 
     if not query:
+        if url_only:
+            console.print(url.replace("search.html", ""), style="cyan")
+            raise typer.Exit()
         webbrowser.open(url.replace("search.html", ""))
         raise typer.Exit()
     search_page = url + "?q=" + quote(query)
+    if url_only:
+        console.print(search_page, style="cyan")
+        raise typer.Exit()
     webbrowser.open(search_page)
 
 
