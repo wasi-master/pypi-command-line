@@ -399,6 +399,9 @@ def _clear_cache():
         session.cache.clear()
     except AttributeError:
         pass
+    else:
+        console.print(f"[cyan]ℹ️ Info:[/] Emptied cache, now trying to delete the cache file")
+
     import os
     import shutil
 
@@ -407,7 +410,8 @@ def _clear_cache():
         file_path = os.path.join(folder, filename)
         try:
             if os.path.isfile(file_path):
-                os.remove(file_path)
+                with session.cache_disabled():
+                    os.remove(file_path)
         except Exception as exc:
             console.print(f"[red]:x: Failed to delete {file_path}. Reason: {exc}[/]")
 
