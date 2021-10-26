@@ -428,6 +428,44 @@ If the packages cache is empty it then loads the packages first, the cache is ke
 - `-h`, `--help`
   Show the help message.
 
+## read-the-docs
+
+Searches the documentation for a certain package.
+
+This just gets the documentation url and opens it's search results page with the given query
+
+### **Usage**
+
+> pypi read-the-docs [OPTIONS] PACKAGE_NAME [QUERY]
+
+### **Options**
+
+- `PACKAGE_NAME`
+
+  The name or link to the docs of the package to show the documentation for  [<span style="color: red">required</span>]
+
+- `QUERY`
+
+  The query you want to read the docs for, if not passed it opens the main docs page
+
+- `--url-only`
+
+  Only print the url to the console instead of opening it in a browser[<span style="color: blue">default: url-only</span>]
+
+- `-h`, `--help`
+
+  Show the help message.
+
+### **Errors and Warnings**
+
+#### <span style="color: yellow">e:</span> Docs not available
+
+Shown when the docs are not in the list of already known docs and needs to be gotten from PyPI, it will ask you if you want to get it from pypi
+
+#### <span style="color: red">E:</span> Documentation url not found on PyPI
+
+Shown when the docs are not in the list of already known docs and not given on PyPI
+
 ## releases
 
 Shows all the available releases for a package.
