@@ -128,6 +128,10 @@ You can cancel using ++ctrl+c++ if you don't find your desired link
 - `PACKAGE_NAME`
   The name of the package to show the urls for.
 
+- `--url-only`
+
+  Only show urls of the package instead of showing an interactive dialog to open in a web browser.
+
 - `-h`, `--help`
 
   Show the help message.
