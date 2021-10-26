@@ -1199,7 +1199,13 @@ def read_the_docs(
 
 
 @app.command()
-def browse(package_name: str = Argument(..., help="The name of the package to show links for")):
+def browse(
+    package_name: str = Argument(..., help="The name of the package to show links for"),
+    url_only: bool = Option(
+        False,
+        help="If this is set then it will only show the urls instead of interactively opening them in the browser",
+    ),
+):
     """Browse for a package's URLs"""
     import webbrowser  # pylint: disable=import-outside-toplevel
 
@@ -1226,6 +1232,11 @@ def browse(package_name: str = Argument(..., help="The name of the package to sh
     urls["Home Page"] = info.get("project_url")
     urls["Release URL"] = info.get("release_url")
     urls["Mail to"] = ("mailto:" + info["maintainer_email"]) if info.get("maintainer_email") else None
+
+    if url_only:
+        return console.print(
+            "\n".join(f"[red]{name:15}[/] [grey46]-[/] [cyan]{url}[/]" for name, url in urls.items() if url)
+        )
 
     answer = questionary.select(
         "Which link do you want to to open?",
