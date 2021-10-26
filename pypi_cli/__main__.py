@@ -706,7 +706,11 @@ def search(
 
 @app.command()
 def releases(
-    package_name: str = Argument(..., help="The name of package to show releases for"),
+    package_name: str = Argument(
+        ...,
+        help="The name of package to show releases for, this can "
+        "also include the version with this syntax: `package_name==version`",
+    ),
     _link: bool = Option(False, metavar="link", help="Display the links to the releases"),
 ):
     """See all the available releases for a package.
@@ -714,7 +718,9 @@ def releases(
     The --link argument can be used to also show the link of the releases.
     This is turned off by default and the link is added as a hyperlink to the package name on supported terminals
     """
-    url = f"{base_url}/pypi/{quote(package_name)}/json"
+    if not version and "==" in package_name:
+        package_name, _, version = package_name.partition("==")
+    url = f"{base_url}/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
@@ -762,11 +768,16 @@ def releases(
 @app.command()
 def wheels(
     package_name: str = Argument(..., help="The name of the package to show wheel info for"),
-    version: str = Argument(None, help="The version of the package to show info for, defaults to latest"),
+    version: str = Argument(
+        None,
+        help="The version of the package to show info for, defaults to latest, can be omitted if using package_name==version",
+    ),
     supported_only: bool = Option(False, help="Only show wheels supported on the current platform"),
 ):
     """See detailed information about all the wheels of a release of a package"""
-    url = f"{base_url}/pypi/{quote(package_name)}/json"
+    if not version and "==" in package_name:
+        package_name, _, version = package_name.partition("==")
+    url = f"{base_url}/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
@@ -794,17 +805,8 @@ def wheels(
     #         else:
     #             return "red"
 
-    releases = parsed_data["releases"]
+    data = parsed_data["urls"]
 
-    if not version:
-        latest_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0]
-        release = releases[str(latest_version)]
-    else:
-        try:
-            release = releases[str(version)]
-        except KeyError:
-            rich.print("[red]:no_entry_sign: Version not found[/]")
-            raise typer.Exit() from KeyError
     from itertools import cycle  # pylint: disable=import-outside-toplevel
 
     colors = cycle(["green", "blue", "magenta", "cyan", "yellow", "red"])
@@ -823,10 +825,10 @@ def wheels(
                     return True
             return False
 
-        release = filter(is_wheel_supported, release)
+        data = filter(is_wheel_supported, data)
     from datetime import timezone  # pylint: disable=import-outside-toplevel
 
-    for wheel in release:
+    for wheel in data:
         wheel_name = Text(wheel["filename"])
         # Maybe use the regex in https://github.com/jwodder/wheel-filename/blob/master/src/wheel_filename/__init__.py#L45-L53
         wheel_name.highlight_regex(
@@ -872,6 +874,8 @@ def information(
     hide_meta: bool = Option(False, metavar="meta", help="Hide the metadata"),
 ):
     """See the information about a package."""
+    if not version and "==" in package_name:
+        package_name, _, version = package_name.partition("==")
     url = f"{base_url}/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
