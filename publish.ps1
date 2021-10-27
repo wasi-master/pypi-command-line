@@ -6,7 +6,7 @@ $Comment = Read-Host -Prompt 'Enter a comment for the new release'
 Write-Host ""
 Write-Host "Removing previous distributions" -ForegroundColor Green
 Remove-Item dist/*
-Remove-Item pypi_command_line.egg-info
+Remove-Item pypi_command_line.egg-info -Recurse
 Write-Host "Changing version number" -ForegroundColor Green
 (Get-Content $InitFilePath) -Replace '__version__\s+=\s+"(.+)"', ('__version__ = "{0}"' -f $NewVersion)  | Set-Content $InitFilePath
 Write-Host "Buliding Package" -ForegroundColor Green
