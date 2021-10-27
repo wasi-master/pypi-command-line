@@ -911,9 +911,12 @@ def information(
     except ImportError:
         from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
 
-    # HACK: should use fromisotime
-    release_time = datetime.strptime(urls[-1]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ")
-    natural_time = release_time.strftime("%b %d, %Y")
+    if urls:
+        # HACK: should use fromisotime
+        release_time = datetime.strptime(urls[-1]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ")
+        natural_time = release_time.strftime("%b %d, %Y")
+    else:
+        natural_time = "UNKNOWN"
     description = info["summary"]
     latest_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0]
     version_comment = (
