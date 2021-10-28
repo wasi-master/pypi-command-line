@@ -29,7 +29,7 @@ _If applicable_, add screenshots to help explain your problem.
 - **Shell**          : [e.g. powershell, bash, zsh, fish]
 - **OS Version**     : [e.g. 21H2 (OS Build 19044.1788)] 
 - **Python Version** : [e.g. 3.10.0]  (Run `python --version`)
-- **Versions**       :-
+- **Package Versions**       :-
 
   Run the following command and put the output here
   - Linux/MacOS
