@@ -25,7 +25,8 @@ If applicable, add screenshots to help explain your problem.
 **Information (please complete the following information):**
 
 - OS: [e.g. Windows 10, MacOS, Linux (Ubuntu)]
-- Terminal: [e.g. powershell, bash, zsh, fish]
+- Terminal: [e.g.GNOME Terminal, Windows Terminal, Command Prompt]
+- Shell: [e.g. powershell, bash, zsh, fish]
 - OS Version: [e.g. 21H2 (OS Build 19044.1788)] 
 - Python Version: [e.g. 3.10.0]  <!-- Run 'python --version' -->
 - Project Version: [e.g. 1.0.0]  <!-- Run 'pypi version' -->
