@@ -37,7 +37,7 @@ _If applicable_, add screenshots to help explain your problem.
   pip freeze | grep -E "bs4|click-help-colors|humanize|packaging|questionary|requests|rich|rich-rst|thefuzz|typer|wheel-filename|lxml|rapidfuzz|requests-cache|shellingham"
   ```
   - Windows
-  ```
+  ```cmd
   pip freeze | findstr "bs4 click-help-colors humanize packaging questionary requests rich rich-rst thefuzz typer wheel-filename lxml rapidfuzz requests-cache shellingham"
   ```
 
