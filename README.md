@@ -19,7 +19,7 @@ Detailed Documentation available at <https://wasi-master.github.io/pypi-command-
 
 ## Features
 
-- 🚀 Extremely fast and easy to use.
+- 🚀 Extremely intuitive and easy to use.
 - 🌟 Beautiful UI with pleasant colors *everywhere*.
 - 😁 Emojis in responses and errors.
 - 📰 Great Markdown and reStructuredText support for viewing project descriptions.
