@@ -3,6 +3,7 @@ import logging
 import subprocess
 import pytest
 
+from subprocess import PIPE
 
 # class InteractiveCommand(subprocess.Popen):
 #     def send(self, text):
@@ -42,7 +43,7 @@ class CommandRunner:
         subprocess.CompletedProcess
             The process that was completed
         """
-        return subprocess.run(command.split(), shell=True, capture_output=True, check=True)
+        return subprocess.run(command.split(), shell=True, check=True, stdout=PIPE, stderr=PIPE)
 
     # @staticmethod
     # def run_interactive(command: str) -> "InteractiveCommand":
