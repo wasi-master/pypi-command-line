@@ -21,113 +21,68 @@ Because of this, I've added imports in each function that needs them instead of 
 
 I compile the regex because it's almost twice as fast.
 
-![6.01 vs 3.92](https://i.imgur.com/m4AFfEV.png "Times for compiled vs non compiled regex")
-<details>
-<summary>Code</summary>
+```python
+>>> timeit.timeit(not_compiled, number=5)
+6.0103950999999824
+>>> timeit.timeit(compiled, number=5)
+3.9251674000000207
+```
 
-<img src="https://i.imgur.com/SWlo2zA.png" title="Source code for non compiled regex">
-<img src="https://i.imgur.com/Wr8bWUM.png" title="Source code for compiled regex">
+??? example "Code"
 
-</details>
+    Source code for non compiled regex:
+
+    ```python
+    def no_compile():
+        for i in range(1000000):
+            re.match(r".+", secrets.token_hex(32))
+    ```
+
+    Source code for compiled regex:
+
+    ```python
+    def no_compile():
+        r = re.compile(r".+")
+        for i in range(1000000):
+            r.match(secrets.token_hex(32))
+    ```
+
 
 ### Speedups
 
 You may have seen that you can do `#!sh pip install "pypi-command-line[speedups]"` and you may have wondered what that actually does.
-If you see the source code you can see these lines
+If you see the source code [you can see these lines](https://github.com/wasi-master/pypi-command-line/blob/main/setup.cfg#L79-L84)
 
-<script src="https://emgithub.com/embed.js?target=https%3A%2F%2Fgithub.com%2Fwasi-master%2Fpypi-command-line%2Fblob%2Fmain%2Fsetup.cfg%23L80-L84&style=atom-one-dark&showBorder=on&showLineNumbers=on&showFileMeta=on&showCopy=off"></script>
+```ini
+[options.extras_require]
+speedups =
+    lxml
+    rapidfuzz
+    requests_cache
+    shellingham
+```
 
-Here's a detailed explanation
+Here's a detailed explanation of what each of those packages do
 
-#### **shellingham**<sup>[<a title="Link to shellingham's PyPI page" href="https://pypi.org/project/shellingham/" target="_blank">↑</a>]</sup>
+#### [**shellingham**](https://pypi.org/project/shellingham/)
 
 This does not really speed up anything but adds auto shell detection for autocomplete installation using the `#!sh --install-completion ` command. This technically lowers the amount of time taken to install autocompletion because it makes it so that you don't have to manually provide what terminal/shell you're using
 
-#### **lxml**<sup>[<a title="Link to lxml's PyPI page" href="https://pypi.org/project/lxml/" target="_blank">↑</a>]</sup>
+#### [**lxml**](https://pypi.org/project/lxml/)
 
 This is an alternative for the built-in [html.parser](https://docs.python.org/3/library/html.parser.html) that comes with python. There is also [`html5lib`](https://pypi.org/project/html5lib/)
 
-<details>
-<summary>Table with parser comparisons supported by BeautifulSoup</summary>
+??? info "Table with parser comparisons supported by BeautifulSoup"
 
-<table>
-  <thead>
-    <tr>
-      <th>Parser</th>
-      <th>Typical usage</th>
-      <th>Advantages</th>
-      <th>Disadvantages</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Python&#39;s html.parser</td>
-      <td><code>BeautifulSoup(markup, &quot;html.parser&quot;)</code></td>
-      <td>
-        <ul>
-          <li>Batteries included </li>
-          <li>Decent speed </li>
-          <li>Lenient (As of Python 2.7.3 and 3.2.)</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Not as fast as lxml, less lenient than html5lib.</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>lxml&#39;s HTML parser</td>
-      <td><code>BeautifulSoup(markup, &quot;lxml&quot;)</code></td>
-      <td>
-        <ul>
-          <li>Very fast</li>
-          <li>Lenient</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>External C dependency</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>lxml&#39;s XML parser</td>
-      <td><code>BeautifulSoup(markup, &quot;lxml-xml&quot;)</code> <code>BeautifulSoup(markup, &quot;xml&quot;)</code></td>
-      <td>
-        <ul>
-          <li>Very fast </li>
-          <li>The only currently supported XML parser</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>External C dependency</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>html5lib</td>
-      <td><code>BeautifulSoup(markup, &quot;html5lib&quot;)</code></td>
-      <td>
-        <ul>
-          <li>Extremely lenient </li>
-          <li>Parses pages the same way a web browser does </li>
-          <li>Creates valid HTML5</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Very slow</li>
-          <li>External Python dependency</li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
+    | Parser               | Typical usage                                                                        | Advantages                                                                                                              | Disadvantages                                                   |
+    | -------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+    | Python's html.parser | `#!python BeautifulSoup(markup, "html.parser")`                                      | <ul> <li>Batteries included </li><li>Decent speed </li><li>Lenient (As of Python 2.7.3 &amp; 3.2.)</li></ul>                                       | <ul> <li>Not as fast as lxml, less lenient than html5lib.</li></ul>              |
+    | lxml's HTML parser   | `#!python BeautifulSoup(markup, "lxml")`                                             | <ul> <li>Very fast</li><li>Lenient</li></ul>                                                                                                | <ul> <li>External C dependency</li></ul>                                         |
+    | lxml's XML parser    | `#!python BeautifulSoup(markup, "lxml-xml")` `#!python BeautifulSoup(markup, "xml")` | <ul> <li>Very fast </li><li>The only currently supported XML parser</li></ul>                                                                | <ul> <li>External C dependency</li></ul>                                         |
+    | html5lib             | `#!python BeautifulSoup(markup, "html5lib")`                                         | <ul> <li>Extremely lenient </li><li>Parses pages the same way a web browser does </li><li>Creates valid HTML5</li></ul> | <ul> <li>Very slow</li><li>External Python dependency</li></ul> |
 
-From <https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser>
-</details>
+    \- From <https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser>
+
 
 If this is not installed it uses [html.parser](https://docs.python.org/3/library/html.parser.html) for html and [xml.etree.ElementTree](https://docs.python.org/3/library/xml.etree.elementtree.html) for xml.
 
@@ -139,11 +94,11 @@ If this is not installed it uses [html.parser](https://docs.python.org/3/library
 
     `lxml` is more than 5 times faster than `html.parser` <sup>[<a title="Reference" href="https://www.ianbicking.org/blog/2008/03/python-html-parser-performance.html#:~:text=from%C2%A0python.org.-,parsing,-The%20first%20test" target="_blank">‾</a>]</sup>
 
-#### **requests-cache**<sup>[<a title="Link to requests-cache's PyPI page" href="https://pypi.org/project/requests-cache/" target="_blank">↑</a>]</sup>
+#### [**requests-cache**](https://pypi.org/project/requests-cache/)
 
 This allows http requests to be faster by caching<sup>[<a title="Caching is a process that stores multiple copies of data or files in a temporary storage location—or cache—so they can be accessed faster." href="https://aws.amazon.com/caching/" target="_blank">?</a>]</sup> them
 
-#### **rapidfuzz**<sup>[<a title="Link to rapidfuzz's PyPI page" href="https://pypi.org/project/rapidfuzz/" target="_blank">↑</a>]</sup>
+#### [**rapidfuzz**](https://pypi.org/project/rapidfuzz/)
 
 This allows rapid fuzzy string matching around 20 times faster than thefuzz
 
@@ -191,22 +146,22 @@ For parsing wheel filenames
 
 ## Dependency Installation Notes
 
-| Name                      | Applicable Commands                                        | Note                                                                                                                                                                                                                                                     |
-| ------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| typer                     | meta                                                       |                                                                                                                                                                                                                                                          |
-| rich                      | all                                                        |                                                                                                                                                                                                                                                          |
-| requests                  | meta                                                       |                                                                                                                                                                                                                                                          |
-| humanize                  | all                                                        |                                                                                                                                                                                                                                                          |
-| bs4                       | search, new-packages (optional), new-releases (optional)   | If lxml and this both are installed then this is used for new-packages and new-releases and can provide up to a 5x improvement in speed and avoid a bug where the descriptions are not shown.                                                            |
+| Name                      | Applicable Commands                                        | Note                                                                                                                                                                                                                                                 |
+| ------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| typer                     | meta                                                       |                                                                                                                                                                                                                                                      |
+| rich                      | all                                                        |                                                                                                                                                                                                                                                      |
+| requests                  | meta                                                       |                                                                                                                                                                                                                                                      |
+| humanize                  | all                                                        |                                                                                                                                                                                                                                                      |
+| bs4                       | search, new-packages (optional), new-releases (optional)   | If lxml and this both are installed then this is used for new-packages and new-releases and can provide up to a 5x improvement in speed and avoid a bug where the descriptions are not shown.                                                        |
 | questionary               | rtfd, browse, description (optional)                       | For the description command, if the pypi page doesn't have a descripton, if it mentions a single github repository then this is not required but if it mentions multiple github repos then you'll need to select one therefore this will be required |
-| thefuzz (optional)        | meta (command suggestions when an invalid command is used) | If this is not available then it uses difflib                                                                                                                                                                                                            |
-| rich-rst                  | description (sometimes)                                    | This will only be required in the `description` command if the description is in reStructuredText                                                                                                                                                        |
-| shellingham (optional)    | --install-completion                                       | This is only required to automatically detect the terminal when installing autocomplete for the current shell. without this you'd have to manually pass the shell as an argument to `install-completion`                                                                                           |
-| lxml (optional)           | search, new-packages (optional), new-releases (optional)   | For the search command this is a must have. for the new-packages and new-releases command this can provide up to 5x speed improvement and avoid a bug where the descriptions are not shown.                                                              |
-| requests-cache (optional) | all                                                        |                                                                                                                                                                                                                                                          |
-| rapidfuzz (optional)      | meta (command suggestions when an invalid command is used) | If this is not available then it tries to use thefuzz and if both are not installed it tries to use difflib                                                                                                                                              |
-| packaging                 | wheels, information (optional)                             | In the information command If this is not available then it uses distutils which is buggy at times                                                                                                                                                       |
-| wheel-filename            | wheels (optional)                                          | If the `--supported-only` flag is passed then this is required
+| thefuzz (optional)        | meta (command suggestions when an invalid command is used) | If this is not available then it uses difflib                                                                                                                                                                                                        |
+| rich-rst                  | description (sometimes)                                    | This will only be required in the `description` command if the description is in reStructuredText                                                                                                                                                    |
+| shellingham (optional)    | --install-completion                                       | This is only required to automatically detect the terminal when installing autocomplete for the current shell. without this you'd have to manually pass the shell as an argument to `install-completion`                                             |
+| lxml (optional)           | search, new-packages (optional), new-releases (optional)   | For the search command this is a must have. for the new-packages and new-releases command this can provide up to 5x speed improvement and avoid a bug where the descriptions are not shown.                                                          |
+| requests-cache (optional) | all                                                        |                                                                                                                                                                                                                                                      |
+| rapidfuzz (optional)      | meta (command suggestions when an invalid command is used) | If this is not available then it tries to use thefuzz and if both are not installed it tries to use difflib                                                                                                                                          |
+| packaging                 | wheels, information (optional)                             | In the information command If this is not available then it uses distutils which is buggy at times                                                                                                                                                   |
+| wheel-filename            | wheels (optional)                                          | If the `--supported-only` flag is passed then this is required                                                                                                                                                                                       |
 
 ## Cache
 

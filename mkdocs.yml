@@ -46,17 +46,20 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.tabbed
   - pymdownx.betterem
+  - pymdownx.keys
 
   - pymdownx.highlight
   - pymdownx.superfences
   - pymdownx.inlinehilite
 
-  - pymdownx.keys
-
-
   - toc:
       permalink: true
 
+extra_javascript:
+  - js/gif_script.js
+
+extra_css:
+  - css/custom.css
 
 extra:
   social:

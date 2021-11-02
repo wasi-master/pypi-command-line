@@ -76,7 +76,9 @@ pip install packaging
 
 ### I don't have pip
 
-If for some reason you don't have pip then you should get pip. See instructions at <https://pip.pypa.io/en/stable/installation/> then do it the ways showed above
+If for some reason you don't have pip then you should get pip. See instructions at <https://pip.pypa.io/en/stable/installation/> then install it with the ways shown above
+
+Or if you have [git](https://git-scm.com) installed then you can clone then install as shown below
 
 ### I want to clone then install
 
@@ -95,40 +97,47 @@ python setup.py install
 
 ### Command `pip` not found
 
-<details open>
-<summary><b>Error Messages</b></summary>
+!!! failure "Error Messages"
 
-Powershell
+    **Powershell**
 
-```powershell
-pip : The term 'pip' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was
-included, verify that the path is correct and try again.
-At line:1 char:1
-+ pip install pypi-command-line
-+ ~~~
-    + CategoryInfo          : ObjectNotFound: (pip:String) [], CommandNotFoundException
-    + FullyQualifiedErrorId : CommandNotFoundException
-```
+    ```powershell
+    pip : The term 'pip' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was
+    included, verify that the path is correct and try again.
+    At line:1 char:1
+    + pip install pypi-command-line
+    + ~~~
+        + CategoryInfo          : ObjectNotFound: (pip:String) [], CommandNotFoundException
+        + FullyQualifiedErrorId : CommandNotFoundException
+    ```
 
-Command Prompt
+    or
 
-```shell
-'pip' is not recognized as an internal or external command,
-operable program or batch file.
-```
+    ```powershell
+    pip: The term 'pip' is not recognized as a name of a cmdlet, function, script file, or executable program.
+    Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+    ```
 
-Bash
+    **Command Prompt**
 
-```bash
-pip: command not found
-```
+    ```shell
+    'pip' is not recognized as an internal or external command,
+    operable program or batch file.
+    ```
 
-Zsh
+    **Bash**
 
-```zsh
-zsh: command not found: pip
-```
+    ```bash
+    pip: command not found
+    ```
 
-</details>
+    **Zsh**
 
-If you get this error you should change `#!sh pip` to `#!sh python -m pip` and if it still doesn't work you should install `#!sh pip` again See instructions at <https://pip.pypa.io/en/stable/installation/>
+    ```zsh
+    zsh: command not found: pip
+    ```
+
+If you get this error you should change `#!sh pip` to `#!sh python -m pip` and if it still doesn't work you should install `#!sh pip` again. See instructions at <https://pip.pypa.io/en/stable/installation/>
+
+!!! danger "Note"
+    if `#!sh python` also doesn't work try `#!sh python3` or `#!sh py`. If nothing works make sure you have installed python correctly and it's in path

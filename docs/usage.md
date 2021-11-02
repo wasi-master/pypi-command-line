@@ -6,9 +6,16 @@ title: Usage
 
 # Usage
 
-> Note: You'll have to install the package first. See <https://wasi-master.github.io/pypi-command-line/install> for instructions.
+!!! note
 
-# Options
+    You'll have to install the package first. See <https://wasi-master.github.io/pypi-command-line/install> for instructions.
+
+!!! tip "Tips"
+
+    - You can *click* the gifs to make them reload, if this does not work refresh the page</br>
+    - You can *right click* and press "*Open Image in New Tab*" to open them in *full screen*
+
+## **Options**
 
 ## -h, --help
 
@@ -20,7 +27,7 @@ Sends a help message, each command also has this flag that you can use to see th
 
 > pypi --help
 
-For comamnd specific help ([`search`](#search) in this case)
+For command specific help: ([`search`](#search) in this case)
 > pypi search --help
 
 ## --install-completion
@@ -51,7 +58,7 @@ The output will be different depending on the shell
 
 ## --cache / --no-cache
 
-Whether to use cache or not for the current command, for more information about the cache see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) [<span style="color: blue">default:</span> cache]
+Whether to use cache or not for the current command, for more information about the cache see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) [<span style="color: cyan">default:</span> cache]
 
 ### **Demo**
 
@@ -72,9 +79,10 @@ TODO: Add demo for --repository
 ### **Usage**
 
 > pypi --repository testpypi <command>
-> pypi --repository "https://test.pypi.org" <command>
 
-# Commands
+> pypi --repository https://test.pypi.org <command>
+
+## **Commands**
 
 ## version
 
@@ -99,11 +107,12 @@ Seeing the latest versions of another package:
 ### **Options**
 
 - `PACKAGE_NAME`
-  The name of the package to show the latest version(s) for. [<span style="color: blue">default:</span> None]
+
+    The name of the package to show the latest version(s) for. [<span style="color: cyan">default:</span> None]
 
 - `-h`, `--help`
 
-  Show the help message.
+    Show the help message.
 
 ## browse
 
@@ -126,15 +135,16 @@ You can cancel using ++ctrl+c++ if you don't find your desired link
 ### **Options**
 
 - `PACKAGE_NAME`
-  The name of the package to show the urls for.
+
+    The name of the package to show the urls for.
 
 - `--url-only`
 
-  Only show urls of the package instead of showing an interactive dialog to open in a web browser.
+    Only show urls of the package instead of showing an interactive dialog to open in a web browser.
 
 - `-h`, `--help`
 
-  Show the help message.
+    Show the help message.
 
 ## cache-clear
 
@@ -146,9 +156,9 @@ Clears the local packages and requests cache, see [notes](https://wasi-master.gi
 
 ### **Errors and Warnings**
 
-#### <span style="color: red">E:</span> Failed to delete \<file_path\>
+- #### <span style="color: red">E:</span> Failed to delete `#!html <file_path>`
 
-Shown when it cannot delete a file due to some other process using it or not having enough permissions
+    Shown when it cannot delete a file due to some other process using it or not having enough permissions
 
 ## cache-information
 
@@ -156,14 +166,14 @@ Shows the size for the packages cache and the size and additionally the websites
 
 ### **Errors and Warnings**
 
-#### <span style="color: yellow">W:</span> Packages cache not available
+- #### <span style="color: yellow">W:</span> Packages cache not available
 
-Shown when the packages cache doesn't exist due to it not being created yet or being deleted recently. You can rebuild that cache using [`cache-refresh`](#cache-refresh)
+    Shown when the packages cache doesn't exist due to it not being created yet or being deleted recently. You can rebuild that cache using [`cache-refresh`](#cache-refresh)
 
 
-#### <span style="color: yellow">W:</span> Requests cache not available
+- #### <span style="color: yellow">W:</span> Requests cache not available
 
-Shown when the requests cache doesn't exist due to the `requests-cache` package not being installed
+    Shown when the requests cache doesn't exist due to the `requests-cache` package not being installed
 
 ### **Usage**
 
@@ -201,29 +211,30 @@ Demo of getting description from github if pypi does not have one
 
 - `PACKAGE_NAME`
 
-  Package to get the description for <span style="color: red">[required]</span>
+    Package to get the description for <span style="color: red">[required]</span>
+
 - `--force-github` / `--no-force-github`
 
-  Forcefully get the description from github [<span style="color: blue">default:</span> no-force-github]
+    Forcefully get the description from github [<span style="color: cyan">default:</span> no-force-github]</br>
+    This will make sure that it doesn't get the description from pypi but get it from github by reading the readme file of that project's repository
 
-  This will make sure that it doesn't get the description from pypi but get it from github by reading the readme file of that project's repository
 - `-h`, `--help`
 
-  Show the help message.
+    Show the help message.
 
 ### Errors and Warnings
 
-#### <span style="color: red">E:</span> Project not found
+- #### <span style="color: red">E:</span> Project not found
 
-Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
+    Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
 
-#### <span style="color: red">E:</span> ReadMe not found
+- #### <span style="color: red">E:</span> ReadMe not found
 
-Shown when `--force-github` is enabled or the PyPI page doesn't have a description and the github page also doesn't have a readme
+    Shown when `--force-github` is enabled or the PyPI page doesn't have a description and the github page also doesn't have a readme
 
-#### <span style="color: yellow">W:</span> Multiple github repos
+- #### <span style="color: yellow">W:</span> Multiple github repos
 
-Shown when `--force-github` is enabled or the PyPI page doesn't have a description. If this is shown it will ask you to pick one
+    Shown when `--force-github` is enabled or the PyPI page doesn't have a description. If this is shown it will ask you to pick one
 
 ## information
 
@@ -249,35 +260,43 @@ You can also see classifiers if you want to
 
 - --version TEXT
 
-  The version of the package to show information for
+    The version of the package to show information for
+
 - `--show-classifiers` / `--no-show-classifiers`
 
-   Show the classifiers  [<span style="color: blue">default:</span> no-show-classifiers]
+    Show the classifiers  [<span style="color: cyan">default:</span> no-show-classifiers]</br>
+   Example of how this looks:
    ![Example of this flag](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif)
+
 - `--hide-project-urls` / `--no-hide-project-urls`
 
-  Hide the project urls  [<span style="color: blue">default:</span> no-hide-project-urls]
+    Hide the project urls  [<span style="color: cyan">default:</span> no-hide-project-urls]
+
 - `--hide-requirements` / `--no-hide-requirements`
 
-  Hide the requirements  [<span style="color: blue">default:</span> no-hide-requirements]
+    Hide the requirements  [<span style="color: cyan">default:</span> no-hide-requirements]
+
 - `--hide-github` / `--no-hide-github`
 
-  Hide the github  [<span style="color: blue">default:</span> no-hide-github]
+    Hide the github  [<span style="color: cyan">default:</span> no-hide-github]
+
 - `--hide-stats` / `--no-hide-stats`
 
-  Hide the stats  [<span style="color: blue">default:</span> no-hide-stats]
+    Hide the stats  [<span style="color: cyan">default:</span> no-hide-stats]
+
 - `--hide-meta` / `--no-hide-meta`
 
-  Hide the metadata  [<span style="color: blue">default:</span> no-hide-meta]
+    Hide the metadata  [<span style="color: cyan">default:</span> no-hide-meta]
+
 - `-h`, `--help`
 
-  Show the help message.
+    Show the help message.
 
 ### **Errors and Warnings**
 
-#### <span style="color: red">E:</span> Project not found
+- #### <span style="color: red">E:</span> Project not found
 
-Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
+    Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
 
 ## largest-files
 
@@ -295,13 +314,13 @@ This command shows the all time largest pypi packages. The layout is simillar to
 
 - `-h`, `--help`
 
-  Show the help message.
+    Show the help message.
 
 ### **Errors and Warnings**
 
-#### <span style="color: red">E:</span> Project not found
+- #### <span style="color: red">E:</span> Project not found
 
-Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
+    Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
 
 ## new-packages
 
@@ -315,23 +334,22 @@ Shows the top 40 newly added packages. Meaning that the first ever version of th
 
 - `-h`, `--help`
 
-  Show the help message.
+    Show the help message.
 
-- `---author` / `--no--author`
+- `--author` / `--no-author`
 
-  Whether to show the project author or not  [<span style="color: blue">default:</span> no--author]
+    Whether to show the project author or not  [<span style="color: cyan">default:</span> no--author]</br>
+    This usually shows the author's email.
 
-  This usually shows the author's email.
+- `--link` / `--no-link`
 
-`---link` / `--no--link`
-
-  Whether to show the project link or not  [<span style="color: blue">default:</span> -link]
+    Whether to show the project link or not  [<span style="color: cyan">default:</span> -link]
 
 ### **Errors and Warnings**
 
-#### <span style="color: yellow">W:</span> `lxml` not installed
+- #### <span style="color: yellow">W:</span> `lxml` not installed
 
-There is a known bug that occurs when lxml is not installed. It doesn't show descriptions in some cases. Please install lxml using `pip install lxml`.
+    There is a known bug that occurs when lxml is not installed. It doesn't show descriptions in some cases. Please install lxml using `pip install lxml`.
 
 ## new-releases
 
@@ -345,23 +363,22 @@ Shows the top 100 newly updated packages. Meaning that the latest version of tho
 
 - `-h`, `--help`
 
-  Show the help message.
+    Show the help message.
 
-- `---author` / `--no--author`
+- `--author` / `--no-author`
 
-  Whether to show the project author or not  [<span style="color: blue">default:</span> no--author]
+    Whether to show the project author or not  [<span style="color: cyan">default:</span> no--author]</br>
+    This usually shows the author's email.
 
-  This usually shows the author's email.
+- `--link` / `--no-link`
 
-`---link` / `--no--link`
-
-  Whether to show the project link or not  [<span style="color: blue">default:</span> -link]
+    Whether to show the project link or not  [<span style="color: cyan">default:</span> -link]
 
 ### **Errors and Warnings**
 
-#### <span style="color: yellow">W:</span> `lxml` not installed
+- #### <span style="color: yellow">W:</span> `lxml` not installed
 
-There is a known bug that occurs when lxml is not installed. It doesn't show descriptions in some cases. Please install lxml using `pip install lxml`.
+    There is a known bug that occurs when lxml is not installed. It doesn't show descriptions in some cases. Please install lxml using `pip install lxml`.
 
 ## releases
 
@@ -379,31 +396,30 @@ name on supported terminals
 
 - `PACKAGE_NAME`
 
-  The name of the package to show releases for
+    The name of the package to show releases for</br>
+    This can also include the version with this format: `package_name==version`
 
 - `-h`, `--help`
 
-  Show the help message.
+    Show the help message.
 
-- `---author` / `--no--author`
+- --version TEXT
 
-  Whether to show the project author or not  [<span style="color: blue"><span style="color: blue">default:</span></span> no--author]
+    The version of the package to show information for
 
-  This usually shows the author's email.
+- `--link` / `--no-link`
 
-- `---link` / `--no--link`
-
-  Whether to show the project link or not  [<span style="color: blue">default:</span> -link]
+    Whether to show the project link or not  [<span style="color: cyan">default:</span> -link]
 
 ### **Errors and Warnings**
 
-#### <span style="color: red">E:</span> Project not found
+- #### <span style="color: red">E:</span> Project not found
 
-Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
+    Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
 
 ## regex-search
 
-Regex stands for Regular Expressions. It allows you to search for all packages in PyPI and only show ones that match a specific Regular Expression<sup>[<a title="A regular expression (shortened as regex or regexp) is a sequence of characters that specifies a search pattern. Usually such patterns are used by string-searching algorithms." href="https://en.wikipedia.org/wiki/Regular_expression" target="_blank">?</a>]
+Regex stands for Regular Expressions. It allows you to search for all packages in PyPI and only show ones that match a specific [Regular Expression](https://en.wikipedia.org/wiki/Regular_expression "A regular expression (shortened as regex or regexp) is a sequence of characters that specifies a search pattern. Usually such patterns are used by string-searching algorithms. For more info click here")
 
 If the packages cache is empty it then loads the packages first, the cache is kept for 1 day meaning your data is at most 1 day old. if you want to refresh you may do so by using the [cache-refresh](#cache-refresh) command. For more information about this cache see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache).
 
@@ -418,15 +434,14 @@ If the packages cache is empty it then loads the packages first, the cache is ke
 ### **Options**
 
 - `REGEX`
-  The regular expression to search with  <span style="color: red">[required]</span>
+    The regular expression to search with  <span style="color: red">[required]</span>
 
 - `--compact` / `--no-compact`
-  Compact formatting  [<span style="color: blue">default:</span> no-compact]
-
-  This removes the table and just shows the package names seperated by commands, it also adds hyperlinks on supported terminals
+    Compact formatting  [<span style="color: cyan">default:</span> no-compact]</br>
+    This removes the table and just shows the package names seperated by commands, it also adds hyperlinks on supported terminals
 
 - `-h`, `--help`
-  Show the help message.
+    Show the help message.
 
 ## read-the-docs
 
@@ -442,62 +457,36 @@ This just gets the documentation url and opens it's search results page with the
 
 - `PACKAGE_NAME`
 
-  The name or link to the docs of the package to show the documentation for  [<span style="color: red">required</span>]
+    The name or link to the docs of the package to show the documentation for  [<span style="color: red">required</span>]
 
 - `QUERY`
 
-  The query you want to read the docs for, if not passed it opens the main docs page
+    The query you want to read the docs for, if not passed it opens the main docs page
 
 - `--url-only`
 
-  Only print the url to the console instead of opening it in a browser[<span style="color: blue">default: url-only</span>]
+    Only print the url to the console instead of opening it in a browser[<span style="color: cyan">default:</span> url-only]
 
 - `-h`, `--help`
 
-  Show the help message.
+    Show the help message.
 
 ### **Errors and Warnings**
 
-#### <span style="color: yellow">e:</span> Docs not available
+- #### <span style="color: yellow">e:</span> Docs not available
 
-Shown when the docs are not in the list of already known docs and needs to be gotten from PyPI, it will ask you if you want to get it from pypi
+    Shown when the docs are not in the list of already known docs and needs to be gotten from PyPI, it will ask you if you want to get it from pypi
 
-#### <span style="color: red">E:</span> Documentation url not found on PyPI
+- #### <span style="color: red">E:</span> Documentation url not found on PyPI
 
-Shown when the docs are not in the list of already known docs and not given on PyPI
+    Shown when the docs are not in the list of already known docs and not given on PyPI
 
-## releases
-
-Shows all the available releases for a package.
-
-This can help you determine what versions of a package are available on PyPI.
-
-### **Demo**
-
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20releases.gif)
-
-### **Usage**
-
-> pypi releases [OPTIONS] PACKAGE_NAME
-
-### **Options**
-
-- `PACKAGE_NAME`
-  The name of package to show releases for <span style="color: red">[required]</span>
-
-- `---link` / `--no--link`
-  Display the links to the releases  [<span style="color: blue">default:</span> no--link]
-
-  This is mostly not required unless you want to download that specific releases too but in that case `pip install PACKAGE_NAME==x.x.x` is better. And the link is already shown as a hyperlink on supported terminals.
-
-- -h, --help
-  Show the help message.
 
 ### **Errors and Warnings**
 
-#### <span style="color: red">E:</span> Project not found
+- #### <span style="color: red">E:</span> Project not found
 
-Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
+    Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
 
 ## search
 
@@ -514,16 +503,17 @@ Search for a package on PyPI.
 ### **Options**
 
 - PACKAGE_NAME <span style="color: red">[required]</span>
-  The name of the package to show wheels for
-  This can also include the version with this format: `package_name==version`
+
+    The name of the package to show wheels for</br>
 
 - `--page INTEGER RANGE`
-  The page of the search results to show. [<span style="color: blue">default:</span> 1; <span style="color: green">1<=x<=500</span>]
-
-  ![Demo of the flag](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search%20with%20page.gif)
+    The page of the search results to show. [<span style="color: cyan">default:</span> 1; <span style="color: green">should be greater than 1 and less than 500</span>]</br>
+    For example:
+    ![Demo of the flag](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search%20with%20page.gif)
 
 - -h, --help
-  Shows the help message.
+
+    Shows the help message.
 
 ### **Errors and Warnings**
 
@@ -546,22 +536,22 @@ See the available wheels of a release on PyPI. The wheel names are color coded a
 ### **Options**
 
 - `PACKAGE_NAME`
-  The name of the package to show wheel info for  <span style="color: red">[required]</span>
+    The name of the package to show wheel info for  <span style="color: red">[required]</span>
 
 - `VERSION`
-  The version of the package to show info for, defaults to latest
+    The version of the package to show info for, defaults to latest
 
 - -h, --help
-  Shows the help message.
+    Shows the help message.
 
 - --supported-only
-  Only show wheels supported on the current platform
+    Only show wheels supported on the current platform
 
 ### Wheel Name Syntax
 
 The wheel filename is `{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl`.
 
-![Image showing a wheel](https://i.imgur.com/6v2ubKU.png)
+![Image showing a wheel](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/wheel.png)
 
 > <span style="color: #92EC5A;">distribution</span>
 
@@ -571,7 +561,7 @@ The wheel filename is `{distribution}-{version}(-{build tag})?-{python tag}-{abi
 
 - Distribution version, e.g. 1.0.
 
-> <span style="color: #FFF075;">build tag (<b>Optional</b>)</span>
+> <span style="color: #FF7F30;">build tag (<b>Optional</b>)</span>
 
 - build number. Must start with a digit. Acts as a tie-breaker if two wheel file names are the same in all other respects (i.e. name, version, and other tags). Sort as an empty tuple if unspecified, else sort as a two-item tuple with the first item being the initial digits as an `int`, and the second item being the remainder of the tag as a `str`.
 
@@ -591,18 +581,18 @@ The wheel filename is `{distribution}-{version}(-{build tag})?-{python tag}-{abi
 
 - E.g. '.whl'.
 
-For example, `distribution-1.0-1-py27-none-any.whl` is the first build of a package called 'distribution', and is compatible with Python 2.7 (any Python 2.7 implementation), with no ABI (pure Python), on any CPU architecture.
+For example, <code><span style="color: #92EC5A;">distribution</span>-<span style="color: #F2C259;">1.0.0-<span style="color: #FF7F30;">1</span></span>-<span style="color: #FF6EF8;">py27</span>-<span style="color: #9263FB;">none</span>-<span style="color: #33F1C8;">any</span>.<span style="color: #4AA0FC;">whl</span></code> is the <span style="color: #FF7F30;">first build</span> of a package called <span style="color: #92EC5A;">'distribution'</span> with <span style="color: #F2C259;">version 1.0.0</span>, and is compatible with <span style="color: #FF6EF8;">Python 2.7</span> (any Python 2.7 implementation), with <span style="color: #9263FB;">no ABI</span> (pure Python), on <span style="color: #33F1C8;">any CPU architecture</span>.
 
 The last three components of the filename before the extension are called "compatibility tags." The compatibility tags express the package's basic interpreter requirements and are detailed in [PEP 425](https://www.python.org/dev/peps/pep-0425/).
 
-\- Gotten from <https://www.python.org/dev/peps/pep-0427/#file-name-convention>
+\- Data gotten from <https://www.python.org/dev/peps/pep-0427/#file-name-convention>
 
 ### **Errors and Warnings**
 
-#### <span style="color: red">E:</span> Project not found
+- #### <span style="color: red">E:</span> Project not found
 
-Shown when the pypi api returns a 404 response meaning the project name specified doesn't exist.
+    Shown when the pypi api returns a 404 response meaning the project name specified doesn't exist.
 
-#### <span style="color: red">E:</span> Version not found
+- #### <span style="color: red">E:</span> Version not found
 
-Shown when the specified version was not found.
+    Shown when the specified version was not found.
