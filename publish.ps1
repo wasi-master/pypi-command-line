@@ -9,7 +9,9 @@ Remove-Item dist/*
 Remove-Item pypi_command_line.egg-info -Recurse
 Write-Host "Changing version number" -ForegroundColor Green
 (Get-Content $InitFilePath) -Replace '__version__\s+=\s+"(.+)"', ('__version__ = "{0}"' -f $NewVersion)  | Set-Content $InitFilePath
-Write-Host "Buliding Package" -ForegroundColor Green
-python -m build
+Write-Host "Buliding Wheel" -ForegroundColor Green
+python setup.py bdist_wheel
+Write-Host "Buliding Source Distribution" -ForegroundColor Green
+python setup.py sdist
 Write-Host "Uploading Package" -ForegroundColor Green
-twine upload dist/* -p $env:TWINE_PASSWORD -u $env:TWINE_USERNAME -c $Comment -r pypi
+python -m twine upload dist/* -p $env:TWINE_PASSWORD -u $env:TWINE_USERNAME -c $Comment -r pypi
