@@ -38,6 +38,8 @@
     
     
     
+      <link rel="stylesheet" href="../css/custom.css">
+    
     
       
 
@@ -423,28 +425,28 @@
         
           <li class="md-nav__item">
   <a href="#shellingham" class="md-nav__link">
-    shellingham[↑]
+    shellingham
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#lxml" class="md-nav__link">
-    lxml[↑]
+    lxml
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#requests-cache" class="md-nav__link">
-    requests-cache[↑]
+    requests-cache
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#rapidfuzz" class="md-nav__link">
-    rapidfuzz[↑]
+    rapidfuzz
   </a>
   
 </li>
@@ -618,107 +620,76 @@
 <p>Because of this, I've added imports in each function that needs them instead of adding them at the top. since the user is only gonna run one single command the imports required for other commands don't need to be imported. Doing this saves around 500ms.</p>
 <h3 id="compiling-regex-in-regex-search">Compiling regex in <code>regex-search</code><a class="headerlink" href="#compiling-regex-in-regex-search" title="Permanent link">&para;</a></h3>
 <p>I compile the regex because it's almost twice as fast.</p>
-<p><img alt="6.01 vs 3.92" src="https://i.imgur.com/m4AFfEV.png" title="Times for compiled vs non compiled regex" /></p>
-<details>
-<summary>Code</summary>
-
-<img src="https://i.imgur.com/SWlo2zA.png" title="Source code for non compiled regex">
-<img src="https://i.imgur.com/Wr8bWUM.png" title="Source code for compiled regex">
-
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">timeit</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="n">not_compiled</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="mf">6.0103950999999824</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">timeit</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="n">compiled</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="mf">3.9251674000000207</span>
+</code></pre></div>
+<details class="example"><summary>Code</summary><p>Source code for non compiled regex:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">no_compile</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000</span><span class="p">):</span>
+        <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.+&quot;</span><span class="p">,</span> <span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+</code></pre></div>
+<p>Source code for compiled regex:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">no_compile</span><span class="p">():</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.+&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000</span><span class="p">):</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+</code></pre></div>
 </details>
-
 <h3 id="speedups">Speedups<a class="headerlink" href="#speedups" title="Permanent link">&para;</a></h3>
 <p>You may have seen that you can do <code class="highlight">pip install <span class="s2">&quot;pypi-command-line[speedups]&quot;</span></code> and you may have wondered what that actually does.
-If you see the source code you can see these lines</p>
-<script src="https://emgithub.com/embed.js?target=https%3A%2F%2Fgithub.com%2Fwasi-master%2Fpypi-command-line%2Fblob%2Fmain%2Fsetup.cfg%23L80-L84&style=atom-one-dark&showBorder=on&showLineNumbers=on&showFileMeta=on&showCopy=off"></script>
-
-<p>Here's a detailed explanation</p>
-<h4 id="shellingham"><strong>shellingham</strong><sup>[<a title="Link to shellingham's PyPI page" href="https://pypi.org/project/shellingham/" target="_blank">↑</a>]</sup><a class="headerlink" href="#shellingham" title="Permanent link">&para;</a></h4>
+If you see the source code <a href="https://github.com/wasi-master/pypi-command-line/blob/main/setup.cfg#L79-L84">you can see these lines</a></p>
+<div class="highlight"><pre><span></span><code><span class="k">[options.extras_require]</span>
+<span class="na">speedups</span> <span class="o">=</span>
+    <span class="na">lxml</span>
+    <span class="na">rapidfuzz</span>
+    <span class="na">requests_cache</span>
+    <span class="na">shellingham</span>
+</code></pre></div>
+<p>Here's a detailed explanation of what each of those packages do</p>
+<h4 id="shellingham"><a href="https://pypi.org/project/shellingham/"><strong>shellingham</strong></a><a class="headerlink" href="#shellingham" title="Permanent link">&para;</a></h4>
 <p>This does not really speed up anything but adds auto shell detection for autocomplete installation using the <code class="highlight">--install-completion</code> command. This technically lowers the amount of time taken to install autocompletion because it makes it so that you don't have to manually provide what terminal/shell you're using</p>
-<h4 id="lxml"><strong>lxml</strong><sup>[<a title="Link to lxml's PyPI page" href="https://pypi.org/project/lxml/" target="_blank">↑</a>]</sup><a class="headerlink" href="#lxml" title="Permanent link">&para;</a></h4>
+<h4 id="lxml"><a href="https://pypi.org/project/lxml/"><strong>lxml</strong></a><a class="headerlink" href="#lxml" title="Permanent link">&para;</a></h4>
 <p>This is an alternative for the built-in <a href="https://docs.python.org/3/library/html.parser.html">html.parser</a> that comes with python. There is also <a href="https://pypi.org/project/html5lib/"><code>html5lib</code></a></p>
-<details>
-<summary>Table with parser comparisons supported by BeautifulSoup</summary>
-
-<table>
-  <thead>
-    <tr>
-      <th>Parser</th>
-      <th>Typical usage</th>
-      <th>Advantages</th>
-      <th>Disadvantages</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Python&#39;s html.parser</td>
-      <td><code>BeautifulSoup(markup, &quot;html.parser&quot;)</code></td>
-      <td>
-        <ul>
-          <li>Batteries included </li>
-          <li>Decent speed </li>
-          <li>Lenient (As of Python 2.7.3 and 3.2.)</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Not as fast as lxml, less lenient than html5lib.</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>lxml&#39;s HTML parser</td>
-      <td><code>BeautifulSoup(markup, &quot;lxml&quot;)</code></td>
-      <td>
-        <ul>
-          <li>Very fast</li>
-          <li>Lenient</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>External C dependency</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>lxml&#39;s XML parser</td>
-      <td><code>BeautifulSoup(markup, &quot;lxml-xml&quot;)</code> <code>BeautifulSoup(markup, &quot;xml&quot;)</code></td>
-      <td>
-        <ul>
-          <li>Very fast </li>
-          <li>The only currently supported XML parser</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>External C dependency</li>
-        </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>html5lib</td>
-      <td><code>BeautifulSoup(markup, &quot;html5lib&quot;)</code></td>
-      <td>
-        <ul>
-          <li>Extremely lenient </li>
-          <li>Parses pages the same way a web browser does </li>
-          <li>Creates valid HTML5</li>
-        </ul>
-      </td>
-      <td>
-        <ul>
-          <li>Very slow</li>
-          <li>External Python dependency</li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
+<details class="info"><summary>Table with parser comparisons supported by BeautifulSoup</summary><table>
+<thead>
+<tr>
+<th>Parser</th>
+<th>Typical usage</th>
+<th>Advantages</th>
+<th>Disadvantages</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python's html.parser</td>
+<td><code class="highlight"><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">markup</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">)</span></code></td>
+<td><ul> <li>Batteries included </li><li>Decent speed </li><li>Lenient (As of Python 2.7.3 &amp; 3.2.)</li></ul></td>
+<td><ul> <li>Not as fast as lxml, less lenient than html5lib.</li></ul></td>
+</tr>
+<tr>
+<td>lxml's HTML parser</td>
+<td><code class="highlight"><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">markup</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">)</span></code></td>
+<td><ul> <li>Very fast</li><li>Lenient</li></ul></td>
+<td><ul> <li>External C dependency</li></ul></td>
+</tr>
+<tr>
+<td>lxml's XML parser</td>
+<td><code class="highlight"><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">markup</span><span class="p">,</span> <span class="s2">&quot;lxml-xml&quot;</span><span class="p">)</span></code> <code class="highlight"><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">markup</span><span class="p">,</span> <span class="s2">&quot;xml&quot;</span><span class="p">)</span></code></td>
+<td><ul> <li>Very fast </li><li>The only currently supported XML parser</li></ul></td>
+<td><ul> <li>External C dependency</li></ul></td>
+</tr>
+<tr>
+<td>html5lib</td>
+<td><code class="highlight"><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">markup</span><span class="p">,</span> <span class="s2">&quot;html5lib&quot;</span><span class="p">)</span></code></td>
+<td><ul> <li>Extremely lenient </li><li>Parses pages the same way a web browser does </li><li>Creates valid HTML5</li></ul></td>
+<td><ul> <li>Very slow</li><li>External Python dependency</li></ul></td>
+</tr>
+</tbody>
 </table>
-
-From <https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser>
+<p>- From <a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser">https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser</a></p>
 </details>
-
 <p>If this is not installed it uses <a href="https://docs.python.org/3/library/html.parser.html">html.parser</a> for html and <a href="https://docs.python.org/3/library/xml.etree.elementtree.html">xml.etree.ElementTree</a> for xml.</p>
 <ul>
 <li>
@@ -730,9 +701,9 @@ From <https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser
 <p><code>lxml</code> is more than 5 times faster than <code>html.parser</code> <sup>[<a title="Reference" href="https://www.ianbicking.org/blog/2008/03/python-html-parser-performance.html#:~:text=from%C2%A0python.org.-,parsing,-The%20first%20test" target="_blank">‾</a>]</sup></p>
 </li>
 </ul>
-<h4 id="requests-cache"><strong>requests-cache</strong><sup>[<a title="Link to requests-cache's PyPI page" href="https://pypi.org/project/requests-cache/" target="_blank">↑</a>]</sup><a class="headerlink" href="#requests-cache" title="Permanent link">&para;</a></h4>
+<h4 id="requests-cache"><a href="https://pypi.org/project/requests-cache/"><strong>requests-cache</strong></a><a class="headerlink" href="#requests-cache" title="Permanent link">&para;</a></h4>
 <p>This allows http requests to be faster by caching<sup>[<a title="Caching is a process that stores multiple copies of data or files in a temporary storage location—or cache—so they can be accessed faster." href="https://aws.amazon.com/caching/" target="_blank">?</a>]</sup> them</p>
-<h4 id="rapidfuzz"><strong>rapidfuzz</strong><sup>[<a title="Link to rapidfuzz's PyPI page" href="https://pypi.org/project/rapidfuzz/" target="_blank">↑</a>]</sup><a class="headerlink" href="#rapidfuzz" title="Permanent link">&para;</a></h4>
+<h4 id="rapidfuzz"><a href="https://pypi.org/project/rapidfuzz/"><strong>rapidfuzz</strong></a><a class="headerlink" href="#rapidfuzz" title="Permanent link">&para;</a></h4>
 <p>This allows rapid fuzzy string matching around 20 times faster than thefuzz</p>
 <h2 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h2>
 <h3 id="rich"><a href="https://github.com/willmcgugan/rich">Rich</a><a class="headerlink" href="#rich" title="Permanent link">&para;</a></h3>
@@ -993,6 +964,8 @@ From <https://www.crummy.com/software/BeautifulSoup/bs4/doc/#installing-a-parser
     
     
       <script src="../assets/javascripts/bundle.56a63758.min.js"></script>
+      
+        <script src="../js/gif_script.js"></script>
       
     
   </body>

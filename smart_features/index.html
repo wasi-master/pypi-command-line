@@ -38,6 +38,8 @@
     
     
     
+      <link rel="stylesheet" href="../css/custom.css">
+    
     
       
 
@@ -518,6 +520,13 @@
                 
                 
                 <h1 id="the-smartness-of-pypi-command-line">The smartness of <code>pypi-command-line</code><a class="headerlink" href="#the-smartness-of-pypi-command-line" title="Permanent link">&para;</a></h1>
+<div class="admonition tip">
+<p class="admonition-title">Tips</p>
+<ul>
+<li>You can <em>click</em> the gifs to make them reload, if this does not work refresh the page</br></li>
+<li>You can <em>right click</em> and press "<em>Open Image in New Tab</em>" to open them in <em>full screen</em></li>
+</ul>
+</div>
 <h2 id="autocompletion">Autocompletion<a class="headerlink" href="#autocompletion" title="Permanent link">&para;</a></h2>
 <p>It supports command line argument autocompletion that can be used via pressing tab.
 <img alt="Example of autocomplete" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/autocomplete%20example.gif" /></p>
@@ -538,7 +547,7 @@
 <h2 id="command-specific">Command specific<a class="headerlink" href="#command-specific" title="Permanent link">&para;</a></h2>
 <h3 id="wheels"><code>wheels</code><a class="headerlink" href="#wheels" title="Permanent link">&para;</a></h3>
 <p>In the wheels command it colorizes the seperate parts of the wheels for easy understanding</p>
-<p><img alt="Example of this feature" src="https://i.imgur.com/noxWljq.png" /></p>
+<p><img alt="Example of this feature" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/wheel.png" /></p>
 <h4 id="format"><strong>Format</strong><a class="headerlink" href="#format" title="Permanent link">&para;</a></h4>
 <p>The wheel filename is <code>{distribution}-{version}(-{build tag})?-{python tag}-{abi tag}-{platform tag}.whl</code>.</p>
 <blockquote>
@@ -554,7 +563,7 @@
 <li>Distribution version, e.g. 1.0.</li>
 </ul>
 <blockquote>
-<p><span style="color: #FFF075;">build tag (<b>Optional</b>)</span></p>
+<p><span style="color: #FF7F30;">build tag (<b>Optional</b>)</span></p>
 </blockquote>
 <ul>
 <li>build number. Must start with a digit. Acts as a tie-breaker if two wheel file names are the same in all other respects (i.e. name, version, and other tags). Sort as an empty tuple if unspecified, else sort as a two-item tuple with the first item being the initial digits as an <code>int</code>, and the second item being the remainder of the tag as a <code>str</code>.</li>
@@ -572,14 +581,20 @@
 <li>E.g. 'p33m', 'abi3', 'none'.</li>
 </ul>
 <blockquote>
+<p><span style="color: #33F1C8;">platform tag</span></p>
+</blockquote>
+<ul>
+<li>E.g. 'linux_x86_64', 'any'.</li>
+</ul>
+<blockquote>
 <p><span style="color: #4AA0FC;">file extension</span></p>
 </blockquote>
 <ul>
 <li>E.g. '.whl'.</li>
 </ul>
-<p>For example, <code>distribution-1.0-1-py27-none-any.whl</code> is the first build of a package called 'distribution', and is compatible with Python 2.7 (any Python 2.7 implementation), with no ABI (pure Python), on any CPU architecture.</p>
+<p>For example, <code><span style="color: #92EC5A;">distribution</span>-<span style="color: #F2C259;">1.0.0-<span style="color: #FF7F30;">1</span></span>-<span style="color: #FF6EF8;">py27</span>-<span style="color: #9263FB;">none</span>-<span style="color: #33F1C8;">any</span>.<span style="color: #4AA0FC;">whl</span></code> is the <span style="color: #FF7F30;">first build</span> of a package called <span style="color: #92EC5A;">'distribution'</span> with <span style="color: #F2C259;">version 1.0.0</span>, and is compatible with <span style="color: #FF6EF8;">Python 2.7</span> (any Python 2.7 implementation), with <span style="color: #9263FB;">no ABI</span> (pure Python), on <span style="color: #33F1C8;">any CPU architecture</span>.</p>
 <p>The last three components of the filename before the extension are called "compatibility tags." The compatibility tags express the package's basic interpreter requirements and are detailed in <a href="https://www.python.org/dev/peps/pep-0425/">PEP 425</a>.</p>
-<p>- Gotten from <a href="https://www.python.org/dev/peps/pep-0427/#file-name-convention">https://www.python.org/dev/peps/pep-0427/#file-name-convention</a></p>
+<p>- Data gotten from <a href="https://www.python.org/dev/peps/pep-0427/#file-name-convention">https://www.python.org/dev/peps/pep-0427/#file-name-convention</a></p>
                 
                   
                 
@@ -678,6 +693,8 @@
     
     
       <script src="../assets/javascripts/bundle.56a63758.min.js"></script>
+      
+        <script src="../js/gif_script.js"></script>
       
     
   </body>
