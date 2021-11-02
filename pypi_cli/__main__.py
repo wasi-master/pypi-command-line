@@ -118,7 +118,7 @@ def __color_error_message():
                     f"https://wasi-master.github.io/pypi-command-line/usage#{self.ctx.command.name.replace('-', '')}"
                 )
             else:
-                return
+                raise typer.Exit()
 
     click.exceptions.UsageError.show = show
 
@@ -505,7 +505,7 @@ def description(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]:no_entry_sign: Project not found[/]")
+            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
         rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
         raise typer.Exit()
 
@@ -740,7 +740,7 @@ def releases(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]:no_entry_sign: Project not found[/]")
+            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
         rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
         raise typer.Exit()
 
@@ -896,7 +896,7 @@ def information(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]:no_entry_sign: Project not found[/]")
+            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
         rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
         raise typer.Exit()
 
@@ -911,9 +911,13 @@ def information(
     except ImportError:
         from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
 
+    from datetime import timezone  # pylint: disable=import-outside-toplevel
+
     if urls:
         # HACK: should use fromisotime
-        release_time = datetime.strptime(urls[-1]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ")
+        release_time = utc_to_local(
+            datetime.strptime(urls[-1]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ"), timezone.utc
+        )
         natural_time = release_time.strftime("%b %d, %Y")
     else:
         natural_time = "UNKNOWN"
@@ -1185,7 +1189,7 @@ def read_the_docs(
 
                 if response.status_code != 200:
                     if response.status_code == 404:
-                        rich.print("[red]:no_entry_sign: Project not found[/]")
+                        rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
                     rich.print(
                         f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]"
                     )
@@ -1241,7 +1245,7 @@ def browse(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]:no_entry_sign: Project not found[/]")
+            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
         rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
         raise typer.Exit()
 
@@ -1339,11 +1343,15 @@ def version(
         None, help="The name or link to the docs of the package to show the documentation for"
     ),
     limit: int = Option(10, help="Limit the number of versions to show"),
+    no_pre_releases: bool = Option(False, help="If set then it will not show pre-releases"),
+    show_installed_version: bool = Option(False, help="If set then it will show the version that is installed too"),
 ):
     """Show the cli's or another package's version and exit"""
     if not package_name:
+        import sys
         from .__init__ import __version__  # pylint: disable=import-outside-toplevel
 
+        console.print(f"Python version: {sys.version}")
         console.print(f"Current version of [yellow]pypi-command-line[/] is [red]{__version__}[/]")
         with console.status("Getting latest version"):
             latest_version = get_latest_version()
@@ -1351,12 +1359,12 @@ def version(
         raise typer.Exit()
 
     url = f"{base_url}/pypi/{quote(package_name)}/json"
-    with console.status("Getting data from PyPI"):
+    with console.status("Getting latest versions from PyPI"):
         response = session.get(url)
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]:no_entry_sign: Project not found[/]")
+            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
         rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
         raise typer.Exit()
 
@@ -1365,13 +1373,68 @@ def version(
     try:
         from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
     except ImportError:
+        if no_pre_releases:
+            rich.print(
+                "[red]:no_entry_sign: Install packaging (`pip install packaging`) to use the --no-pre-releases flag[/]"
+            )
+            raise typer.Exit()
         from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
 
-    latest_versions = list(sorted(map(parse_version, parsed_data["releases"].keys()), reverse=True))[:limit]
-    output = f"Top {limit} latest versions of [green]{package_name}[/] ordered by version number:\n"
+    if not no_pre_releases:
+        latest_versions = list(sorted(map(parse_version, parsed_data["releases"].keys()), reverse=True))[:limit]
+    else:
+        latest_versions = list(
+            sorted(
+                filter(lambda x: not x.is_prerelease, map(parse_version, parsed_data["releases"].keys())), reverse=True
+            )
+        )[:limit]
+
+    minimal_output = limit == 1
+
+    if minimal_output:
+        output = f"[green]{package_name}[/] -"
+    else:
+        if show_installed_version:
+            import pkg_resources
+
+            try:
+                installed_version = pkg_resources.get_distribution(package_name).version
+            except Exception:
+                pass
+            else:
+                version_info = f" [dark_orange](Installed Version: {installed_version})[/]"
+        output = f"Top {limit} latest versions of [green]{package_name}[/]{version_info if show_installed_version else ''}{' [yellow](excluding pre-releases)[/]' if no_pre_releases else ''}:\n"
+
+    from datetime import timezone  # pylint: disable=import-outside-toplevel
+
     for n, version in enumerate(latest_versions, start=1):
-        output += f" [magenta]{n}.[/] [white]{version}[/]\n"
-    console.print(output)
+        output += f" {f'[magenta]{n}.[/] ' if not minimal_output else ''}"
+
+        if limit == 1 and show_installed_version:
+            import pkg_resources
+
+            try:
+                installed_version = pkg_resources.get_distribution(package_name).version
+            except Exception:
+                output += f"[blue]{version}[/]"
+            else:
+                output += f"[yellow]{installed_version}[/]->[blue]{version}[/]"
+        else:
+            output += f"[blue]{version}[/]"
+
+        try:
+            upload_time = utc_to_local(
+                datetime.strptime(
+                    parsed_data["releases"][str(version)][0]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ"
+                ),
+                timezone.utc,
+            )
+            output += f" [red]{humanize.naturaltime(upload_time)}[/] [cyan]({upload_time.strftime('%a %b %d %H:%M:%S %Y')})[/]"
+        except Exception as e:
+            print(e)
+        finally:
+            output += "\n"
+    console.print(output.strip())
 
 
 @app.callback()
