@@ -260,7 +260,7 @@ console = Console(
             "markdown.link": "#6088ff",
             "wheel.distribution": "#92EC5A",
             "wheel.version": "#F2C259",
-            "wheel.build_tag": "#FFF075",
+            "wheel.build_tag": "#FF7F30",
             "wheel.python_tag": "#FF6EF8",
             "wheel.abi_tag": "#9263FB",
             "wheel.platform_tag": "#33F1C8",
@@ -606,22 +606,22 @@ def description(
 
 @app.command()
 def new_packages(
-    _author: bool = Option(False, metavar="author", help="Show the project author or not"),
-    _link: bool = Option(True, metavar="link", help="Show the project link or not"),
+    author: bool = Option(False, metavar="author", help="Show the project author or not"),
+    link: bool = Option(True, metavar="link", help="Show the project link or not"),
 ):
     """See the top 40 newly added packages."""
     _format_xml_packages(
-        f"{base_url}/rss/packages.xml", "Newly Added Packages", "Published At", _author, _link, split_title=True
+        f"{base_url}/rss/packages.xml", "Newly Added Packages", "Published At", author, link, split_title=True
     )
 
 
 @app.command()
 def new_releases(
-    _author: bool = Option(False, metavar="author", help="Show the project author or not"),
-    _link: bool = Option(True, metavar="link", help="Show the project link or not"),
+    author: bool = Option(False, metavar="author", help="Show the project author or not"),
+    link: bool = Option(True, metavar="link", help="Show the project link or not"),
 ):
     """See the top 100 newly updated packages."""
-    _format_xml_packages(f"{base_url}/rss/updates.xml", "Newly Released Packages", "Released At", _author, _link)
+    _format_xml_packages(f"{base_url}/rss/updates.xml", "Newly Released Packages", "Released At", author, link)
 
 
 @app.command()
@@ -725,7 +725,7 @@ def releases(
         "also include the version with this syntax: `package_name==version`",
     ),
     version: str = Option(None, help="The version of the package to show releases for"),
-    _link: bool = Option(False, metavar="link", help="Display the links to the releases"),
+    link: bool = Option(False, metavar="link", help="Display the links to the releases"),
 ):
     """See all the available releases for a package.
 
@@ -750,7 +750,7 @@ def releases(
     table.add_column("Version", style="green", header_style="green")
     table.add_column("Upload date", width=24, style="red", header_style="red")
     table.add_column("Size", style="yellow", header_style="yellow")
-    if _link is True:
+    if link is True:
         table.add_column("Link", style="cyan", header_style="blue")
 
     for version, releases in parsed_data["releases"].items():
@@ -763,7 +763,7 @@ def releases(
         except ValueError:
             upload_time = datetime.strptime(release["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%SZ")
 
-        if _link is True:
+        if link is True:
             table.add_row(
                 f"[link={release['url']}] {version}[/]",
                 upload_time.strftime("%c"),
