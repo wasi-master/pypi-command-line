@@ -121,3 +121,6 @@ dmypy.json
 
 # File history
 .history/
+
+# A file I use for making workflows (WIP)
+workflow_generator.py
