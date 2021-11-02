@@ -729,16 +729,45 @@ name on supported terminals</p>
 <li><code>-h</code>, <code>--help</code>
   Show the help message.</li>
 </ul>
+<h2 id="read-the-docs">read-the-docs<a class="headerlink" href="#read-the-docs" title="Permanent link">&para;</a></h2>
+<p>Searches the documentation for a certain package.</p>
+<p>This just gets the documentation url and opens it's search results page with the given query</p>
+<h3 id="usage_18"><strong>Usage</strong><a class="headerlink" href="#usage_18" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>pypi read-the-docs [OPTIONS] PACKAGE_NAME [QUERY]</p>
+</blockquote>
+<h3 id="options_10"><strong>Options</strong><a class="headerlink" href="#options_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>PACKAGE_NAME</code></li>
+</ul>
+<p>The name or link to the docs of the package to show the documentation for  [<span style="color: red">required</span>]</p>
+<ul>
+<li><code>QUERY</code></li>
+</ul>
+<p>The query you want to read the docs for, if not passed it opens the main docs page</p>
+<ul>
+<li><code>--url-only</code></li>
+</ul>
+<p>Only print the url to the console instead of opening it in a browser[<span style="color: blue">default: url-only</span>]</p>
+<ul>
+<li><code>-h</code>, <code>--help</code></li>
+</ul>
+<p>Show the help message.</p>
+<h3 id="errors-and-warnings_8"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_8" title="Permanent link">&para;</a></h3>
+<h4 id="e-docs-not-available"><span style="color: yellow">e:</span> Docs not available<a class="headerlink" href="#e-docs-not-available" title="Permanent link">&para;</a></h4>
+<p>Shown when the docs are not in the list of already known docs and needs to be gotten from PyPI, it will ask you if you want to get it from pypi</p>
+<h4 id="e-documentation-url-not-found-on-pypi"><span style="color: red">E:</span> Documentation url not found on PyPI<a class="headerlink" href="#e-documentation-url-not-found-on-pypi" title="Permanent link">&para;</a></h4>
+<p>Shown when the docs are not in the list of already known docs and not given on PyPI</p>
 <h2 id="releases_1">releases<a class="headerlink" href="#releases_1" title="Permanent link">&para;</a></h2>
 <p>Shows all the available releases for a package.</p>
 <p>This can help you determine what versions of a package are available on PyPI.</p>
 <h3 id="demo_10"><strong>Demo</strong><a class="headerlink" href="#demo_10" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20releases.gif" /></p>
-<h3 id="usage_18"><strong>Usage</strong><a class="headerlink" href="#usage_18" title="Permanent link">&para;</a></h3>
+<h3 id="usage_19"><strong>Usage</strong><a class="headerlink" href="#usage_19" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi releases [OPTIONS] PACKAGE_NAME</p>
 </blockquote>
-<h3 id="options_10"><strong>Options</strong><a class="headerlink" href="#options_10" title="Permanent link">&para;</a></h3>
+<h3 id="options_11"><strong>Options</strong><a class="headerlink" href="#options_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
 <p><code>PACKAGE_NAME</code>
@@ -754,18 +783,18 @@ name on supported terminals</p>
 <li>-h, --help
   Show the help message.</li>
 </ul>
-<h3 id="errors-and-warnings_8"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_8" title="Permanent link">&para;</a></h3>
+<h3 id="errors-and-warnings_9"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_9" title="Permanent link">&para;</a></h3>
 <h4 id="e-project-not-found_4"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_4" title="Permanent link">&para;</a></h4>
 <p>Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist</p>
 <h2 id="search">search<a class="headerlink" href="#search" title="Permanent link">&para;</a></h2>
 <p>Search for a package on PyPI.</p>
 <h3 id="demo_11"><strong>Demo</strong><a class="headerlink" href="#demo_11" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search.gif" /></p>
-<h3 id="usage_19"><strong>Usage</strong><a class="headerlink" href="#usage_19" title="Permanent link">&para;</a></h3>
+<h3 id="usage_20"><strong>Usage</strong><a class="headerlink" href="#usage_20" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi search [OPTIONS] PACKAGE_NAME</p>
 </blockquote>
-<h3 id="options_11"><strong>Options</strong><a class="headerlink" href="#options_11" title="Permanent link">&para;</a></h3>
+<h3 id="options_12"><strong>Options</strong><a class="headerlink" href="#options_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
 <p>PACKAGE_NAME <span style="color: red">[required]</span>
@@ -782,18 +811,18 @@ name on supported terminals</p>
 <li>-h, --help
   Shows the help message.</li>
 </ul>
-<h3 id="errors-and-warnings_9"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_9" title="Permanent link">&para;</a></h3>
+<h3 id="errors-and-warnings_10"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_10" title="Permanent link">&para;</a></h3>
 <h4 id="e-project-not-found_5"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_5" title="Permanent link">&para;</a></h4>
 <p>Shown when the pypi api returns a 404 response meaning the page number specified most likely doesn't exist</p>
 <h2 id="wheels">wheels<a class="headerlink" href="#wheels" title="Permanent link">&para;</a></h2>
 <p>See the available wheels of a release on PyPI. The wheel names are color coded and the information is colored too.</p>
 <h3 id="demo_12"><strong>Demo</strong><a class="headerlink" href="#demo_12" title="Permanent link">&para;</a></h3>
 <p><img alt="Demo of the command" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20wheels.gif" /></p>
-<h3 id="usage_20"><strong>Usage</strong><a class="headerlink" href="#usage_20" title="Permanent link">&para;</a></h3>
+<h3 id="usage_21"><strong>Usage</strong><a class="headerlink" href="#usage_21" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi search [OPTIONS] PACKAGE_NAME [VERSION]</p>
 </blockquote>
-<h3 id="options_12"><strong>Options</strong><a class="headerlink" href="#options_12" title="Permanent link">&para;</a></h3>
+<h3 id="options_13"><strong>Options</strong><a class="headerlink" href="#options_13" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
 <p><code>PACKAGE_NAME</code>
@@ -860,7 +889,7 @@ name on supported terminals</p>
 <p>For example, <code>distribution-1.0-1-py27-none-any.whl</code> is the first build of a package called 'distribution', and is compatible with Python 2.7 (any Python 2.7 implementation), with no ABI (pure Python), on any CPU architecture.</p>
 <p>The last three components of the filename before the extension are called "compatibility tags." The compatibility tags express the package's basic interpreter requirements and are detailed in <a href="https://www.python.org/dev/peps/pep-0425/">PEP 425</a>.</p>
 <p>- Gotten from <a href="https://www.python.org/dev/peps/pep-0427/#file-name-convention">https://www.python.org/dev/peps/pep-0427/#file-name-convention</a></p>
-<h3 id="errors-and-warnings_10"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_10" title="Permanent link">&para;</a></h3>
+<h3 id="errors-and-warnings_11"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_11" title="Permanent link">&para;</a></h3>
 <h4 id="e-project-not-found_6"><span style="color: red">E:</span> Project not found<a class="headerlink" href="#e-project-not-found_6" title="Permanent link">&para;</a></h4>
 <p>Shown when the pypi api returns a 404 response meaning the project name specified doesn't exist.</p>
 <h4 id="e-version-not-found"><span style="color: red">E:</span> Version not found<a class="headerlink" href="#e-version-not-found" title="Permanent link">&para;</a></h4>
