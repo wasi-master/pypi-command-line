@@ -17,6 +17,18 @@ def test_version_with_limit(runner):
     assert len(output.splitlines()) == 2, "More that one item was gotten"
 
 
+def test_version_with_no_pre_releases(runner):
+    result = runner.run("pypi version discord --no-pre-releases")
+    output = result.stdout.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n").strip()
+    assert output, "No output was gotten"  # Assert if a output was returned
+
+
+def test_version_with_show_installed_versions(runner):
+    result = runner.run("pypi version discord --show-installed-versions")
+    output = result.stdout.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n").strip()
+    assert output, "No output was gotten"  # Assert if a output was returned
+
+
 def test_version_help_message(runner):
     result = runner.run("pypi version --help")
     assert result.stdout.decode("utf-8"), "No output was gotten"  # Assert if a output was returned
