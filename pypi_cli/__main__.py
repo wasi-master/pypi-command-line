@@ -606,22 +606,24 @@ def description(
 
 @app.command()
 def new_packages(
-    author: bool = Option(False, metavar="author", help="Show the project author or not"),
-    link: bool = Option(True, metavar="link", help="Show the project link or not"),
+    show_author: bool = Option(False, metavar="author", help="Show the project author or not"),
+    hide_link: bool = Option(False, metavar="link", help="Show the project link or not"),
 ):
     """See the top 40 newly added packages."""
     _format_xml_packages(
-        f"{base_url}/rss/packages.xml", "Newly Added Packages", "Published At", author, link, split_title=True
+        f"{base_url}/rss/packages.xml", "Newly Added Packages", "Published At", show_author, hide_link, split_title=True
     )
 
 
 @app.command()
 def new_releases(
-    author: bool = Option(False, metavar="author", help="Show the project author or not"),
-    link: bool = Option(True, metavar="link", help="Show the project link or not"),
+    show_author: bool = Option(False, metavar="author", help="Show the project author or not"),
+    hide_link: bool = Option(False, metavar="link", help="Show the project link or not"),
 ):
     """See the top 100 newly updated packages."""
-    _format_xml_packages(f"{base_url}/rss/updates.xml", "Newly Released Packages", "Released At", author, link)
+    _format_xml_packages(
+        f"{base_url}/rss/updates.xml", "Newly Released Packages", "Released At", show_author, hide_link
+    )
 
 
 @app.command()
@@ -725,7 +727,7 @@ def releases(
         "also include the version with this syntax: `package_name==version`",
     ),
     version: str = Option(None, help="The version of the package to show releases for"),
-    link: bool = Option(False, metavar="link", help="Display the links to the releases"),
+    show_links: bool = Option(False, metavar="link", help="Display the links to the releases"),
 ):
     """See all the available releases for a package.
 
