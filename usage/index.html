@@ -467,11 +467,11 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#-cache-no-cache" class="md-nav__link">
-    --cache / --no-cache
+  <a href="#-no-cache" class="md-nav__link">
+    --no-cache
   </a>
   
-    <nav class="md-nav" aria-label="--cache / --no-cache">
+    <nav class="md-nav" aria-label="--no-cache">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1084,8 +1084,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#e-docs-not-available" class="md-nav__link">
-    e: Docs not available
+  <a href="#w-docs-not-available" class="md-nav__link">
+    W: Docs not available
   </a>
   
 </li>
@@ -1325,8 +1325,12 @@
 <div class="admonition tip">
 <p class="admonition-title">Tips</p>
 <ul>
-<li>You can <em>click</em> the gifs to make them reload, if this does not work refresh the page</br></li>
-<li>You can <em>right click</em> and press "<em>Open Image in New Tab</em>" to open them in <em>full screen</em></li>
+<li>You can <em>click</em> the gifs to make them restart, if this does not work reload the page (Shortcut for reloading: <kbd>F5</kbd>)</br></li>
+<li>You can either<ul>
+<li><em>right click</em> and press "<em>Open Image in New Tab</em>" to open them in <em>full screen</em></li>
+<li><em>drag</em> the image <em>and drop</em> it to your tabs panel to open them in <em>full screen</em></li>
+</ul>
+</li>
 </ul>
 </div>
 <h2 id="options"><strong>Options</strong><a class="headerlink" href="#options" title="Permanent link">&para;</a></h2>
@@ -1358,8 +1362,8 @@
 <blockquote>
 <p>pypi --show-completion</p>
 </blockquote>
-<h2 id="-cache-no-cache">--cache / --no-cache<a class="headerlink" href="#-cache-no-cache" title="Permanent link">&para;</a></h2>
-<p>Whether to use cache or not for the current command, for more information about the cache see <a href="https://wasi-master.github.io/pypi-command-line/notes#cache">notes</a> [<span style="color: cyan">default:</span> cache]</p>
+<h2 id="-no-cache">--no-cache<a class="headerlink" href="#-no-cache" title="Permanent link">&para;</a></h2>
+<p>If used, disabled the cache for the current command, for more information about the cache see <a href="https://wasi-master.github.io/pypi-command-line/notes#cache">notes</a></p>
 <h3 id="demo_2"><strong>Demo</strong><a class="headerlink" href="#demo_2" title="Permanent link">&para;</a></h3>
 <p>TODO: Add demo for --no-cache</p>
 <h3 id="usage_4"><strong>Usage</strong><a class="headerlink" href="#usage_4" title="Permanent link">&para;</a></h3>
@@ -1394,23 +1398,19 @@
 <ul>
 <li>
 <p><code>PACKAGE_NAME</code></p>
-<p>The name of the package to show the latest version(s) for. [<span style="color: cyan">default:</span> None]</p>
+<p>The name of the package to show the latest version(s) for. [<span style="color: cyan">default:</span> pypi-command-line]</p>
 </li>
 <li>
 <p><code>--limit INTEGER</code></p>
 <p>Limit the number of versions to show [<span style="color: cyan">default:</span> 10]</p>
 </li>
 <li>
-<p><code>--no-pre-releases</code> / <code>--no-no-pre-releases</code></p>
-<p>If set then it will not show pre-releases [<span style="color: cyan">default:</span> no-no-pre-releases]</p>
+<p><code>--no-pre-releases</code></p>
+<p>If set then it will not show pre-releases</p>
 </li>
 <li>
-<p><code>--minimal</code> / <code>--no-minimal</code></p>
-<p>Whether to show minimal output, this is enabled if there are less than 3 versions to show  [<span style="color: cyan">default:</span> no-minimal]</p>
-</li>
-<li>
-<p><code>--show-installed-versions</code> / <code>--no-show-installed-versions</code></p>
-<p>If set then it will show the version that is installed too  [<span style="color: cyan">default:</span> no-show-installed-versions]</p>
+<p><code>--show-installed-versions</code></p>
+<p>If set then it will show the version that is installed too</p>
 </li>
 <li>
 <p><code>-h</code>, <code>--help</code></p>
@@ -1432,7 +1432,7 @@
 <ul>
 <li>
 <p><code>PACKAGE_NAME</code></p>
-<p>The name of the package to show the urls for.</p>
+<p>The name of the package to show the urls for. <span style="color: red">[required]</span></p>
 </li>
 <li>
 <p><code>--url-only</code></p>
@@ -1498,8 +1498,8 @@
 <p>Package to get the description for <span style="color: red">[required]</span></p>
 </li>
 <li>
-<p><code>--force-github</code> / <code>--no-force-github</code></p>
-<p>Forcefully get the description from github [<span style="color: cyan">default:</span> no-force-github]</br>
+<p><code>--force-github</code></p>
+<p>Forcefully get the description from github </br>
 This will make sure that it doesn't get the description from pypi but get it from github by reading the readme file of that project's repository</p>
 </li>
 <li>
@@ -1544,30 +1544,30 @@ This will make sure that it doesn't get the description from pypi but get it fro
 <p>The version of the package to show information for</p>
 </li>
 <li>
-<p><code>--show-classifiers</code> / <code>--no-show-classifiers</code></p>
-<p>Show the classifiers  [<span style="color: cyan">default:</span> no-show-classifiers]</br>
+<p><code>--show-classifiers</code></p>
+<p>Show the classifiers  </br>
    Example of how this looks:
    <img alt="Example of this flag" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif" /></p>
 </li>
 <li>
-<p><code>--hide-project-urls</code> / <code>--no-hide-project-urls</code></p>
-<p>Hide the project urls  [<span style="color: cyan">default:</span> no-hide-project-urls]</p>
+<p><code>--hide-project-urls</code></p>
+<p>Hide the project urls</p>
 </li>
 <li>
-<p><code>--hide-requirements</code> / <code>--no-hide-requirements</code></p>
-<p>Hide the requirements  [<span style="color: cyan">default:</span> no-hide-requirements]</p>
+<p><code>--hide-requirements</code></p>
+<p>Hide the requirements</p>
 </li>
 <li>
-<p><code>--hide-github</code> / <code>--no-hide-github</code></p>
-<p>Hide the github  [<span style="color: cyan">default:</span> no-hide-github]</p>
+<p><code>--hide-github</code></p>
+<p>Hide the github</p>
 </li>
 <li>
-<p><code>--hide-stats</code> / <code>--no-hide-stats</code></p>
-<p>Hide the stats  [<span style="color: cyan">default:</span> no-hide-stats]</p>
+<p><code>--hide-stats</code></p>
+<p>Hide the stats</p>
 </li>
 <li>
-<p><code>--hide-meta</code> / <code>--no-hide-meta</code></p>
-<p>Hide the metadata  [<span style="color: cyan">default:</span> no-hide-meta]</p>
+<p><code>--hide-meta</code></p>
+<p>Hide the metadata</p>
 </li>
 <li>
 <p><code>-h</code>, <code>--help</code></p>
@@ -1616,13 +1616,13 @@ This will make sure that it doesn't get the description from pypi but get it fro
 <p>Show the help message.</p>
 </li>
 <li>
-<p><code>--author</code> / <code>--no-author</code></p>
-<p>Whether to show the project author or not  [<span style="color: cyan">default:</span> no--author]</br>
+<p><code>--show-author</code></p>
+<p>If used this also shows the author </br>
 This usually shows the author's email.</p>
 </li>
 <li>
-<p><code>--link</code> / <code>--no-link</code></p>
-<p>Whether to show the project link or not  [<span style="color: cyan">default:</span> -link]</p>
+<p><code>--hide-link</code></p>
+<p>If used it does not show the project link</p>
 </li>
 </ul>
 <h3 id="errors-and-warnings_5"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_5" title="Permanent link">&para;</a></h3>
@@ -1645,13 +1645,13 @@ This usually shows the author's email.</p>
 <p>Show the help message.</p>
 </li>
 <li>
-<p><code>--author</code> / <code>--no-author</code></p>
-<p>Whether to show the project author or not  [<span style="color: cyan">default:</span> no--author]</br>
+<p><code>--show-author</code></p>
+<p>If used, it shows the project author too</br>
 This usually shows the author's email.</p>
 </li>
 <li>
-<p><code>--link</code> / <code>--no-link</code></p>
-<p>Whether to show the project link or not  [<span style="color: cyan">default:</span> -link]</p>
+<p><code>--hide-link</code></p>
+<p>If used, it shows the project link too</p>
 </li>
 </ul>
 <h3 id="errors-and-warnings_6"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_6" title="Permanent link">&para;</a></h3>
@@ -1686,8 +1686,8 @@ This can also include the version with this format: <code>package_name==version<
 <p>The version of the package to show information for</p>
 </li>
 <li>
-<p><code>--link</code> / <code>--no-link</code></p>
-<p>Whether to show the project link or not  [<span style="color: cyan">default:</span> -link]</p>
+<p><code>--show-links</code></p>
+<p>If enabled it shows the wheel links too</p>
 </li>
 </ul>
 <h3 id="errors-and-warnings_7"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_7" title="Permanent link">&para;</a></h3>
@@ -1713,9 +1713,9 @@ This can also include the version with this format: <code>package_name==version<
     The regular expression to search with  <span style="color: red">[required]</span></p>
 </li>
 <li>
-<p><code>--compact</code> / <code>--no-compact</code>
-    Compact formatting  [<span style="color: cyan">default:</span> no-compact]</br>
-    This removes the table and just shows the package names seperated by commands, it also adds hyperlinks on supported terminals</p>
+<p><code>--compact</code>
+    Compact formatting </br>
+    This removes the table and just shows the package names seperated by commas, it also adds hyperlinks on supported terminals</p>
 </li>
 <li>
 <p><code>-h</code>, <code>--help</code>
@@ -1751,7 +1751,7 @@ This can also include the version with this format: <code>package_name==version<
 <h3 id="errors-and-warnings_8"><strong>Errors and Warnings</strong><a class="headerlink" href="#errors-and-warnings_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<h4 id="e-docs-not-available"><span style="color: yellow">e:</span> Docs not available<a class="headerlink" href="#e-docs-not-available" title="Permanent link">&para;</a></h4>
+<h4 id="w-docs-not-available"><span style="color: yellow">W:</span> Docs not available<a class="headerlink" href="#w-docs-not-available" title="Permanent link">&para;</a></h4>
 <p>Shown when the docs are not in the list of already known docs and needs to be gotten from PyPI, it will ask you if you want to get it from pypi</p>
 </li>
 <li>

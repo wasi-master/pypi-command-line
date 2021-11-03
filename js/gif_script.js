@@ -9,10 +9,11 @@ window.onload = function () {
   const images = document.getElementsByTagName('img')
   for (let i = 0; i < images.length; i++) {
     const image = images[i]
-    if (!image.src.endsWith('.gif')) {
-      continue
-    }
+
+    if (!image.src.endsWith('.gif')) { continue }
+
     image.onclick = function () { restartGif(image) }
+
     if (image.title) {
       image.title += " (Click to restart)"
     } else if (image.alt) {
