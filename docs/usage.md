@@ -12,8 +12,10 @@ title: Usage
 
 !!! tip "Tips"
 
-    - You can *click* the gifs to make them reload, if this does not work refresh the page</br>
-    - You can *right click* and press "*Open Image in New Tab*" to open them in *full screen*
+    - You can *click* the gifs to make them restart, if this does not work reload the page (Shortcut for reloading: <kbd>F5</kbd>)</br>
+    - You can either
+        - *right click* and press "*Open Image in New Tab*" to open them in *full screen*
+        - *drag* the image *and drop* it to your tabs panel to open them in *full screen*
 
 ## **Options**
 
@@ -56,9 +58,9 @@ The output will be different depending on the shell
 
 > pypi --show-completion
 
-## --cache / --no-cache
+## --no-cache
 
-Whether to use cache or not for the current command, for more information about the cache see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) [<span style="color: cyan">default:</span> cache]
+If used, disabled the cache for the current command, for more information about the cache see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache)
 
 ### **Demo**
 
@@ -96,9 +98,13 @@ Seeing the current and latest version of pypi-command-line:
 
 ![Seeing the current and latest version of pypi-command-line](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20without%20package.png)
 
-Seeing the latest versions of another package:
+Seeing the latest versions of another package (django in this case):
 
-![Seeing the latest versions of another package](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20package.png)
+![Seeing the latest versions of another package](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20installed%20version%20limit%205.png)
+
+Omitting the pre-releases:
+
+![Seeing the latest versions of another package](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20no%20pre%20releases.png)
 
 ### **Usage**
 
@@ -108,7 +114,19 @@ Seeing the latest versions of another package:
 
 - `PACKAGE_NAME`
 
-    The name of the package to show the latest version(s) for. [<span style="color: cyan">default:</span> None]
+    The name of the package to show the latest version(s) for. [<span style="color: cyan">default:</span> pypi-command-line]
+
+- `--limit INTEGER`
+
+    Limit the number of versions to show [<span style="color: cyan">default:</span> 10]
+
+- `--no-pre-releases`
+
+    If set then it will not show pre-releases
+
+- `--show-installed-versions`
+
+    If set then it will show the version that is installed too
 
 - `-h`, `--help`
 
@@ -136,7 +154,7 @@ You can cancel using ++ctrl+c++ if you don't find your desired link
 
 - `PACKAGE_NAME`
 
-    The name of the package to show the urls for.
+    The name of the package to show the urls for. <span style="color: red">[required]</span>
 
 - `--url-only`
 
@@ -213,9 +231,9 @@ Demo of getting description from github if pypi does not have one
 
     Package to get the description for <span style="color: red">[required]</span>
 
-- `--force-github` / `--no-force-github`
+- `--force-github`
 
-    Forcefully get the description from github [<span style="color: cyan">default:</span> no-force-github]</br>
+    Forcefully get the description from github </br>
     This will make sure that it doesn't get the description from pypi but get it from github by reading the readme file of that project's repository
 
 - `-h`, `--help`
@@ -258,35 +276,35 @@ You can also see classifiers if you want to
   The name of the package to show information for
   This can also include the version with this format: `package_name==version`
 
-- --version TEXT
+- `--version TEXT`
 
     The version of the package to show information for
 
-- `--show-classifiers` / `--no-show-classifiers`
+- `--show-classifiers`
 
-    Show the classifiers  [<span style="color: cyan">default:</span> no-show-classifiers]</br>
+    Show the classifiers  </br>
    Example of how this looks:
    ![Example of this flag](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif)
 
-- `--hide-project-urls` / `--no-hide-project-urls`
+- `--hide-project-urls`
 
-    Hide the project urls  [<span style="color: cyan">default:</span> no-hide-project-urls]
+    Hide the project urls
 
-- `--hide-requirements` / `--no-hide-requirements`
+- `--hide-requirements`
 
-    Hide the requirements  [<span style="color: cyan">default:</span> no-hide-requirements]
+    Hide the requirements
 
-- `--hide-github` / `--no-hide-github`
+- `--hide-github`
 
-    Hide the github  [<span style="color: cyan">default:</span> no-hide-github]
+    Hide the github
 
-- `--hide-stats` / `--no-hide-stats`
+- `--hide-stats`
 
-    Hide the stats  [<span style="color: cyan">default:</span> no-hide-stats]
+    Hide the stats
 
-- `--hide-meta` / `--no-hide-meta`
+- `--hide-meta`
 
-    Hide the metadata  [<span style="color: cyan">default:</span> no-hide-meta]
+    Hide the metadata
 
 - `-h`, `--help`
 
@@ -336,14 +354,14 @@ Shows the top 40 newly added packages. Meaning that the first ever version of th
 
     Show the help message.
 
-- `--author` / `--no-author`
+- `--show-author`
 
-    Whether to show the project author or not  [<span style="color: cyan">default:</span> no--author]</br>
+    If used this also shows the author </br>
     This usually shows the author's email.
 
-- `--link` / `--no-link`
+- `--hide-link`
 
-    Whether to show the project link or not  [<span style="color: cyan">default:</span> -link]
+    If used it does not show the project link
 
 ### **Errors and Warnings**
 
@@ -365,14 +383,14 @@ Shows the top 100 newly updated packages. Meaning that the latest version of tho
 
     Show the help message.
 
-- `--author` / `--no-author`
+- `--show-author`
 
-    Whether to show the project author or not  [<span style="color: cyan">default:</span> no--author]</br>
+    If used, it shows the project author too</br>
     This usually shows the author's email.
 
-- `--link` / `--no-link`
+- `--hide-link`
 
-    Whether to show the project link or not  [<span style="color: cyan">default:</span> -link]
+    If used, it shows the project link too
 
 ### **Errors and Warnings**
 
@@ -403,13 +421,13 @@ name on supported terminals
 
     Show the help message.
 
-- --version TEXT
+- `--version TEXT`
 
     The version of the package to show information for
 
-- `--link` / `--no-link`
+- `--show-links`
 
-    Whether to show the project link or not  [<span style="color: cyan">default:</span> -link]
+    If enabled it shows the wheel links too
 
 ### **Errors and Warnings**
 
@@ -436,9 +454,9 @@ If the packages cache is empty it then loads the packages first, the cache is ke
 - `REGEX`
     The regular expression to search with  <span style="color: red">[required]</span>
 
-- `--compact` / `--no-compact`
-    Compact formatting  [<span style="color: cyan">default:</span> no-compact]</br>
-    This removes the table and just shows the package names seperated by commands, it also adds hyperlinks on supported terminals
+- `--compact`
+    Compact formatting </br>
+    This removes the table and just shows the package names seperated by commas, it also adds hyperlinks on supported terminals
 
 - `-h`, `--help`
     Show the help message.
@@ -502,11 +520,12 @@ Search for a package on PyPI.
 
 ### **Options**
 
-- PACKAGE_NAME <span style="color: red">[required]</span>
+- `PACKAGE_NAME`
 
-    The name of the package to show wheels for</br>
+    The name of the package to show wheels for <span style="color: red">[required]</span></br>
 
 - `--page INTEGER RANGE`
+
     The page of the search results to show. [<span style="color: cyan">default:</span> 1; <span style="color: green">should be greater than 1 and less than 500</span>]</br>
     For example:
     ![Demo of the flag](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search%20with%20page.gif)
@@ -536,15 +555,19 @@ See the available wheels of a release on PyPI. The wheel names are color coded a
 ### **Options**
 
 - `PACKAGE_NAME`
+
     The name of the package to show wheel info for  <span style="color: red">[required]</span>
 
 - `VERSION`
+
     The version of the package to show info for, defaults to latest
 
-- -h, --help
+- `-h, `--help`
+
     Shows the help message.
 
 - --supported-only
+
     Only show wheels supported on the current platform
 
 ### Wheel Name Syntax
