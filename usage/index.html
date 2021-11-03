@@ -1382,8 +1382,10 @@
 <h3 id="demo_4"><strong>Demo</strong><a class="headerlink" href="#demo_4" title="Permanent link">&para;</a></h3>
 <p>Seeing the current and latest version of pypi-command-line:</p>
 <p><img alt="Seeing the current and latest version of pypi-command-line" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20without%20package.png" /></p>
-<p>Seeing the latest versions of another package:</p>
-<p><img alt="Seeing the latest versions of another package" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20package.png" /></p>
+<p>Seeing the latest versions of another package (django in this case):</p>
+<p><img alt="Seeing the latest versions of another package" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20installed%20version%20limit%205.png" /></p>
+<p>Omitting the pre-releases:</p>
+<p><img alt="Seeing the latest versions of another package" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20no%20pre%20releases.png" /></p>
 <h3 id="usage_6"><strong>Usage</strong><a class="headerlink" href="#usage_6" title="Permanent link">&para;</a></h3>
 <blockquote>
 <p>pypi version [PACKAGE_NAME]</p>
@@ -1538,7 +1540,7 @@ This will make sure that it doesn't get the description from pypi but get it fro
   This can also include the version with this format: <code>package_name==version</code></p>
 </li>
 <li>
-<p>--version TEXT</p>
+<p><code>--version TEXT</code></p>
 <p>The version of the package to show information for</p>
 </li>
 <li>
@@ -1680,7 +1682,7 @@ This can also include the version with this format: <code>package_name==version<
 <p>Show the help message.</p>
 </li>
 <li>
-<p>--version TEXT</p>
+<p><code>--version TEXT</code></p>
 <p>The version of the package to show information for</p>
 </li>
 <li>
@@ -1775,14 +1777,14 @@ This can also include the version with this format: <code>package_name==version<
 <h3 id="options_11"><strong>Options</strong><a class="headerlink" href="#options_11" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p>PACKAGE_NAME <span style="color: red">[required]</span></p>
-<p>The name of the package to show wheels for</br></p>
+<p><code>PACKAGE_NAME</code></p>
+<p>The name of the package to show wheels for <span style="color: red">[required]</span></br></p>
 </li>
 <li>
-<p><code>--page INTEGER RANGE</code>
-    The page of the search results to show. [<span style="color: cyan">default:</span> 1; <span style="color: green">should be greater than 1 and less than 500</span>]</br>
-    For example:
-    <img alt="Demo of the flag" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search%20with%20page.gif" /></p>
+<p><code>--page INTEGER RANGE</code></p>
+<p>The page of the search results to show. [<span style="color: cyan">default:</span> 1; <span style="color: green">should be greater than 1 and less than 500</span>]</br>
+For example:
+<img alt="Demo of the flag" src="https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search%20with%20page.gif" /></p>
 </li>
 <li>
 <p>-h, --help</p>
@@ -1803,20 +1805,20 @@ This can also include the version with this format: <code>package_name==version<
 <h3 id="options_12"><strong>Options</strong><a class="headerlink" href="#options_12" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><code>PACKAGE_NAME</code>
-    The name of the package to show wheel info for  <span style="color: red">[required]</span></p>
+<p><code>PACKAGE_NAME</code></p>
+<p>The name of the package to show wheel info for  <span style="color: red">[required]</span></p>
 </li>
 <li>
-<p><code>VERSION</code>
-    The version of the package to show info for, defaults to latest</p>
+<p><code>VERSION</code></p>
+<p>The version of the package to show info for, defaults to latest</p>
 </li>
 <li>
-<p>-h, --help
-    Shows the help message.</p>
+<p><code>-h,</code>--help`</p>
+<p>Shows the help message.</p>
 </li>
 <li>
-<p>--supported-only
-    Only show wheels supported on the current platform</p>
+<p>--supported-only</p>
+<p>Only show wheels supported on the current platform</p>
 </li>
 </ul>
 <h3 id="wheel-name-syntax">Wheel Name Syntax<a class="headerlink" href="#wheel-name-syntax" title="Permanent link">&para;</a></h3>
