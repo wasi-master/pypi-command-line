@@ -752,7 +752,7 @@ def releases(
     table.add_column("Version", style="green", header_style="green")
     table.add_column("Upload date", width=24, style="red", header_style="red")
     table.add_column("Size", style="yellow", header_style="yellow")
-    if link is True:
+    if show_links is True:
         table.add_column("Link", style="cyan", header_style="blue")
 
     for version, releases in parsed_data["releases"].items():
@@ -765,7 +765,7 @@ def releases(
         except ValueError:
             upload_time = datetime.strptime(release["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%SZ")
 
-        if link is True:
+        if show_links is True:
             table.add_row(
                 f"[link={release['url']}] {version}[/]",
                 upload_time.strftime("%c"),
