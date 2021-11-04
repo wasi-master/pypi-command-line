@@ -32,6 +32,24 @@ Detailed Documentation available at <https://wasi-master.github.io/pypi-command-
   - See all the releases of a package, along with when they were made and their size.
   - See New projects and new releases [just like PyPI](https://pypi.org#pypi-trending-packages).
   - See top 100 of the largest packages [just like PyPI](https://pypi.org/stats/).
+  - Many more... (
+    command list includes
+      [`browse`](https://wasi-master.github.io/pypi-command-line/usage/#browse),
+      [`cache-info`](https://wasi-master.github.io/pypi-command-line/usage/#cache-info),
+      [`cache-refresh`](https://wasi-master.github.io/pypi-command-line/usage/#cache-refresh),
+      [`cache-clear`](https://wasi-master.github.io/pypi-command-line/usage/#cache-clear),
+      [`information`](https://wasi-master.github.io/pypi-command-line/usage/#information),
+      [`description`](https://wasi-master.github.io/pypi-command-line/usage/#description),
+      [`search`](https://wasi-master.github.io/pypi-command-line/usage/#search),
+      [`wheels`](https://wasi-master.github.io/pypi-command-line/usage/#wheels),
+      [`releases`](https://wasi-master.github.io/pypi-command-line/usage/#releases),
+      [`largest-files`](https://wasi-master.github.io/pypi-command-line/usage/#largest-files),
+      [`regex-search`](https://wasi-master.github.io/pypi-command-line/usage/#regex-search),
+      [`version`](https://wasi-master.github.io/pypi-command-line/usage/#version),
+      [`new-packages`](https://wasi-master.github.io/pypi-command-line/usage/#new-packages),
+      [`new-releases`](https://wasi-master.github.io/pypi-command-line/usage/#new-releases),
+      [`read-the-docs`](https://wasi-master.github.io/pypi-command-line/usage/#read-the-docs),
+    )
 - 💻 Cross-platform.
 - 🤯 Open source.
 - 📚 Extensive documentation.
