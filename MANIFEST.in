@@ -1,2 +1,2 @@
-exclude images/ docs/ .github/ mkdocs.yml publish.ps1
-include tests/
+exclude images docs .github mkdocs.yml publish.ps1 pypi_cli/interactive.py
+include tests
