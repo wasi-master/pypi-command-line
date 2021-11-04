@@ -48,7 +48,7 @@ Detailed Documentation available at <https://wasi-master.github.io/pypi-command-
       [`version`](https://wasi-master.github.io/pypi-command-line/usage/#version),
       [`new-packages`](https://wasi-master.github.io/pypi-command-line/usage/#new-packages),
       [`new-releases`](https://wasi-master.github.io/pypi-command-line/usage/#new-releases),
-      [`read-the-docs`](https://wasi-master.github.io/pypi-command-line/usage/#read-the-docs),
+      [`read-the-docs`](https://wasi-master.github.io/pypi-command-line/usage/#read-the-docs)
     )
 - 💻 Cross-platform.
 - 🤯 Open source.
