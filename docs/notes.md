@@ -33,7 +33,7 @@ I compile the regex because it's almost twice as fast.
 
     Source code for non compiled regex:
 
-    ```python
+    ```python linenums="1"
     def no_compile():
         for i in range(1000000):
             re.match(r".+", secrets.token_hex(32))
@@ -41,7 +41,7 @@ I compile the regex because it's almost twice as fast.
 
     Source code for compiled regex:
 
-    ```python
+    ```python linenums="1"
     def no_compile():
         r = re.compile(r".+")
         for i in range(1000000):
@@ -54,13 +54,14 @@ I compile the regex because it's almost twice as fast.
 You may have seen that you can do `#!sh pip install "pypi-command-line[speedups]"` and you may have wondered what that actually does.
 If you see the source code [you can see these lines](https://github.com/wasi-master/pypi-command-line/blob/main/setup.cfg#L79-L84)
 
-```ini
+```ini linenums="79"
 [options.extras_require]
 speedups =
     lxml
     rapidfuzz
     requests_cache
     shellingham
+    ujson
 ```
 
 Here's a detailed explanation of what each of those packages do
@@ -102,6 +103,10 @@ This allows http requests to be faster by caching<sup>[<a title="Caching is a pr
 #### [**rapidfuzz**](https://pypi.org/project/rapidfuzz/)
 
 This allows rapid fuzzy string matching around 20 times faster than thefuzz
+
+#### [**ujson**](https://pypi.org/project/ujson/)
+
+This allows json parsing to be ultra fast
 
 ## Dependencies
 
