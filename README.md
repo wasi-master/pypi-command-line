@@ -131,3 +131,14 @@ pypi search --help
 ```
 
 For a full guide see <https://wasi-master.github.io/pypi-command-line/usage>.
+
+## Download Count
+
+Here is the download count info as gotten from [PePy](https://pepy.tech).\
+I've included these since PyPIStats by default does not include mirrors in it's count<sup>[1](https://pypistats.org/faqs#why-are-the-cumulative-download-counts-different-from-the-sum-of)</sup>. Also see <https://github.com/psincraian/pepy/issues/351>
+
+| Period | Count                                                                                                                                                                                                  |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Week   | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=week&units=none&left_color=black&right_color=green&left_text=Week)](https://pepy.tech/project/pypi-command-line)   |
+| Month  | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=month&units=none&left_color=black&right_color=green&left_text=Month)](https://pepy.tech/project/pypi-command-line) |
+| Total  | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=total&units=none&left_color=black&right_color=green&left_text=Total)](https://pepy.tech/project/pypi-command-line) |
