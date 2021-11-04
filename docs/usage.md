@@ -491,7 +491,7 @@ This just gets the documentation url and opens it's search results page with the
 
 ### **Errors and Warnings**
 
-- #### <span style="color: yellow">e:</span> Docs not available
+- #### <span style="color: yellow">W:</span> Docs not available
 
     Shown when the docs are not in the list of already known docs and needs to be gotten from PyPI, it will ask you if you want to get it from pypi
 
