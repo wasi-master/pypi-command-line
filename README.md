@@ -1,6 +1,6 @@
 # pypi-command-line
 
-`pypi-command-line` is a **powerful** command line interface for [pypi.org](https://pypi.org "The Python Package Index (PyPI) is a repository of software for the Python programming language.")
+`pypi-command-line` is a **colorful**, **powerful**, and **beautiful** command line interface for [pypi.org](https://pypi.org "The Python Package Index (PyPI) is a repository of software for the Python programming language.") that is actively maintained
 
 [![Version](https://img.shields.io/pypi/v/pypi-command-line?label=pypi%20version&style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/pypi-command-line/)
 [![Lines of code](https://img.shields.io/tokei/lines/github/wasi-master/pypi-command-line?style=flat-square&logo=python&logoColor=white)](https://github.com/wasi-master/pypi-command-line/)
@@ -14,8 +14,6 @@
 [![Python Implementation](https://img.shields.io/pypi/implementation/pypi-command-line?label=python%20implementation&style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pypi-command-line/#:~:text=programming%20language)
 [![PyPI Wheel availability](https://img.shields.io/pypi/wheel/pypi-command-line?label=pypi%20wheel%20availabile%3F&style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/pypi-command-line/#files)
 [![Documentation status](https://img.shields.io/website?down_color=red&down_message=not%20working&label=docs&logo=github&style=flat-square&up_color=blue&up_message=working&url=https%3A%2F%2Fwasi-master.github.io%2Fpypi-command-line%2F)](https://wasi-master.github.io/pypi-command-line)
-
-A powerful command line interface for <https://pypi.org>
 
 Detailed Documentation available at <https://wasi-master.github.io/pypi-command-line/>
 
