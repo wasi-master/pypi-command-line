@@ -1,6 +1,7 @@
 ---
 layout: page
-title: Installation
+title: Installation instructions for pypi-command-line
+description: pypi-command-line is a powerful, colorful, beautiful command line interface for pypi.org that is well maintained
 ---
 
 # Installation

@@ -1,6 +1,7 @@
 ---
 layout: page
-title: Documentation
+title: Documentation for pypi-command-line
+description: pypi-command-line is a powerful, colorful, beautiful command line interface for pypi.org that is well maintained
 ---
 
 # Welcome to pypi-command-line documentation

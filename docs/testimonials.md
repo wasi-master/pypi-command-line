@@ -1,3 +1,9 @@
+---
+layout: page
+title: Testimonials of pypi-command-line
+description: pypi-command-line is a powerful, colorful, beautiful command line interface for pypi.org that is well maintained
+---
+
 # Testimonials
 
 > I like your use of Rich! _Great work._<sup>[1](https://www.reddit.com/r/Python/comments/q8rrx7/i_made_a_commandlineinterface_for_pypi_as_a_14/#:~:text=i%20like%20your%20use%20of%20rich!%20great%20work.)</sup>

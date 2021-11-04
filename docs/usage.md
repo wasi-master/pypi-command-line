@@ -1,6 +1,7 @@
 ---
 layout: page
-title: Usage
+title: Usage instructions for pypi-command-line
+description: pypi-command-line is a powerful, colorful, beautiful command line interface for pypi.org that is well maintained
 ---
 <!-- markdownlint-disable MD024 MD025 MD033-->
 
