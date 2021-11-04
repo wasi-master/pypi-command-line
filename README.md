@@ -35,9 +35,6 @@ Detailed Documentation available at <https://wasi-master.github.io/pypi-command-
   - Many more... (
     command list includes
       [`browse`](https://wasi-master.github.io/pypi-command-line/usage/#browse),
-      [`cache-info`](https://wasi-master.github.io/pypi-command-line/usage/#cache-info),
-      [`cache-refresh`](https://wasi-master.github.io/pypi-command-line/usage/#cache-refresh),
-      [`cache-clear`](https://wasi-master.github.io/pypi-command-line/usage/#cache-clear),
       [`information`](https://wasi-master.github.io/pypi-command-line/usage/#information),
       [`description`](https://wasi-master.github.io/pypi-command-line/usage/#description),
       [`search`](https://wasi-master.github.io/pypi-command-line/usage/#search),
@@ -46,6 +43,9 @@ Detailed Documentation available at <https://wasi-master.github.io/pypi-command-
       [`largest-files`](https://wasi-master.github.io/pypi-command-line/usage/#largest-files),
       [`regex-search`](https://wasi-master.github.io/pypi-command-line/usage/#regex-search),
       [`version`](https://wasi-master.github.io/pypi-command-line/usage/#version),
+      [`cache-info`](https://wasi-master.github.io/pypi-command-line/usage/#cache-info),
+      [`cache-refresh`](https://wasi-master.github.io/pypi-command-line/usage/#cache-refresh),
+      [`cache-clear`](https://wasi-master.github.io/pypi-command-line/usage/#cache-clear),
       [`new-packages`](https://wasi-master.github.io/pypi-command-line/usage/#new-packages),
       [`new-releases`](https://wasi-master.github.io/pypi-command-line/usage/#new-releases),
       [`read-the-docs`](https://wasi-master.github.io/pypi-command-line/usage/#read-the-docs)
