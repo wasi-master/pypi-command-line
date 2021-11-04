@@ -42,6 +42,7 @@ plugins:
   #   separator: '\s'
 
 markdown_extensions:
+  - meta
   - admonition
   - pymdownx.details
   - pymdownx.tabbed
