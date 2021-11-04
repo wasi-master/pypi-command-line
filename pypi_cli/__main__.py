@@ -1,5 +1,4 @@
 """The main file."""
-import json
 from datetime import datetime
 from urllib.parse import quote
 
@@ -18,6 +17,11 @@ try:
     from click_help_colors import HelpColorsCommand, HelpColorsGroup
 except ImportError:
     click_help_colors = None
+
+try:
+    import ujson as json
+except ImportError:
+    import json
 
 base_url = "https://pypi.org"
 
