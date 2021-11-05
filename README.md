@@ -142,3 +142,18 @@ I've included these since PyPIStats by default does not include mirrors in it's 
 | Week   | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=week&units=none&left_color=black&right_color=green&left_text=Week)](https://pepy.tech/project/pypi-command-line)   |
 | Month  | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=month&units=none&left_color=black&right_color=green&left_text=Month)](https://pepy.tech/project/pypi-command-line) |
 | Total  | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=total&units=none&left_color=black&right_color=green&left_text=Total)](https://pepy.tech/project/pypi-command-line) |
+
+## Alternatives
+
+### [pypi-cli](https://pypi.org/project/pypi-cli/ "pypi-cli")
+
+Now this probably was the best option before `pypi-command-line` came out and it does have some flaws. The `information` command of pypi-cli is pretty minimal, there's no way of seeing the github information, The download count doesn't work properly, the long descriptions aren't formatted at all with pypi-cli. pypi-cli uses the xml-rpc<sup>[<a title="XML-RPC is a remote procedure call (RPC) protocol which uses XML to encode its calls and HTTP as a transport mechanism." href="https://en.wikipedia.org/wiki/XML-RPC" target="_blank">?</a>]</sup> API that is discontinued So the search feature doesn't work anymore, . The stat command is broken and is badly formatted for screens that are not ultra wide. And the project is unmaintained and archived
+
+**TL;DR** The `stat` and `search` commands don't work anymore, the information command kinda works but the download count doesn't work, can't see github information, descriptions are raw.
+
+### [pypi-client](https://pypi.org/project/pypi-client/ "pypi-client")
+
+So this can just search for packages on pypi and thats it. Now don't you think that this is inherently bad as per say. So I tried it out immediately and it just got stuck loading the packages, pypi-client gets names of all the packages that exist pypi<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=fetches%20all%20package%20names%20from%20pypi" target="_blank">‾</a></sup> which took like 4 mins, then I assume it downloads the github stars data?<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=downloads%20github%20stars" target="_blank">‾</a></sup> Which takes like another 3 mins and then It just asked me to authorize with github… like why does pypi-client even need authorization from me since github has a public api. And then it showed [this](https://i.imgur.com/D0VJhmZ.png "Demo of the program that has been badly formatted") which isn't really unreadable just badly formatted for screens that are not ultra wide. by changing the font size a bit I could make it look like [this](https://i.imgur.com/usU2AnJ.jpeg "Demo of the program after lowering the font size") which still isn't bad just a bit convoluted. And even at the end of the day the results are manually searched through therefore different from pypi<sup><a title=Example href="https://i.imgur.com/2AuCKuX.jpg" target="_blank">‾</a></sup>
+
+**TL;DR:**
+Takes too long (≈7 mins), Needs github authorization, badly formatted for non ultra wide monitors, searches manually so results are different compared to pypi
