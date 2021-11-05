@@ -2,19 +2,6 @@
 
 `pypi-command-line` is a **colorful**, **powerful**, and **beautiful** command line interface for [pypi.org](https://pypi.org "The Python Package Index (PyPI) is a repository of software for the Python programming language.") that is actively maintained
 
-[![Version](https://img.shields.io/pypi/v/pypi-command-line?label=pypi%20version&style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/pypi-command-line/)
-[![Lines of code](https://img.shields.io/tokei/lines/github/wasi-master/pypi-command-line?style=flat-square&logo=python&logoColor=white)](https://github.com/wasi-master/pypi-command-line/)
-[![Downloads yesterday](https://img.shields.io/pypi/dd/pypi-command-line?label=pypi%20downloads%20yesterday&style=flat-square&logo=pypi&logoColor=white)](https://pypistats.org/packages/pypi-command-line)
-[![Downloads in the last 7 days](https://img.shields.io/pypi/dw/pypi-command-line?label=pypi%20downloads%20in%20the%20last%207%20days&style=flat-square&logo=pypi&logoColor=white)](https://pypistats.org/packages/pypi-command-line)
-[![Downloads in the last 30 days](https://img.shields.io/pypi/dm/pypi-command-line?label=pypi%20downloads%20in%20the%20last%2030%20days&style=flat-square&logo=pypi&logoColor=white)](https://pypistats.org/packages/pypi-command-line)
-[![Number of issues](https://img.shields.io/github/issues/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)](https://github.com/wasi-master/pypi-command-line/issues)
-[![Number of pull requests](https://img.shields.io/github/issues-pr-closed/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)](https://github.com/wasi-master/pypi-command-line/pulls)
-[![Number of stars on GitHub](https://img.shields.io/github/stars/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)](https://github.com/wasi-master/pypi-command-line/stargazers)
-[![Supported python versions](https://img.shields.io/pypi/pyversions/pypi-command-line?label=supported%20python%20versions&style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pypi-command-line/#:~:text=requires%3A%20python%20%3E%3D3.6)
-[![Python Implementation](https://img.shields.io/pypi/implementation/pypi-command-line?label=python%20implementation&style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pypi-command-line/#:~:text=programming%20language)
-[![PyPI Wheel availability](https://img.shields.io/pypi/wheel/pypi-command-line?label=pypi%20wheel%20availabile%3F&style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/pypi-command-line/#files)
-[![Documentation status](https://img.shields.io/website?down_color=red&down_message=not%20working&label=docs&logo=github&style=flat-square&up_color=blue&up_message=working&url=https%3A%2F%2Fwasi-master.github.io%2Fpypi-command-line%2F)](https://wasi-master.github.io/pypi-command-line)
-
 Detailed Documentation available at <https://wasi-master.github.io/pypi-command-line/>
 
 ## Features
@@ -53,6 +40,49 @@ Detailed Documentation available at <https://wasi-master.github.io/pypi-command-
 - 💻 Cross-platform.
 - 🤯 Open source.
 - 📚 Extensive documentation.
+
+## Info
+
+<details open>
+<summary>Hide Info</summary>
+
+### Download Count
+
+I've included both [PePy](https://pepy.tech/) and [PyPIStats](https://pypistats.org/) since PyPIStats by default does not include mirrors in it's count<sup>[1](https://pypistats.org/faqs#why-are-the-cumulative-download-counts-different-from-the-sum-of)</sup>. Also see <https://github.com/psincraian/pepy/issues/351>
+
+| Period | From [PePy](https://pepy.tech/project/pypi-command-line)                                                                                                                                             | From [PyPiStats](https://pypistats.org/packages/pypi-command-line)                                                                                                               |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Day    |                                                                                                                                                                                                     | [![Downloads yesterday](https://img.shields.io/pypi/dd/pypi-command-line?label=Day&labelColor=black&color=orange)](https://pypistats.org/packages/pypi-command-line)             |
+| Week   | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=week&units=none&left_color=black&right_color=blue&left_text=Week)](https://pepy.tech/project/pypi-command-line)   | [![Downloads in the last 7 days](https://img.shields.io/pypi/dw/pypi-command-line?label=Week&labelColor=black&color=orange)](https://pypistats.org/packages/pypi-command-line)   |
+| Month  | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=month&units=none&left_color=black&right_color=blue&left_text=Month)](https://pepy.tech/project/pypi-command-line) | [![Downloads in the last 30 days](https://img.shields.io/pypi/dm/pypi-command-line?label=Month&labelColor=black&color=orange)](https://pypistats.org/packages/pypi-command-line) |
+| Total  | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=total&units=none&left_color=black&right_color=blue&left_text=Total)](https://pepy.tech/project/pypi-command-line) |
+
+### Meta
+
+| Title                     | Badge                                                                                                                                                                                                                                                            |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Version                   | [![Version](https://img.shields.io/pypi/v/pypi-command-line?label=pypi%20version&style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/pypi-command-line/)                                                                                      |
+| Wheel availability        | [![PyPI Wheel availability](https://img.shields.io/pypi/wheel/pypi-command-line?label=pypi%20wheel%20availabile%3F&style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/pypi-command-line/#files)                                              |
+| Supported python versions | [![Supported python versions](https://img.shields.io/pypi/pyversions/pypi-command-line?label=supported%20python%20versions&style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pypi-command-line/#:~:text=requires%3A%20python%20%3E%3D3.6) |
+| Python Implementation     | [![Python Implementation](https://img.shields.io/pypi/implementation/pypi-command-line?label=python%20implementation&style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/pypi-command-line/#:~:text=programming%20language)                 |
+
+### GitHub
+
+| Title                   | Badge                                                                                                                                                                                                                                  |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Number of issues open   | [![Number of issues open](https://img.shields.io/github/issues/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white&label=issues%20open)](https://github.com/wasi-master/pypi-command-line/issues)              |
+| Number of issues closed | [![Number of issues closed](https://img.shields.io/github/issues-closed/wasi-master/pypi-command-line?label=issues%20closed&style=flat-square&logo=github&logoColor=white)](https://github.com/wasi-master/pypi-command-line/issues?q=is%3Aissue++is%3Aclosed+)                                                             |
+| Number of pull requests | [![Number of pull requests](https://img.shields.io/github/issues-pr-closed/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white&label=pull%20requests)](https://github.com/wasi-master/pypi-command-line/pulls) |
+| Number of stars         | [![Number of stars on GitHub](https://img.shields.io/github/stars/wasi-master/pypi-command-line?style=flat-square&logo=github&logoColor=white)](https://github.com/wasi-master/pypi-command-line/stargazers)                           |
+
+### Misc
+
+| Title                | Badge                                                                                                                                                                                                                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Documentation status | [![Documentation status](https://img.shields.io/website?down_color=red&down_message=not%20working&label=docs&logo=github&style=flat-square&up_color=blue&up_message=working&url=https%3A%2F%2Fwasi-master.github.io%2Fpypi-command-line%2F)](https://wasi-master.github.io/pypi-command-line) |
+| Lines of code        | [![Lines of code](https://img.shields.io/tokei/lines/github/wasi-master/pypi-command-line?style=flat-square&logo=python&logoColor=white)](https://github.com/wasi-master/pypi-command-line/)                                                                                                  |
+
+</details>
 
 ## Screenshots
 
@@ -131,17 +161,6 @@ pypi search --help
 ```
 
 For a full guide see <https://wasi-master.github.io/pypi-command-line/usage>.
-
-## Download Count
-
-Here is the download count info as gotten from [PePy](https://pepy.tech).\
-I've included these since PyPIStats by default does not include mirrors in it's count<sup>[1](https://pypistats.org/faqs#why-are-the-cumulative-download-counts-different-from-the-sum-of)</sup>. Also see <https://github.com/psincraian/pepy/issues/351>
-
-| Period | Count                                                                                                                                                                                                  |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Week   | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=week&units=none&left_color=black&right_color=green&left_text=Week)](https://pepy.tech/project/pypi-command-line)   |
-| Month  | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=month&units=none&left_color=black&right_color=green&left_text=Month)](https://pepy.tech/project/pypi-command-line) |
-| Total  | [![Downloads](https://static.pepy.tech/personalized-badge/pypi-command-line?period=total&units=none&left_color=black&right_color=green&left_text=Total)](https://pepy.tech/project/pypi-command-line) |
 
 ## Alternatives
 
