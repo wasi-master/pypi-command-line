@@ -6,6 +6,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
+        <meta name="description" content="pypi-command-line is a powerful, colorful, beautiful command line interface for pypi.org that is well maintained">
+      
       
       
       
@@ -16,7 +18,7 @@
     
     
       
-        <title>Notes - pypi-command-line</title>
+        <title>Notes for pypi-command-line - pypi-command-line</title>
       
     
     
@@ -100,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Notes
+              Notes for pypi-command-line
             
           </span>
         </div>
@@ -458,6 +460,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#ujson" class="md-nav__link">
+    ujson
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -633,27 +642,42 @@
 <span class="mf">3.9251674000000207</span>
 </code></pre></div>
 <details class="example"><summary>Code</summary><p>Source code for non compiled regex:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">no_compile</span><span class="p">():</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">no_compile</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000</span><span class="p">):</span>
         <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.+&quot;</span><span class="p">,</span> <span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
 </code></pre></div>
+</td></tr></table>
 <p>Source code for compiled regex:</p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">no_compile</span><span class="p">():</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">no_compile</span><span class="p">():</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.+&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000</span><span class="p">):</span>
         <span class="n">r</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
 </code></pre></div>
+</td></tr></table>
 </details>
 <h3 id="speedups">Speedups<a class="headerlink" href="#speedups" title="Permanent link">&para;</a></h3>
 <p>You may have seen that you can do <code class="highlight">pip install <span class="s2">&quot;pypi-command-line[speedups]&quot;</span></code> and you may have wondered what that actually does.
 If you see the source code <a href="https://github.com/wasi-master/pypi-command-line/blob/main/setup.cfg#L79-L84">you can see these lines</a></p>
-<div class="highlight"><pre><span></span><code><span class="k">[options.extras_require]</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">[options.extras_require]</span>
 <span class="na">speedups</span> <span class="o">=</span>
     <span class="na">lxml</span>
     <span class="na">rapidfuzz</span>
     <span class="na">requests_cache</span>
     <span class="na">shellingham</span>
+    <span class="na">ujson</span>
 </code></pre></div>
+</td></tr></table>
 <p>Here's a detailed explanation of what each of those packages do</p>
 <h4 id="shellingham"><a href="https://pypi.org/project/shellingham/"><strong>shellingham</strong></a><a class="headerlink" href="#shellingham" title="Permanent link">&para;</a></h4>
 <p>This does not really speed up anything but adds auto shell detection for autocomplete installation using the <code class="highlight">--install-completion</code> command. This technically lowers the amount of time taken to install autocompletion because it makes it so that you don't have to manually provide what terminal/shell you're using</p>
@@ -712,6 +736,8 @@ If you see the source code <a href="https://github.com/wasi-master/pypi-command-
 <p>This allows http requests to be faster by caching<sup>[<a title="Caching is a process that stores multiple copies of data or files in a temporary storage location—or cache—so they can be accessed faster." href="https://aws.amazon.com/caching/" target="_blank">?</a>]</sup> them</p>
 <h4 id="rapidfuzz"><a href="https://pypi.org/project/rapidfuzz/"><strong>rapidfuzz</strong></a><a class="headerlink" href="#rapidfuzz" title="Permanent link">&para;</a></h4>
 <p>This allows rapid fuzzy string matching around 20 times faster than thefuzz</p>
+<h4 id="ujson"><a href="https://pypi.org/project/ujson/"><strong>ujson</strong></a><a class="headerlink" href="#ujson" title="Permanent link">&para;</a></h4>
+<p>This allows json parsing to be ultra fast</p>
 <h2 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h2>
 <h3 id="rich"><a href="https://github.com/willmcgugan/rich">Rich</a><a class="headerlink" href="#rich" title="Permanent link">&para;</a></h3>
 <p>This allows the beautiful formatting that you can see when using the commands. <a href="https://rich.readthedocs.io/en/latest/markup.html">Colors</a>, <a href="https://rich.readthedocs.io/en/latest/tables.html">Tables</a>, <a href="https://rich.readthedocs.io/en/latest/panel.html">Panels</a>, <a href="https://rich.readthedocs.io/en/latest/progress.html">Progress Bars</a> and much more.</p>
