@@ -986,7 +986,7 @@ def information(
                     )
                 )
             else:
-                size = github_data["size"]
+                size = github_data.get("size", "Unknown")
                 stars = github_data["stargazers_count"]
                 forks = github_data["forks_count"]
                 issues = github_data["open_issues"]
