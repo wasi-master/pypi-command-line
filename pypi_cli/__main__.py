@@ -422,7 +422,7 @@ def _clear_cache():
 
 def _get_github_readme(repo):
     readme = session.get(f"https://api.github.com/repos/{repo}/readme").json()
-    if readme.get("message") == "Not Found":
+    if readme.get("message") == "Not Found":def
         console.print(f"[red]:x: Could not find readme for[/] [yellow]{repo}[/]")
         raise typer.Exit()
     content = session.get(f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
@@ -1009,7 +1009,7 @@ def information(
         try:
             parsed_stats = json.loads(r.text)
             assert isinstance(parsed_stats, dict)
-        except (json.JSONDecodeError, AssertionError):
+        except (json.JSONDecodeError, AssertionError, ValueError):
             parsed_stats = None
 
         stats = parsed_stats["data"] if parsed_stats else None
