@@ -124,3 +124,6 @@ dmypy.json
 
 # A file I use for making workflows (WIP)
 workflow_generator.py
+
+# A file I use for generating thanks messages :D
+thanker_with_table.py

@@ -422,7 +422,7 @@ def _clear_cache():
 
 def _get_github_readme(repo):
     readme = session.get(f"https://api.github.com/repos/{repo}/readme").json()
-    if readme.get("message") == "Not Found":def
+    if readme.get("message") == "Not Found":
         console.print(f"[red]:x: Could not find readme for[/] [yellow]{repo}[/]")
         raise typer.Exit()
     content = session.get(f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
