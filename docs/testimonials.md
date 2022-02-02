@@ -20,10 +20,14 @@ description: pypi-command-line is a powerful, colorful, beautiful command line i
 
 \- <a href="https://www.reddit.com/user/neekyboi/" title="neekyboi's Reddit Profile" target="_blank"><img id="testimonial-image" src="https://i.redd.it/snoovatar/avatars/f09b48d9-fbdc-4c6c-9980-861503b70bcf.png" width=32 /></a> <span id=testimonial-text>neekyboi</span>
 
-> So astonished by your organization and drive. Definitely learning from this :D. Great work!<sup>[5](https://www.reddit.com/r/Python/comments/q8rrx7/i_made_a_commandlineinterface_for_pypi_as_a_14/#:~:text=so%20astonished%20by%20your%20organization%20and%20drive.%20definitely%20learning%20from%20this%20%3Ad.%20great%20work!)</sup>
-
-\- <a href="https://www.reddit.com/user/got_blah/" title="got_blah's Reddit Profile" target="_blank"><img id="testimonial-image" src="https://i.redd.it/snoovatar/avatars/db6a1481-553b-4fb4-a746-67fb7047c33f.png" width=32 /></a> <span id=testimonial-text>got_blah</span>
-
-> Damn, I've seen professionals writing worst doc and stuff after years of experience. Well done Bobby!<sup>[6](https://www.reddit.com/r/Python/comments/q8rrx7/i_made_a_commandlineinterface_for_pypi_as_a_14/#:~:text=damn%2C%20i've%20seen%20professionals%20writing%20worst%20doc%20and%20stuff%20after%20years%20of%20experience.%20well%20done%20bobby!)</sup>
+> Damn, I've seen professionals writing worst doc and stuff after years of experience. Well done Bobby!<sup>[4](https://www.reddit.com/r/Python/comments/q8rrx7/i_made_a_commandlineinterface_for_pypi_as_a_14/#:~:text=damn%2C%20i've%20seen%20professionals%20writing%20worst%20doc%20and%20stuff%20after%20years%20of%20experience.%20well%20done%20bobby!)</sup>
 
 \- <a href="https://www.reddit.com/user/Warkred/" title="Warkred's Reddit Profile" target="_blank"><img id="testimonial-image" src="https://www.redditstatic.com/avatars/defaults/v2/avatar_default_0.png" width=32 /></a> <span id=testimonial-text>Warkred</span>
+
+> Just wanted to say thank for the very useful utility! It's especially impressive given your age. Well done!<sup>[5](https://github.com/wasi-master/pypi-command-line/issues/8#:~:text=just%20wanted%20to%20say%20thank%20for%20the%20very%20useful%20utility!%20It%27s%20especially%20impressive%20given%20your%20age.%20Well%20done!)</sup>
+
+\- <a href="https://github.com/RhetTbull" title="RhetTbull's GitHub Profile" target="_blank"><img id="testimonial-image" src="https://github.com/RhetTbull.png" width=32 /></a> <span id=testimonial-text>RhetTbull, Creator of [osxphotos](https://github.com/RhetTbull/osxphotos)</span>
+
+> So astonished by your organization and drive. Definitely learning from this :D. Great work!<sup>[6](https://www.reddit.com/r/Python/comments/q8rrx7/i_made_a_commandlineinterface_for_pypi_as_a_14/#:~:text=so%20astonished%20by%20your%20organization%20and%20drive.%20definitely%20learning%20from%20this%20%3Ad.%20great%20work!)</sup>
+
+\- <a href="https://www.reddit.com/user/got_blah/" title="got_blah's Reddit Profile" target="_blank"><img id="testimonial-image" src="https://i.redd.it/snoovatar/avatars/db6a1481-553b-4fb4-a746-67fb7047c33f.png" width=32 /></a> <span id=testimonial-text>got_blah</span>
