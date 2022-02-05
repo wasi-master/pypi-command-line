@@ -501,6 +501,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
 def description(
     package_name: str = Argument(..., help="Package to get the description for"),
     force_github: bool = Option(False, help="Forcefully get the description from github"),
+    syntax_theme: str = Option("monokai", help="Override the default syntax highlighting theme"),
 ):
     """See the description for a package."""
     url = f"{base_url}/pypi/{quote(package_name)}/json"
@@ -596,11 +597,11 @@ def description(
     if parsed_data["description_content_type"] == "text/markdown":
         from rich.markdown import Markdown  # pylint: disable=import-outside-toplevel
 
-        description = Markdown(parsed_data["description"])
+        description = Markdown(parsed_data["description"], code_theme=syntax_theme)
     elif parsed_data["description_content_type"] == "text/x-rst":
         from rich_rst import RestructuredText  # pylint: disable=import-outside-toplevel
 
-        description = RestructuredText(parsed_data["description"])
+        description = RestructuredText(parsed_data["description"], code_theme=syntax_theme)
     else:
         from rich.text import Text  # pylint: disable=import-outside-toplevel
 
