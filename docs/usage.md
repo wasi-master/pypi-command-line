@@ -237,6 +237,12 @@ Demo of getting description from github if pypi does not have one
     Forcefully get the description from github </br>
     This will make sure that it doesn't get the description from pypi but get it from github by reading the readme file of that project's repository
 
+- `--syntax-theme`
+
+    Specify a custom syntax highlighting theme for code blocks</br>
+    This has to be a pygments supported syntax highlighting theme or `ansi_dark` or `ansi_light` which will use the colors from your terminal theme.
+    For a list of pygments themes see [this link](https://stylishthemes.github.io/Syntax-Themes/pygments/)
+
 - `-h`, `--help`
 
     Show the help message.
