@@ -16,6 +16,6 @@ thefuzz
 # For reStructuredText pretty printing
 rich-rst
 # For colored help command
-click-help-colors
+rich-click
 # For parsing version numbers
 packaging

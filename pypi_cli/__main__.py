@@ -2,7 +2,6 @@
 from datetime import datetime
 from urllib.parse import quote
 
-import click
 import humanize
 import rich
 import typer
@@ -13,10 +12,11 @@ from rich.theme import Theme
 from typer import Argument, Option
 
 try:
-    import click_help_colors
-    from click_help_colors import HelpColorsCommand, HelpColorsGroup
+    import rich_click as click
+    from rich_click import RichCommand as Command, RichGroup as Group
 except ImportError:
-    click_help_colors = None
+    import click
+    from click import Command, Group
 
 try:
     import ujson as json
@@ -125,28 +125,6 @@ def __color_error_message():
                 raise typer.Exit()
 
     click.exceptions.UsageError.show = show
-
-
-if click_help_colors is not None:
-
-    class CustomHelpColorsGroup(HelpColorsGroup):
-        def __init__(self, *args, **kwargs) -> None:
-            super().__init__(*args, **kwargs)
-            self.help_headers_color = "red"
-            self.help_options_color = "yellow"
-            self.context_settings = {"help_option_names": ["-h", "--help"]}
-
-    class CustomHelpColorsCommand(HelpColorsCommand):
-        def __init__(self, *args, **kwargs) -> None:
-            super().__init__(*args, **kwargs)
-            self.help_headers_color = "red"
-            self.help_options_color = "yellow"
-
-    Group = CustomHelpColorsGroup
-    Command = CustomHelpColorsCommand
-else:
-    Group = click.Group
-    Command = click.Command
 
 
 class AliasedGroup(Group):
