@@ -5,6 +5,7 @@ from urllib.parse import quote
 import humanize
 import rich
 import typer
+from rich.align import Align
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -22,6 +23,8 @@ try:
     import ujson as json
 except ImportError:
     import json
+else:
+    json.JSONDecodeError = ValueError
 
 base_url = "https://pypi.org"
 
@@ -954,40 +957,51 @@ def information(
             url = f"https://api.github.com/repos/{quote(repo)}"
             with console.status("Getting data from GitHub"):
                 resp = session.get(url)
-            github_data = json.loads(resp.text)
-            if github_data.get("message") and github_data["message"] == "Not Found":
-                metadata.add_row(
-                    Panel(
-                        f"[red underline]Repo Not Found[/]\n[cyan]Link[/]: {url}\n[light_green]Name[/]: {repo}\n",
-                        expand=False,
-                        border_style="green",
-                        title="GitHub",
+            if resp.status_code == 200:
+                github_data = json.loads(resp.text)
+                if github_data.get("message") and github_data["message"] == "Not Found":
+                    metadata.add_row(
+                        Panel(
+                            f"[red underline]Repo Not Found[/]\n[cyan]Link[/]: {url}\n[light_green]Name[/]: {repo}\n",
+                            expand=False,
+                            border_style="green",
+                            title="GitHub",
+                        )
                     )
-                )
+                else:
+                    size = github_data.get("size", -1)
+                    stars = github_data.get("stargazers_count", -1)
+                    forks = github_data.get("forks_count", -1)
+                    issues = github_data.get("open_issues", -1)
+                    metadata.add_row(
+                        Panel(
+                            f"[light_green]Name[/]: [link=https://github.com/{repo}]{repo}[/]\n"
+                            f"[light_green]Size[/]: {size:,} KB\n"
+                            f"[light_green]Stargazers[/]: {stars:,}\n"
+                            f"[light_green]Issues/Pull Requests[/]: {issues:,}\n"
+                            f"[light_green]Forks[/]: {forks:,}",
+                            expand=False,
+                            border_style="green",
+                            title="GitHub",
+                        )
+                    )
             else:
-                size = github_data.get("size", "Unknown")
-                stars = github_data["stargazers_count"]
-                forks = github_data["forks_count"]
-                issues = github_data["open_issues"]
                 metadata.add_row(
-                    Panel(
-                        f"[light_green]Name[/]: [link=https://github.com/{repo}]{repo}[/]\n"
-                        f"[light_green]Size[/]: {size:,} KB\n"
-                        f"[light_green]Stargazers[/]: {stars:,}\n"
-                        f"[light_green]Issues/Pull Requests[/]: {issues:,}\n"
-                        f"[light_green]Forks[/]: {forks:,}",
-                        expand=False,
-                        border_style="green",
-                        title="GitHub",
+                        Panel(
+                            f"Error {resp.status_code}",
+                            expand=False,
+                            border_style="green",
+                            title="GitHub",
+                        )
                     )
-                )
     if not hide_stats:
         stats_url = f"https://pypistats.org/api/packages/{package_name}/recent"
         with console.status("Getting statistics from PyPI Stats"):
             r = session.get(stats_url)
         try:
             parsed_stats = json.loads(r.text)
-            assert isinstance(parsed_stats, dict)
+            if not isinstance(parsed_stats, dict):
+                parsed_stats = None
         except (json.JSONDecodeError, AssertionError, ValueError):
             parsed_stats = None
 
@@ -1070,7 +1084,7 @@ def regex_search(
                 matches.append(f"[link={base_url}/project/{package}]{package}[/]")
         console.print(", ".join(matches))
     else:
-        table = Table(show_header=True, show_lines=True, title=f"Matches for {regex}")
+        table = Table(show_header=True, show_lines=True)
         table.add_column("[purple]No.[/]", style="purple")
         table.add_column("[green]Package[/]")
         table.add_column("[blue]Link[/]", style="cyan")
@@ -1083,6 +1097,7 @@ def regex_search(
                     f"[link={base_url}/project/{package}]{package}[/]",
                     f"{base_url}/project/{package}",
                 )
+        table.title = f"{table.row_count} matches for [#ffffff on #000000]{regex}[/]"
         console.print(table)
         if table.row_count > 50:
             console.print(

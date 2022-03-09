@@ -14,4 +14,4 @@ python setup.py bdist_wheel
 Write-Host "Buliding Source Distribution" -ForegroundColor Green
 python setup.py sdist
 Write-Host "Uploading Package" -ForegroundColor Green
-python -m twine upload dist/* -p $env:TWINE_PASSWORD -u $env:TWINE_USERNAME -c $Comment -r pypi
+python -m twine upload dist/* -c $Comment -r pypi
