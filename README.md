@@ -172,7 +172,21 @@ Now this probably was the best option before `pypi-command-line` came out and it
 
 ### [pypi-client](https://pypi.org/project/pypi-client/ "pypi-client")
 
-So this can just search for packages on pypi and thats it. Now don't you think that this is inherently bad as per say. So I tried it out immediately and it just got stuck loading the packages, pypi-client gets names of all the packages that exist pypi<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=fetches%20all%20package%20names%20from%20pypi" target="_blank">‾</a></sup> which took like 4 mins, then I assume it downloads the github stars data?<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=downloads%20github%20stars" target="_blank">‾</a></sup> Which takes like another 3 mins and then It just asked me to authorize with github… like why does pypi-client even need authorization from me since github has a public api. And then it showed [this](https://i.imgur.com/D0VJhmZ.png "Demo of the program that has been badly formatted") which isn't really unreadable just badly formatted for screens that are not ultra wide. by changing the font size a bit I could make it look like [this](https://i.imgur.com/usU2AnJ.jpeg "Demo of the program after lowering the font size") which still isn't bad just a bit convoluted. And even at the end of the day the results are manually searched through therefore different from pypi<sup><a title=Example href="https://i.imgur.com/2AuCKuX.jpg" target="_blank">‾</a></sup>
+So this can just search for packages on pypi and thats it. Now don't you think that this is inherently bad as per se. So I tried it out immediately and it just got stuck loading the packages, pypi-client gets names of all the packages that exist pypi<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=fetches%20all%20package%20names%20from%20pypi" target="_blank">‾</a></sup> which took like 4 mins, then I assume it downloads the github stars data?<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=downloads%20github%20stars" target="_blank">‾</a></sup> Which takes like another 3 mins and then It just asked me to authorize with github… like why does pypi-client even need authorization from me since github has a public api. And then it showed [this](https://i.imgur.com/D0VJhmZ.png "Demo of the program that has been badly formatted") which isn't really unreadable just badly formatted for screens that are not ultra wide. by changing the font size a bit I could make it look like [this](https://i.imgur.com/usU2AnJ.jpeg "Demo of the program after lowering the font size") which still isn't bad just a bit convoluted. And even at the end of the day the results are manually searched through therefore different from pypi<sup><a title=Example href="https://i.imgur.com/2AuCKuX.jpg" target="_blank">‾</a></sup>
 
 **TL;DR:**
 Takes too long (≈7 mins), Needs github authorization, badly formatted for non ultra wide monitors, searches manually so results are different compared to pypi
+
+### [yolk](https://pypi.org/project/yolk/ "yolk")
+
+Discontinued 9 years ago, only supports python 2. Uses flags instead of subcommands for everything.
+
+**TL;DR:**
+Is this really necessary?
+
+### [qypi](https://pypi.org/project/qypi/ "qypi")
+
+So, this library is most likely the best alternative for pypi-command-line. But the output is in json, uses the xml-rpc api for search which is discontinued, the readme command doesn't work for me, the list command doesn't have a progressbar
+
+**TL;DR:**
+Output is only in json, without color. The search command doesn't work anymore. Has no progressbar for long running tasks

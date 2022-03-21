@@ -36,8 +36,20 @@ So this can just search for packages on pypi and thats it. Now don't you think t
 **TL;DR:**
 Takes too long (≈7 mins), Needs github authorization, badly formatted for non ultra wide monitors, searches manually so results are different compared to pypi
 
+### [yolk](https://pypi.org/project/yolk/ "yolk")
+
+Discontinued 9 years ago, only supports python 2. Uses flags instead of subcommands for everything.
+
 **TL;DR:**
-Takes too long (≈7 mins), Needs github authorization, badly formatted for non ultra-high-end monitors, searches manually so results are different compared to pypi
+Is this really necessary?
+
+### [qypi](https://pypi.org/project/qypi/ "qypi")
+
+So, this library is most likely the best alternative for pypi-command-line. But the output is in json, uses the xml-rpc api for search which is discontinued, the readme command doesn't work for me, the list command doesn't have a progressbar
+
+**TL;DR:**
+Output is only in json, without color. The search command doesn't work anymore. Has no progressbar for long running tasks
+
 
 ## Benchmarks for speed
 
