@@ -536,7 +536,7 @@ def description(
         if repos:
             if len(repos) == 1:
                 repo = next(iter(repos))
-                console.print(f"[yellow]ℹ️ INFO:[/] However, I did find a github repo[/] https://github.com/{repo}.\n")
+                console.print(f"[yellow]ℹ️ INFO:[/] However, I did find a github repo https://github.com/{repo}.\n")
 
                 try:
                     import questionary  # pylint: disable=import-outside-toplevel
