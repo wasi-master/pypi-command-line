@@ -14,7 +14,8 @@ from typer import Argument, Option
 
 try:
     import rich_click as click
-    from rich_click import RichCommand as Command, RichGroup as Group
+    from rich_click import RichCommand as Command
+    from rich_click import RichGroup as Group
 except ImportError:
     import click
     from click import Command, Group
@@ -71,7 +72,8 @@ except ImportError:
 
 def __color_error_message():
     """Override click.UsageError.show to show colored output"""
-    from click._compat import get_text_stderr  # pylint: disable=import-outside-toplevel
+    from click._compat import \
+        get_text_stderr  # pylint: disable=import-outside-toplevel
     from rich.markup import escape  # pylint: disable=import-outside-toplevel
 
     def show(self, file=None):
@@ -96,10 +98,8 @@ def __color_error_message():
         )
         try:
             import questionary  # pylint: disable=import-outside-toplevel
-            from questionary import (
-                Choice,
-                Style,
-            )  # pylint: disable=import-outside-toplevel
+            from questionary import (  # pylint: disable=import-outside-toplevel
+                Choice, Style)
         except ImportError:
             pass
         else:
@@ -188,9 +188,10 @@ class AliasedGroup(Group):
 
             except ImportError:
                 try:
+                    import warnings  # pylint: disable=import-outside-toplevel
+
                     import thefuzz.fuzz  # pylint: disable=import-outside-toplevel
                     import thefuzz.process  # pylint: disable=import-outside-toplevel
-                    import warnings  # pylint: disable=import-outside-toplevel
 
                     warnings.filterwarnings("error")
                     try:
@@ -396,7 +397,8 @@ def fill_cache(msg="Fetching cache"):
     import os  # pylint: disable=import-outside-toplevel
 
     import requests  # pylint: disable=import-outside-toplevel
-    from rich.progress import Progress  # pylint: disable=import-outside-toplevel
+    from rich.progress import \
+        Progress  # pylint: disable=import-outside-toplevel
 
     all_packages_url = f"{base_url}/simple/"
     cache_path = os.path.join(os.path.dirname(__file__), "cache")
@@ -628,9 +630,8 @@ def description(
                 try:
                     import questionary  # pylint: disable=import-outside-toplevel
                 except ImportError:
-                    from rich.prompt import (
-                        Confirm,
-                    )  # pylint: disable=import-outside-toplevel
+                    from rich.prompt import \
+                        Confirm  # pylint: disable=import-outside-toplevel
 
                     resp = Confirm.ask("Do you want to get the description from there?")
                 else:
@@ -671,11 +672,13 @@ def description(
             raise typer.Exit()
 
     if parsed_data["description_content_type"] == "text/markdown":
-        from rich.markdown import Markdown  # pylint: disable=import-outside-toplevel
+        from rich.markdown import \
+            Markdown  # pylint: disable=import-outside-toplevel
 
         description = Markdown(parsed_data["description"], code_theme=syntax_theme)
     elif parsed_data["description_content_type"] == "text/x-rst":
-        from rich_rst import RestructuredText  # pylint: disable=import-outside-toplevel
+        from rich_rst import \
+            RestructuredText  # pylint: disable=import-outside-toplevel
 
         description = RestructuredText(
             parsed_data["description"], code_theme=syntax_theme
@@ -936,9 +939,8 @@ def wheels(
 
     parsed_data = json.loads(response.text)
 
-    from packaging.version import (
-        parse as parse_version,
-    )  # pylint: disable=import-outside-toplevel
+    from packaging.version import \
+        parse as parse_version  # pylint: disable=import-outside-toplevel
     from rich.text import Text  # pylint: disable=import-outside-toplevel
 
     # def is_wheel_supported(wheel_name):
@@ -961,10 +963,8 @@ def wheels(
     colors = cycle(["green", "blue", "magenta", "cyan", "yellow", "red"])
     wheel_panels = []
     if supported_only:
-        from packaging.tags import (
-            parse_tag,
-            sys_tags,
-        )  # pylint: disable=import-outside-toplevel
+        from packaging.tags import (  # pylint: disable=import-outside-toplevel
+            parse_tag, sys_tags)
         from wheel_filename import InvalidFilenameError, parse_wheel_filename
 
         def is_wheel_supported(wheel):
@@ -1063,9 +1063,8 @@ def information(
     urls = parsed_data["urls"]
 
     try:
-        from packaging.version import (
-            parse as parse_version,
-        )  # pylint:disable=import-outside-toplevel
+        from packaging.version import \
+            parse as parse_version  # pylint:disable=import-outside-toplevel
     except ImportError:
         from distutils.version import (
             LooseVersion as parse_version,
@@ -1582,7 +1581,9 @@ def version(
     """Show the cli's or another package's version and exit"""
     if not package_name:
         import sys
-        from .__init__ import __version__  # pylint: disable=import-outside-toplevel
+
+        from .__init__ import \
+            __version__  # pylint: disable=import-outside-toplevel
 
         console.print(f"Python version: {sys.version}")
         console.print(
@@ -1612,18 +1613,17 @@ def version(
     parsed_data = json.loads(response.text)
 
     try:
-        from packaging.version import (
-            parse as parse_version,
-        )  # pylint:disable=import-outside-toplevel
+        from packaging.version import \
+            parse as parse_version  # pylint:disable=import-outside-toplevel
     except ImportError:
         if no_pre_releases:
             rich.print(
                 "[red]:no_entry_sign: Install packaging (`pip install packaging`) to use the --no-pre-releases flag[/]"
             )
             raise typer.Exit()
-        from distutils.version import (
-            LooseVersion as parse_version,
-        )  # pylint:disable=import-outside-toplevel
+        from distutils.version import \
+            LooseVersion as \
+            parse_version  # pylint:disable=import-outside-toplevel
 
     if not no_pre_releases:
         latest_versions = list(
