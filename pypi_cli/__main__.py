@@ -10,7 +10,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.theme import Theme
-from typer import Argument, Option
+from typer import Argument
+from typer import Option
 
 try:
     import rich_click as click
