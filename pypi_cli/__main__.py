@@ -35,7 +35,8 @@ except ImportError:
 
     session = Session()
     session.headers.update(
-        {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"})
+        {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
+    )
 else:
     import os.path  # pylint: disable=import-outside-toplevel
 
@@ -45,8 +46,12 @@ else:
         backend="sqlite",
         urls_expire_after={
             **dict.fromkeys(
-                [f"{base_url}/simple", f"{base_url}/stats",
-                    "https://api.github.com/repos/*/readme"], 86400
+                [
+                    f"{base_url}/simple",
+                    f"{base_url}/stats",
+                    "https://api.github.com/repos/*/readme",
+                ],
+                86400,
             ),
             f"{base_url}/pypi": 10800,
             f"{base_url}/search": 3600,
@@ -54,8 +59,7 @@ else:
             "https://pypistats.org/api/packages/": 21600,
             "https://img.shields.io": 30,
         },
-        headers={"User-Agent": "wasi_master/pypi_cli",
-                 "Accept": "application/json"},
+        headers={"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"},
         cache_control=True,
     )
 
@@ -74,25 +78,32 @@ def __color_error_message():
         if file is None:
             file = get_text_stderr()
         hint = ""
-        if self.ctx is not None and self.ctx.command.get_help_option(self.ctx) is not None:
+        if (
+            self.ctx is not None
+            and self.ctx.command.get_help_option(self.ctx) is not None
+        ):
             hint = f"[magenta]Try '[blue]{self.ctx.command_path} [bold]{self.ctx.help_option_names[-1]}[/bold][/blue]' or visit [cyan]https://wasi-master.github.io/pypi-command-line/usage#{self.ctx.command.name.replace('-', '')}[/cyan] for help.[/magenta]"
             hint = f"{hint}\n"
         if self.ctx is not None:
             console.print(
-                "[yellow]:disappointed_relieved: You did not do this properly[/]")
+                "[yellow]:disappointed_relieved: You did not do this properly[/]"
+            )
             console.print(
                 f"{(self.ctx.get_usage().replace('...', '').replace('Usage: ', '[green]Usage: [/]').replace('[OPTIONS]', '[bright_black]'+ escape('[OPTIONS…]') + '[/]').replace('[ARGS]', '[bright_black]'+ escape('[ARGS…]') + '[/]'))}\n{hint}"
             )
         console.print(
-            f":exclamation: [bold][red]Error[/bold]: {self.format_message()}[/red]")
+            f":exclamation: [bold][red]Error[/bold]: {self.format_message()}[/red]"
+        )
         try:
             import questionary  # pylint: disable=import-outside-toplevel
-            from questionary import Choice, Style  # pylint: disable=import-outside-toplevel
+            from questionary import (
+                Choice,
+                Style,
+            )  # pylint: disable=import-outside-toplevel
         except ImportError:
             pass
         else:
-            style = Style(
-                [("link", "cyan"), ("command", "blue"), ("cancel", "gray")])
+            style = Style([("link", "cyan"), ("command", "blue"), ("cancel", "gray")])
             print("\n")
             resp = questionary.select(
                 "What do you want to do",
@@ -100,8 +111,10 @@ def __color_error_message():
                     Choice(
                         [
                             ("class:text", "Run '"),
-                            ("class:command",
-                             f"{self.ctx.command_path} {self.ctx.help_option_names[-1]}"),
+                            (
+                                "class:command",
+                                f"{self.ctx.command_path} {self.ctx.help_option_names[-1]}",
+                            ),
                             ("class:text", "'"),
                         ],
                         value=0,
@@ -123,7 +136,8 @@ def __color_error_message():
             ).ask()
             if resp == 0:
                 console.print(
-                    f"[blue]❯ [/]{self.ctx.command_path} {self.ctx.help_option_names[-1]}")
+                    f"[blue]❯ [/]{self.ctx.command_path} {self.ctx.help_option_names[-1]}"
+                )
 
                 print(self.ctx.get_help())
             elif resp == 1:
@@ -144,22 +158,34 @@ class AliasedGroup(Group):
         if rv is not None:
             return rv
         alias_mapping = {
-            **dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"), "rs": "rsearch"}
+            **dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"),
+            "rs": "rsearch",
+        }
         if cmd_name in alias_mapping:
             return click.Group.get_command(self, ctx, alias_mapping[cmd_name])
         commands = self.list_commands(ctx)
         matches = [x for x in commands if x.startswith(cmd_name)]
         if not matches:
-            def processor(x): return x.replace("-", "").lower()
+
+            def processor(x):
+                return x.replace("-", "").lower()
+
             try:
                 import rapidfuzz  # pylint: disable=import-outside-toplevel
 
-                def get_closest_match(cmd): return [
-                    i[0]
-                    for i in rapidfuzz.process.extract(
-                        cmd, commands, scorer=rapidfuzz.fuzz.WRatio, score_cutoff=50, processor=processor, limit=5
-                    )
-                ]
+                def get_closest_match(cmd):
+                    return [
+                        i[0]
+                        for i in rapidfuzz.process.extract(
+                            cmd,
+                            commands,
+                            scorer=rapidfuzz.fuzz.WRatio,
+                            score_cutoff=50,
+                            processor=processor,
+                            limit=5,
+                        )
+                    ]
+
             except ImportError:
                 try:
                     import thefuzz.fuzz  # pylint: disable=import-outside-toplevel
@@ -168,12 +194,19 @@ class AliasedGroup(Group):
 
                     warnings.filterwarnings("error")
                     try:
-                        def get_closest_match(cmd): return [
-                            i[0]
-                            for i in thefuzz.process.extractBests(
-                                cmd, commands, score_cutoff=50, processor=processor, limit=5
-                            )
-                        ]
+
+                        def get_closest_match(cmd):
+                            return [
+                                i[0]
+                                for i in thefuzz.process.extractBests(
+                                    cmd,
+                                    commands,
+                                    score_cutoff=50,
+                                    processor=processor,
+                                    limit=5,
+                                )
+                            ]
+
                     except UserWarning:
                         console.print(
                             "[yellow]WARNING:[/] Using slow [red]thefuzz[/] and [red]]difflib.SequenceMatcher[/]. "
@@ -182,8 +215,11 @@ class AliasedGroup(Group):
                 except ImportError:
                     import difflib  # pylint: disable=import-outside-toplevel
 
-                    def get_closest_match(cmd): return difflib.get_close_matches(
-                        cmd, commands, n=5, cutoff=0.5) or [None]
+                    def get_closest_match(cmd):
+                        return difflib.get_close_matches(
+                            cmd, commands, n=5, cutoff=0.5
+                        ) or [None]
+
         if len(matches) == 0:
             closest_matches = get_closest_match(cmd_name)
             if not closest_matches:
@@ -205,7 +241,8 @@ class AliasedGroup(Group):
                     "Which one did you want to run?",
                     choices=closest_matches,
                     style=questionary.Style(
-                        [("text", "red"), ("highlighted", "bg:ansibrightred")]),
+                        [("text", "red"), ("highlighted", "bg:ansibrightred")]
+                    ),
                 ).ask()
 
             if not resp:
@@ -213,26 +250,26 @@ class AliasedGroup(Group):
             return click.Group.get_command(self, ctx, resp)
         elif len(matches) == 1:
             console.print(
-                f"[cyan]ℹ️ Info:[/] Found shortened name '{cmd_name}', using '{matches[0]}'")
+                f"[cyan]ℹ️ Info:[/] Found shortened name '{cmd_name}', using '{matches[0]}'"
+            )
             return click.Group.get_command(self, ctx, matches[0])
-        formatted_matches = ", ".join(
-            sorted(f"[red]{match}[/]" for match in matches))
+        formatted_matches = ", ".join(sorted(f"[red]{match}[/]" for match in matches))
         try:
             import questionary
         except ImportError:
-            ctx.fail(
-                f"Found Too many matches for '{cmd_name}': {formatted_matches}")
+            ctx.fail(f"Found Too many matches for '{cmd_name}': {formatted_matches}")
         else:
             import difflib  # pylint: disable=import-outside-toplevel
 
             console.print(
-                f"[red]:warning: Attention:[/] Found Too many matches for '{cmd_name}': {formatted_matches}")
+                f"[red]:warning: Attention:[/] Found Too many matches for '{cmd_name}': {formatted_matches}"
+            )
             command = questionary.select(
                 "Select one to continue",
-                choices=difflib.get_close_matches(
-                    cmd_name, matches, cutoff=0.0),
+                choices=difflib.get_close_matches(cmd_name, matches, cutoff=0.0),
                 style=questionary.Style(
-                    [("text", "red"), ("highlighted", "bg:ansibrightred")]),
+                    [("text", "red"), ("highlighted", "bg:ansibrightred")]
+                ),
             ).ask()
             if not command:
                 raise typer.Exit()
@@ -294,10 +331,10 @@ class Package:
         time = soup.find(class_="package-snippet__created")
         self.date = time.get_text().strip()
         self.released = datetime.strptime(
-            time.find("time")["datetime"][:-5], "%Y-%m-%dT%H:%M:%S")
+            time.find("time")["datetime"][:-5], "%Y-%m-%dT%H:%M:%S"
+        )
         self.name = soup.find(class_="package-snippet__name").get_text()
-        self.description = soup.find(
-            class_="package-snippet__description").get_text()
+        self.description = soup.find(class_="package-snippet__description").get_text()
 
 
 def utc_to_local(utc_dt, tzinfo):
@@ -339,8 +376,7 @@ def get_latest_version():
 def load_cache():
     import os  # pylint: disable=import-outside-toplevel
 
-    cache_file = os.path.join(os.path.dirname(
-        __file__), "cache", "packages.txt")
+    cache_file = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
 
     try:
         last_refreshed = os.path.getmtime(cache_file)
@@ -366,8 +402,7 @@ def fill_cache(msg="Fetching cache"):
     cache_path = os.path.join(os.path.dirname(__file__), "cache")
     if not os.path.exists(cache_path):
         os.makedirs(cache_path)
-    cache_file = os.path.join(os.path.dirname(
-        __file__), "cache", "packages.txt")
+    cache_file = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
 
     with Progress(transient=True) as progress:
         response = requests.get(all_packages_url, stream=True)
@@ -398,7 +433,8 @@ def _refresh_cache():
     new_cache = fill_cache(msg="Fetching new cache")
     changed = len(new_cache) - len(old_cache)
     console.print(
-        f"[yellow]:repeat: Updated the cache, number of new packages till last refresh:[/] [red]{changed}[/]")
+        f"[yellow]:repeat: Updated the cache, number of new packages till last refresh:[/] [red]{changed}[/]"
+    )
 
 
 def _clear_cache():
@@ -408,7 +444,8 @@ def _clear_cache():
         pass
     else:
         console.print(
-            f"[cyan]ℹ️ Info:[/] Emptied cache, now trying to delete the cache file")
+            f"[cyan]ℹ️ Info:[/] Emptied cache, now trying to delete the cache file"
+        )
 
     import os
     import shutil
@@ -421,18 +458,17 @@ def _clear_cache():
                 with session.cache_disabled():
                     os.remove(file_path)
         except Exception as exc:
-            console.print(
-                f"[red]:x: Failed to delete {file_path}. Reason: {exc}[/]")
+            console.print(f"[red]:x: Failed to delete {file_path}. Reason: {exc}[/]")
 
 
 def _get_github_readme(repo):
     readme = session.get(f"https://api.github.com/repos/{repo}/readme").json()
     if readme.get("message") == "Not Found":
-        console.print(
-            f"[red]:x: Could not find readme for[/] [yellow]{repo}[/]")
+        console.print(f"[red]:x: Could not find readme for[/] [yellow]{repo}[/]")
         raise typer.Exit()
     content = session.get(
-        f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
+        f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}"
+    )
     if content.status_code == 200:
         return content.text, readme["path"]
     return None, None
@@ -463,7 +499,9 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
 
     from datetime import timezone  # pylint: disable=import-outside-toplevel
 
-    for index, package in enumerate(soup.find_all("item") if lxml else soup.iter("item"), 1):
+    for index, package in enumerate(
+        soup.find_all("item") if lxml else soup.iter("item"), 1
+    ):
         title = package.find("title").text
         if split_title:
             title = title.split()[0]
@@ -471,8 +509,12 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
         description = package.find("description")
         link = package.find("link").text
 
-        date = utc_to_local(datetime.strptime(package.find(
-            "pubDate").text, "%a, %d %b %Y %H:%M:%S GMT"), timezone.utc)
+        date = utc_to_local(
+            datetime.strptime(
+                package.find("pubDate").text, "%a, %d %b %Y %H:%M:%S GMT"
+            ),
+            timezone.utc,
+        )
         if _link and _author:
             table.add_row(
                 f"{index}.",
@@ -507,12 +549,13 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
 
 @app.command()
 def description(
-    package_name: str = Argument(...,
-                                 help="Package to get the description for"),
+    package_name: str = Argument(..., help="Package to get the description for"),
     force_github: bool = Option(
-        False, help="Forcefully get the description from github"),
+        False, help="Forcefully get the description from github"
+    ),
     syntax_theme: str = Option(
-        "monokai", help="Override the default syntax highlighting theme"),
+        "monokai", help="Override the default syntax highlighting theme"
+    ),
 ):
     """See the description for a package."""
     url = f"{base_url}/pypi/{quote(package_name)}/json"
@@ -522,9 +565,11 @@ def description(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(
-                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]"
+            )
         rich.print(
-            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]"
+        )
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)["info"]
@@ -533,17 +578,17 @@ def description(
 
         repos = set(
             re.findall(
-                r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
+                r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})",
+                str(parsed_data),
+            )
         )
         if len(repos) > 1:
-            console.print(
-                "[red]:warning: WARNING:[/] I found multiple github repos. ")
+            console.print("[red]:warning: WARNING:[/] I found multiple github repos. ")
             import questionary  # pylint: disable=import-outside-toplevel
 
             repo = questionary.select(
                 "Please specify the repo you want to use.",
-                choices=[questionary.Choice([("cyan", r)])
-                         for r in list(repos)],
+                choices=[questionary.Choice([("cyan", r)]) for r in list(repos)],
             ).ask()
         elif len(repos) == 1:
             repo = next(iter(repos))
@@ -553,7 +598,8 @@ def description(
         readme, filename = _get_github_readme(repo)
         if not readme or not filename:
             console.print(
-                "[red]:x: I could not find a readme inside the GitHub repository[/]")
+                "[red]:x: I could not find a readme inside the GitHub repository[/]"
+            )
             raise typer.Exit()
         parsed_data["description"] = readme
         if filename.endswith((".md", ".md.txt")):
@@ -568,42 +614,48 @@ def description(
 
         repos = set(
             re.findall(
-                r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
+                r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})",
+                str(parsed_data),
+            )
         )
         if repos:
             if len(repos) == 1:
                 repo = next(iter(repos))
                 console.print(
-                    f"[yellow]ℹ️ INFO:[/] However, I did find a github repo https://github.com/{repo}.\n")
+                    f"[yellow]ℹ️ INFO:[/] However, I did find a github repo https://github.com/{repo}.\n"
+                )
 
                 try:
                     import questionary  # pylint: disable=import-outside-toplevel
                 except ImportError:
-                    from rich.prompt import Confirm  # pylint: disable=import-outside-toplevel
+                    from rich.prompt import (
+                        Confirm,
+                    )  # pylint: disable=import-outside-toplevel
 
-                    resp = Confirm.ask(
-                        "Do you want to get the description from there?")
+                    resp = Confirm.ask("Do you want to get the description from there?")
                 else:
                     resp = questionary.confirm(
-                        "Do you want to get the description from there?").ask()
+                        "Do you want to get the description from there?"
+                    ).ask()
 
                 if not resp:
                     console.print("[dim gray]:ok: Cancelled![/]")
                     raise typer.Exit()
             elif len(repos) > 1:
                 console.print(
-                    "[red]:warning: WARNING:[/] I did find some github repos. ")
+                    "[red]:warning: WARNING:[/] I did find some github repos. "
+                )
                 import questionary  # pylint: disable=import-outside-toplevel
 
                 repo = questionary.select(
                     "Please specify the repo you want to see the descripton from (Ctrl+C to cancel).",
-                    choices=[questionary.Choice([("cyan", r)])
-                             for r in list(repos)],
+                    choices=[questionary.Choice([("cyan", r)]) for r in list(repos)],
                 ).ask()
             readme, filename = _get_github_readme(repo)
             if not readme or not filename:
                 console.print(
-                    "[red]:x: I could not find a readme inside the GitHub repository[/]")
+                    "[red]:x: I could not find a readme inside the GitHub repository[/]"
+                )
                 raise typer.Exit()
             parsed_data["description"] = readme
             if filename.endswith((".md", ".md.txt")):
@@ -621,44 +673,62 @@ def description(
     if parsed_data["description_content_type"] == "text/markdown":
         from rich.markdown import Markdown  # pylint: disable=import-outside-toplevel
 
-        description = Markdown(
-            parsed_data["description"], code_theme=syntax_theme)
+        description = Markdown(parsed_data["description"], code_theme=syntax_theme)
     elif parsed_data["description_content_type"] == "text/x-rst":
         from rich_rst import RestructuredText  # pylint: disable=import-outside-toplevel
 
         description = RestructuredText(
-            parsed_data["description"], code_theme=syntax_theme)
+            parsed_data["description"], code_theme=syntax_theme
+        )
     else:
         from rich.text import Text  # pylint: disable=import-outside-toplevel
 
         description = Text(parsed_data["description"])
-    console.print(Panel(
-        description, title=f"Description for {package_name}", border_style="bold magenta"))
+    console.print(
+        Panel(
+            description,
+            title=f"Description for {package_name}",
+            border_style="bold magenta",
+        )
+    )
 
 
 @app.command()
 def new_packages(
     show_author: bool = Option(
-        False, metavar="author", help="Show the project author or not"),
-    hide_link: bool = Option(False, metavar="link",
-                             help="Show the project link or not"),
+        False, metavar="author", help="Show the project author or not"
+    ),
+    hide_link: bool = Option(
+        False, metavar="link", help="Show the project link or not"
+    ),
 ):
     """See the top 40 newly added packages."""
     _format_xml_packages(
-        f"{base_url}/rss/packages.xml", "Newly Added Packages", "Published At", show_author, hide_link, split_title=True
+        f"{base_url}/rss/packages.xml",
+        "Newly Added Packages",
+        "Published At",
+        show_author,
+        hide_link,
+        split_title=True,
     )
 
 
 @app.command()
 def new_releases(
     show_author: bool = Option(
-        False, metavar="author", help="Show the project author or not"),
-    hide_link: bool = Option(False, metavar="link",
-                             help="Show the project link or not"),
+        False, metavar="author", help="Show the project author or not"
+    ),
+    hide_link: bool = Option(
+        False, metavar="link", help="Show the project link or not"
+    ),
 ):
     """See the top 100 newly updated packages."""
     _format_xml_packages(
-        f"{base_url}/rss/updates.xml", "Newly Released Packages", "Released At", show_author, hide_link
+        f"{base_url}/rss/updates.xml",
+        "Newly Released Packages",
+        "Released At",
+        show_author,
+        hide_link,
     )
 
 
@@ -666,24 +736,24 @@ def new_releases(
 def largest_files():
     """See the top 100 projects with the largest file size."""
 
-    headers = {"User-Agent": "wasi_master/pypi_cli",
-               "Accept": "application/json"}
+    headers = {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
     url = f"{base_url}/stats/"
     with console.status("Loading largest files..."):
         response = session.get(url, headers=headers)
         print(response.text)
         data = json.loads(response.text)
     packages = data["top_packages"]
-    packages = dict(
-        sorted(packages.items(), key=lambda i: i[1]["size"], reverse=True))
-    table = Table(
-        title="Top packages on PyPI based on their size", show_lines=True)
+    packages = dict(sorted(packages.items(), key=lambda i: i[1]["size"], reverse=True))
+    table = Table(title="Top packages on PyPI based on their size", show_lines=True)
     table.add_column("Index", style="magenta", header_style="bold magenta")
     table.add_column("Package", style="green", header_style="bold green")
     table.add_column("Size", style="red", header_style="bold red")
     table.add_column("Link", style="cyan", header_style="bold blue")
     table.add_row(
-        "-", "All Total", humanize.naturalsize(data["total_packages_size"], binary=True) + "\n", style="bold red"
+        "-",
+        "All Total",
+        humanize.naturalsize(data["total_packages_size"], binary=True) + "\n",
+        style="bold red",
     )
     for i, (name, project) in enumerate(packages.items(), 1):
         table.add_row(
@@ -697,10 +767,10 @@ def largest_files():
 
 @app.command()
 def search(
-    package_name: str = Argument(...,
-                                 help="The name of the package to search for"),
-    page: int = Option(1, min=1, max=500,
-                       help="The page of the search results to show."),
+    package_name: str = Argument(..., help="The name of the package to search for"),
+    page: int = Option(
+        1, min=1, max=500, help="The page of the search results to show."
+    ),
     # classifier: List[str] = Option(
     #     None, help="Can be used multiple times to specify a list of classifiers to filter the results."
     # ),
@@ -714,34 +784,32 @@ def search(
         response = session.get(url, params=parameters)
 
     if response.status_code == 404:
-        console.print(
-            "[bold:no_entry_sign: The specified page doesn't exist[/]")
+        console.print("[bold:no_entry_sign: The specified page doesn't exist[/]")
         raise typer.Exit()
 
     with console.status("Parsing data..."):
         import bs4  # pylint: disable=import-outside-toplevel
 
-        soup = bs4.BeautifulSoup(
-            response.text, "lxml" if lxml else "html.parser")
+        soup = bs4.BeautifulSoup(response.text, "lxml" if lxml else "html.parser")
         result_list = soup.find(
-            attrs={"aria-label": "Search results"}, class_="unstyled")
+            attrs={"aria-label": "Search results"}, class_="unstyled"
+        )
         if not result_list:
             comment = soup.select(
                 "div.split-layout.split-layout--table.split-layout--wrap-on-tablet > div:nth-child(1) > p"
             )
-            console.print(
-                f"[bold]{' '.join(comment[0].get_text().split())}[/]")
+            console.print(f"[bold]{' '.join(comment[0].get_text().split())}[/]")
             raise typer.Exit()
 
-        results = [Package(i) for i in result_list.find_all(
-            "a", class_="package-snippet")]
+        results = [
+            Package(i) for i in result_list.find_all("a", class_="package-snippet")
+        ]
 
         pagination = soup.find(class_="button-group--pagination")
         if not pagination:
             amount_of_pages = 1
         else:
-            amount_of_pages = int(pagination.find_all(
-                ["span", "a"])[-2].get_text())
+            amount_of_pages = int(pagination.find_all(["span", "a"])[-2].get_text())
 
     table = Table(
         show_header=True,
@@ -773,10 +841,10 @@ def releases(
         help="The name of package to show releases for, this can "
         "also include the version with this syntax: `package_name==version`",
     ),
-    version: str = Option(
-        None, help="The version of the package to show releases for"),
-    show_links: bool = Option(False, metavar="link",
-                              help="Display the links to the releases"),
+    version: str = Option(None, help="The version of the package to show releases for"),
+    show_links: bool = Option(
+        False, metavar="link", help="Display the links to the releases"
+    ),
 ):
     """See all the available releases for a package.
 
@@ -792,9 +860,11 @@ def releases(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(
-                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]"
+            )
         rich.print(
-            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]"
+        )
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -813,10 +883,12 @@ def releases(
         release = releases[0]
         try:
             upload_time = datetime.strptime(
-                release["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ")
+                release["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ"
+            )
         except ValueError:
             upload_time = datetime.strptime(
-                release["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%SZ")
+                release["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%SZ"
+            )
 
         if show_links is True:
             table.add_row(
@@ -836,14 +908,16 @@ def releases(
 
 @app.command()
 def wheels(
-    package_name: str = Argument(...,
-                                 help="The name of the package to show wheel info for"),
+    package_name: str = Argument(
+        ..., help="The name of the package to show wheel info for"
+    ),
     version: str = Argument(
         None,
         help="The version of the package to show info for, defaults to latest, can be omitted if using package_name==version",
     ),
     supported_only: bool = Option(
-        False, help="Only show wheels supported on the current platform"),
+        False, help="Only show wheels supported on the current platform"
+    ),
 ):
     """See detailed information about all the wheels of a release of a package"""
     if not version and "==" in package_name:
@@ -856,12 +930,15 @@ def wheels(
         if response.status_code == 404:
             rich.print("[red]:no_entry_sign: Project or version not found[/]")
         rich.print(
-            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]"
+        )
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
 
-    from packaging.version import parse as parse_version  # pylint: disable=import-outside-toplevel
+    from packaging.version import (
+        parse as parse_version,
+    )  # pylint: disable=import-outside-toplevel
     from rich.text import Text  # pylint: disable=import-outside-toplevel
 
     # def is_wheel_supported(wheel_name):
@@ -884,7 +961,10 @@ def wheels(
     colors = cycle(["green", "blue", "magenta", "cyan", "yellow", "red"])
     wheel_panels = []
     if supported_only:
-        from packaging.tags import parse_tag, sys_tags  # pylint: disable=import-outside-toplevel
+        from packaging.tags import (
+            parse_tag,
+            sys_tags,
+        )  # pylint: disable=import-outside-toplevel
         from wheel_filename import InvalidFilenameError, parse_wheel_filename
 
         def is_wheel_supported(wheel):
@@ -913,20 +993,25 @@ def wheels(
                     filter(
                         None,
                         [
-                            f"[blue]Comment:[/] {wheel['comment_text']}" if wheel["comment_text"] else None,
+                            f"[blue]Comment:[/] {wheel['comment_text']}"
+                            if wheel["comment_text"]
+                            else None,
                             f"[magenta]Has Signature[/]: {wheel['has_sig']}",
                             f"[cyan]Package Type:[/] {wheel['packagetype']}",
                             f"[green]Requires Python:[/] {wheel['requires_python']}"
                             if not wheel["requires_python"] is None
                             else None,
                             f"[yellow]Size:[/] {humanize.naturalsize(wheel['size'], binary=True)}",
-                            f"[bright_cyan]Yanked Reason[/]: {wheel['yanked_reason']}" if wheel["yanked"] else None,
+                            f"[bright_cyan]Yanked Reason[/]: {wheel['yanked_reason']}"
+                            if wheel["yanked"]
+                            else None,
                             f"[red]Upload Time[/]: {humanize.naturaltime(utc_to_local(datetime.strptime(wheel['upload_time_iso_8601'], '%Y-%m-%dT%H:%M:%S.%fZ'), timezone.utc))}",
                         ],
                     )
                 ),
-                title=f"[white]{wheel_name}[/]" if not wheel_name.plain.endswith(
-                    ".whl") else wheel_name,
+                title=f"[white]{wheel_name}[/]"
+                if not wheel_name.plain.endswith(".whl")
+                else wheel_name,
                 border_style=next(colors),
             )
         )
@@ -937,18 +1022,20 @@ def wheels(
 
 @app.command()
 def information(
-    package_name: str = Argument(...,
-                                 help="The name of the package to show information for"),
-    version: str = Option(
-        None, help="The version of the package to show info for"),
+    package_name: str = Argument(
+        ..., help="The name of the package to show information for"
+    ),
+    version: str = Option(None, help="The version of the package to show info for"),
     show_classifiers: bool = Option(
-        False, metavar="classifiers", help="Show the classifiers"),
+        False, metavar="classifiers", help="Show the classifiers"
+    ),
     hide_project_urls: bool = Option(
-        False, metavar="project_urls", help="Hide the project urls"),
+        False, metavar="project_urls", help="Hide the project urls"
+    ),
     hide_requirements: bool = Option(
-        False, metavar="requirements", help="Hide the requirements"),
-    hide_github: bool = Option(
-        False, metavar="github", help="Hide the github"),
+        False, metavar="requirements", help="Hide the requirements"
+    ),
+    hide_github: bool = Option(False, metavar="github", help="Hide the github"),
     hide_stats: bool = Option(False, metavar="stats", help="Hide the stats"),
     hide_meta: bool = Option(False, metavar="meta", help="Hide the metadata"),
 ):
@@ -962,9 +1049,11 @@ def information(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(
-                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]"
+            )
         rich.print(
-            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]"
+        )
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -974,24 +1063,29 @@ def information(
     urls = parsed_data["urls"]
 
     try:
-        from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
+        from packaging.version import (
+            parse as parse_version,
+        )  # pylint:disable=import-outside-toplevel
     except ImportError:
-        from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
+        from distutils.version import (
+            LooseVersion as parse_version,
+        )  # pylint:disable=import-outside-toplevel
 
     from datetime import timezone  # pylint: disable=import-outside-toplevel
 
     if urls:
         # HACK: should use fromisotime
         release_time = utc_to_local(
-            datetime.strptime(urls[-1]["upload_time_iso_8601"],
-                              "%Y-%m-%dT%H:%M:%S.%fZ"), timezone.utc
+            datetime.strptime(
+                urls[-1]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ"
+            ),
+            timezone.utc,
         )
         natural_time = release_time.strftime("%b %d, %Y")
     else:
         natural_time = "UNKNOWN"
     description = info["summary"]
-    latest_version = list(
-        sorted(map(parse_version, releases.keys()), reverse=True))[0]
+    latest_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0]
     version_comment = (
         "[green]Latest Version[/]"
         if str(latest_version) == str(info["version"])
@@ -1000,8 +1094,8 @@ def information(
     import re  # pylint: disable=import-outside-toplevel
 
     repos = re.findall(
-        r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?", str(
-            info)
+        r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?",
+        str(info),
     )
     if len(repos) > 1:
         repos = list(
@@ -1017,9 +1111,11 @@ def information(
     from rich.text import Text  # pylint:disable=import-outside-toplevel
 
     title = Text.from_markup(
-        f"[bold cyan]{info['name']} {info['version']}[/]\n{description}", justify="left")
+        f"[bold cyan]{info['name']} {info['version']}[/]\n{description}", justify="left"
+    )
     message = Text.from_markup(
-        f"{version_comment}\nReleased: {natural_time}", justify="right")
+        f"{version_comment}\nReleased: {natural_time}", justify="right"
+    )
     table = Table.grid(expand=True)
     table.add_column(justify="left")
     table.add_column(justify="right")
@@ -1030,8 +1126,10 @@ def information(
     if info.get("project_urls") and not hide_project_urls:
         metadata.add_row(
             Panel(
-                "\n".join(f"[yellow]{name}[/]: [cyan]{url}[/]" for name,
-                          url in info["project_urls"].items()),
+                "\n".join(
+                    f"[yellow]{name}[/]: [cyan]{url}[/]"
+                    for name, url in info["project_urls"].items()
+                ),
                 expand=False,
                 border_style="magenta",
                 title="Project URLs",
@@ -1123,8 +1221,12 @@ def information(
                     for i in (
                         f"[dark_goldenrod]License[/]: {info['license']}",
                         f"[dark_goldenrod]Author[/]: {info['author']}",
-                        f"[dark_goldenrod]Author Email[/]: {info['author_email']}" if info["author_email"] else "",
-                        f"[dark_goldenrod]Maintainer[/]: {info['maintainer']}" if info["maintainer"] else "",
+                        f"[dark_goldenrod]Author Email[/]: {info['author_email']}"
+                        if info["author_email"]
+                        else "",
+                        f"[dark_goldenrod]Maintainer[/]: {info['maintainer']}"
+                        if info["maintainer"]
+                        else "",
                         f"[dark_goldenrod]Maintainer Email[/]: {info['maintainer_email']}"
                         if info["maintainer_email"]
                         else "",
@@ -1166,8 +1268,7 @@ def regex_search(
         matches = []
         for package in packages:
             if _regex.match(package):
-                matches.append(
-                    f"[link={base_url}/project/{package}]{package}[/]")
+                matches.append(f"[link={base_url}/project/{package}]{package}[/]")
         console.print(", ".join(matches))
     else:
         table = Table(show_header=True, show_lines=True)
@@ -1194,12 +1295,17 @@ def regex_search(
 @app.command()
 def read_the_docs(
     package_name: str = Argument(
-        ..., help="The name or link to the docs of the package to show the documentation for"),
+        ...,
+        help="The name or link to the docs of the package to show the documentation for",
+    ),
     query: str = Argument(
-        None, help="The query you want to read the docs for, if not passed goes to the main docs page"
+        None,
+        help="The query you want to read the docs for, if not passed goes to the main docs page",
     ),
     url_only: bool = Option(
-        True, help="Only print the url to the console instead of opening it in a browser"),
+        True,
+        help="Only print the url to the console instead of opening it in a browser",
+    ),
 ):
     """Search the documentation for an item of a package."""
     import webbrowser  # pylint: disable=import-outside-toplevel
@@ -1278,18 +1384,21 @@ def read_the_docs(
                 if response.status_code != 200:
                     if response.status_code == 404:
                         rich.print(
-                            f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+                            f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]"
+                        )
                     rich.print(
                         f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]"
                     )
                     raise typer.Exit()
 
                 parsed_data = json.loads(response.text)
-                url = parsed_data["info"].get(
-                    "project_urls", {}).get("Documentation", None)
+                url = (
+                    parsed_data["info"]
+                    .get("project_urls", {})
+                    .get("Documentation", None)
+                )
                 if not url:
-                    console.print(
-                        "[bold]:x: Documentation url not found on PyPI[/]")
+                    console.print("[bold]:x: Documentation url not found on PyPI[/]")
                     raise typer.Exit()
                 else:
                     import os.path  # pylint: disable=import-outside-toplevel
@@ -1316,8 +1425,7 @@ def read_the_docs(
 
 @app.command()
 def browse(
-    package_name: str = Argument(...,
-                                 help="The name of the package to show links for"),
+    package_name: str = Argument(..., help="The name of the package to show links for"),
     url_only: bool = Option(
         False,
         help="If this is set then it will only show the urls instead of interactively opening them in the browser",
@@ -1329,7 +1437,8 @@ def browse(
     import questionary  # pylint: disable=import-outside-toplevel
 
     link_style = questionary.Style(
-        [("name", "bold red"), ("seperator", "gray"), ("url", "cyan")])
+        [("name", "bold red"), ("seperator", "gray"), ("url", "cyan")]
+    )
 
     url = f"{base_url}/pypi/{quote(package_name)}/json"
 
@@ -1339,9 +1448,11 @@ def browse(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(
-                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]"
+            )
         rich.print(
-            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]"
+        )
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -1351,19 +1462,30 @@ def browse(
     urls["Project URL"] = info.get("project_url")
     urls["Home Page"] = info.get("project_url")
     urls["Release URL"] = info.get("release_url")
-    urls["Mail to"] = ("mailto:" + info["maintainer_email"]
-                       ) if info.get("maintainer_email") else None
+    urls["Mail to"] = (
+        ("mailto:" + info["maintainer_email"]) if info.get("maintainer_email") else None
+    )
 
     if url_only:
-        console.print("\n".join(
-            f"[red]{name:15}[/] [grey46]-[/] [cyan]{url}[/]" for name, url in urls.items() if url))
+        console.print(
+            "\n".join(
+                f"[red]{name:15}[/] [grey46]-[/] [cyan]{url}[/]"
+                for name, url in urls.items()
+                if url
+            )
+        )
         raise typer.Exit()
 
     answer = questionary.select(
         "Which link do you want to to open?",
         choices=[
             questionary.Choice(
-                title=[("class:name", f"{name:15}"), ("class:seperator", " - "), ("class:url", url)], value=url
+                title=[
+                    ("class:name", f"{name:15}"),
+                    ("class:seperator", " - "),
+                    ("class:url", url),
+                ],
+                value=url,
             )
             for name, url in urls.items()
             if url
@@ -1391,37 +1513,35 @@ def cache_info():
     """See information about the cache"""
     import os.path  # pylint: disable=import-outside-toplevel
 
-    packages_cache = os.path.join(
-        os.path.dirname(__file__), "cache", "packages.txt")
-    requests_cache = os.path.join(os.path.dirname(
-        __file__), "cache", "requests.sqlite")
+    packages_cache = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
+    requests_cache = os.path.join(os.path.dirname(__file__), "cache", "requests.sqlite")
     try:
         packages_size = os.path.getsize(packages_cache)
         packages_last_refreshed = os.path.getmtime(packages_cache)
     except FileNotFoundError:
         packages_size = None
         packages_last_refreshed = None
-        console.print(
-            "[bold yellow]:no_entry_sign: Packages cache not available[/]")
+        console.print("[bold yellow]:no_entry_sign: Packages cache not available[/]")
     try:
         requests_size = os.path.getsize(requests_cache)
     except FileNotFoundError:
         requests_size = None
-        console.print(
-            "[bold yellow]:no_entry_sign: Requests cache not available[/]")
+        console.print("[bold yellow]:no_entry_sign: Requests cache not available[/]")
         if not packages_size:
-            console.print(
-                "[bold red]:warning::no_entry_sign: No cache available![/]")
+            console.print("[bold red]:warning::no_entry_sign: No cache available![/]")
             # If both the caches are unavailable, then we can't do anything
             raise typer.Exit()
 
     console.print(
-        f"ℹ️ Packages cache size: {humanize.naturalsize(packages_size or 0, binary=True)}")
+        f"ℹ️ Packages cache size: {humanize.naturalsize(packages_size or 0, binary=True)}"
+    )
 
     console.print(
-        f"ℹ️ Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
+        f"ℹ️ Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}"
+    )
     console.print(
-        f"ℹ️ Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
+        f"ℹ️ Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}"
+    )
     if packages_last_refreshed:
         from datetime import datetime
 
@@ -1431,15 +1551,16 @@ def cache_info():
 
     if requests_size:
         table = Table(title="All cached requests")
-        table.add_column("Index", style="dim magenta",
-                         header_style="bold magenta")
+        table.add_column("Index", style="dim magenta", header_style="bold magenta")
         table.add_column("Link", style="cyan", header_style="bold cyan")
         table.add_column("Created", style="green", header_style="bold green")
         table.add_column("Expires", style="green", header_style="bold green")
         for n, response in enumerate(session.cache.values()):
             table.add_row(
-                f"{n}.", response.url, humanize.naturaltime(
-                    response.created_at), humanize.naturaltime(response.expires)
+                f"{n}.",
+                response.url,
+                humanize.naturaltime(response.created_at),
+                humanize.naturaltime(response.expires),
             )
         console.print(table)
 
@@ -1447,13 +1568,16 @@ def cache_info():
 @app.command()
 def version(
     package_name: str = Argument(
-        None, help="The name or link to the docs of the package to show the documentation for"
+        None,
+        help="The name or link to the docs of the package to show the documentation for",
     ),
     limit: int = Option(10, help="Limit the number of versions to show"),
     no_pre_releases: bool = Option(
-        False, help="If set then it will not show pre-releases"),
+        False, help="If set then it will not show pre-releases"
+    ),
     show_installed_version: bool = Option(
-        False, help="If set then it will show the version that is installed too"),
+        False, help="If set then it will show the version that is installed too"
+    ),
 ):
     """Show the cli's or another package's version and exit"""
     if not package_name:
@@ -1462,11 +1586,13 @@ def version(
 
         console.print(f"Python version: {sys.version}")
         console.print(
-            f"Current version of [yellow]pypi-command-line[/] is [red]{__version__}[/]")
+            f"Current version of [yellow]pypi-command-line[/] is [red]{__version__}[/]"
+        )
         with console.status("Getting latest version"):
             latest_version = get_latest_version()
         console.print(
-            f"Latest  version of [yellow]pypi-command-line[/] is [red]{latest_version}[/]")
+            f"Latest  version of [yellow]pypi-command-line[/] is [red]{latest_version}[/]"
+        )
         raise typer.Exit()
 
     url = f"{base_url}/pypi/{quote(package_name)}/json"
@@ -1476,30 +1602,41 @@ def version(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(
-                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+                f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]"
+            )
         rich.print(
-            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+            f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]"
+        )
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
 
     try:
-        from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
+        from packaging.version import (
+            parse as parse_version,
+        )  # pylint:disable=import-outside-toplevel
     except ImportError:
         if no_pre_releases:
             rich.print(
                 "[red]:no_entry_sign: Install packaging (`pip install packaging`) to use the --no-pre-releases flag[/]"
             )
             raise typer.Exit()
-        from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
+        from distutils.version import (
+            LooseVersion as parse_version,
+        )  # pylint:disable=import-outside-toplevel
 
     if not no_pre_releases:
-        latest_versions = list(sorted(
-            map(parse_version, parsed_data["releases"].keys()), reverse=True))[:limit]
+        latest_versions = list(
+            sorted(map(parse_version, parsed_data["releases"].keys()), reverse=True)
+        )[:limit]
     else:
         latest_versions = list(
             sorted(
-                filter(lambda x: not x.is_prerelease, map(parse_version, parsed_data["releases"].keys())), reverse=True
+                filter(
+                    lambda x: not x.is_prerelease,
+                    map(parse_version, parsed_data["releases"].keys()),
+                ),
+                reverse=True,
             )
         )[:limit]
 
@@ -1512,12 +1649,13 @@ def version(
             import pkg_resources
 
             try:
-                installed_version = pkg_resources.get_distribution(
-                    package_name).version
+                installed_version = pkg_resources.get_distribution(package_name).version
             except Exception:
                 pass
             else:
-                version_info = f" [dark_orange](Installed Version: {installed_version})[/]"
+                version_info = (
+                    f" [dark_orange](Installed Version: {installed_version})[/]"
+                )
         output = f"Top {limit} latest versions of [green]{package_name}[/]{version_info if show_installed_version else ''}{' [yellow](excluding pre-releases)[/]' if no_pre_releases else ''}:\n"
 
     from datetime import timezone  # pylint: disable=import-outside-toplevel
@@ -1529,8 +1667,7 @@ def version(
             import pkg_resources
 
             try:
-                installed_version = pkg_resources.get_distribution(
-                    package_name).version
+                installed_version = pkg_resources.get_distribution(package_name).version
             except Exception:
                 output += f"[blue]{version}[/]"
             else:
@@ -1541,8 +1678,8 @@ def version(
         try:
             upload_time = utc_to_local(
                 datetime.strptime(
-                    parsed_data["releases"][str(
-                        version)][0]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ"
+                    parsed_data["releases"][str(version)][0]["upload_time_iso_8601"],
+                    "%Y-%m-%dT%H:%M:%S.%fZ",
                 ),
                 timezone.utc,
             )
@@ -1557,8 +1694,7 @@ def version(
 @app.callback()
 def main(
     cache: bool = Option(True, help="Whether to use cache or not"),
-    repository: str = Option(
-        None, help="The repository to fetch the information from"),
+    repository: str = Option(None, help="The repository to fetch the information from"),
 ):
     """
     A beautiful command line interface for the Python Package Index
@@ -1568,7 +1704,8 @@ def main(
 
         session = Session()
         session.headers.update(
-            {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"})
+            {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
+        )
     if repository:
         global base_url
         if repository == "testpypi":
