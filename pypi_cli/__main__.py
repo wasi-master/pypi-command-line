@@ -274,7 +274,7 @@ class Package:
         """
         self.name = soup.find(class_="package-snippet__name").get_text()
         self.version = soup.find(class_="package-snippet__version").get_text()
-        time = soup.find(class_="package-snippet__released")
+        time = soup.find(class_="package-snippet__created")
         self.date = time.get_text().strip()
         self.released = datetime.strptime(time.find("time")["datetime"][:-5], "%Y-%m-%dT%H:%M:%S")
         self.name = soup.find(class_="package-snippet__name").get_text()
