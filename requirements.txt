@@ -1,5 +1,5 @@
 # For argument parsing and CLI
-typer[all]
+typer[all]==0.6.0
 # For pretty printing
 rich
 # For choosing a link with the browse command
