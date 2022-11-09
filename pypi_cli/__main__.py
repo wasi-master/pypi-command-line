@@ -1,4 +1,6 @@
 """The main file."""
+from typing import Any, Callable
+
 from datetime import datetime
 from urllib.parse import quote
 
@@ -11,13 +13,13 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.theme import Theme
 from typer import Argument, Option
+from typer.models import CommandFunctionType
+from typer.core import TyperCommand as Command, TyperGroup as Group
 
 try:
     import rich_click as click
-    from rich_click import RichCommand as Command, RichGroup as Group
 except ImportError:
     import click
-    from click import Command, Group
 
 try:
     import ujson as json
@@ -129,7 +131,6 @@ def __color_error_message():
 
     click.exceptions.UsageError.show = show
 
-
 class AliasedGroup(Group):
     def get_command(self, ctx, cmd_name):
         rv = click.Group.get_command(self, ctx, cmd_name)
@@ -228,13 +229,25 @@ class AliasedGroup(Group):
 
 
 class PypiTyper(typer.Typer):
-    """A custom subclassed version of typer.Typer to allow colored help"""
+    """A custom subclassed version of typer.Typer to allow rich help."""
 
-    def __init__(self, *args, cls=AliasedGroup, **kwargs) -> None:
+    def __init__(
+        self,
+        *args,
+        cls=AliasedGroup,
+        **kwargs,
+    ) -> None:
+        """Initialise with a RichGroup class as the default."""
         super().__init__(*args, cls=cls, **kwargs)
 
-    def command(self, *args, cls=Command, **kwargs) -> typer.Typer.command:
+    def command(
+        self,
+        *args,
+        cls=Command,
+        **kwargs,
+    ) -> Callable[[CommandFunctionType], CommandFunctionType]:
         return super().command(*args, cls=cls, **kwargs)
+
 
 
 # We instantiate a cutom typer app
@@ -875,6 +888,7 @@ def information(
     hide_stats: bool = Option(False, metavar="stats", help="Hide the stats"),
     hide_meta: bool = Option(False, metavar="meta", help="Hide the metadata"),
 ):
+
     """See the information about a package."""
     if not version and "==" in package_name:
         package_name, _, version = package_name.partition("==")
@@ -1459,8 +1473,9 @@ def main(
 
 
 def run():
-    """Run the CLI."""
+    """Redefine typer.run() to use our custom Typer class."""  # noqa D402
     app()
+
 
 
 if __name__ == "__main__":
