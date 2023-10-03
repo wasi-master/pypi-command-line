@@ -48,7 +48,7 @@ It shows emojis for responses that makes it more *✨beautiful✨*
 
 ### `wheels`
 
-In the wheels command it colorizes the seperate parts of the wheels for easy understanding
+In the wheels command it colorizes the separate parts of the wheels for easy understanding
 
 ![Example of this feature](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/wheel.png)
 
