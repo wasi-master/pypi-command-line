@@ -250,7 +250,7 @@ class PypiTyper(typer.Typer):
 
 
 
-# We instantiate a cutom typer app
+# We instantiate a custom typer app
 app = PypiTyper()
 console = Console(
     theme=Theme(
@@ -505,7 +505,7 @@ def description(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)["info"]
@@ -568,7 +568,7 @@ def description(
                 import questionary  # pylint: disable=import-outside-toplevel
 
                 repo = questionary.select(
-                    "Please specify the repo you want to see the descripton from (Ctrl+C to cancel).",
+                    "Please specify the repo you want to see the description from (Ctrl+C to cancel).",
                     choices=[questionary.Choice([("cyan", r)]) for r in list(repos)],
                 ).ask()
             readme, filename = _get_github_readme(repo)
@@ -742,7 +742,7 @@ def releases(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -799,7 +799,7 @@ def wheels(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print("[red]:no_entry_sign: Project or version not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -899,7 +899,7 @@ def information(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -1205,7 +1205,7 @@ def read_the_docs(
                     if response.status_code == 404:
                         rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
                     rich.print(
-                        f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]"
+                        f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]"
                     )
                     raise typer.Exit()
 
@@ -1250,7 +1250,7 @@ def browse(
 
     import questionary  # pylint: disable=import-outside-toplevel
 
-    link_style = questionary.Style([("name", "bold red"), ("seperator", "gray"), ("url", "cyan")])
+    link_style = questionary.Style([("name", "bold red"), ("separator", "gray"), ("url", "cyan")])
 
     url = f"{base_url}/pypi/{quote(package_name)}/json"
 
@@ -1260,7 +1260,7 @@ def browse(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -1280,7 +1280,7 @@ def browse(
         "Which link do you want to to open?",
         choices=[
             questionary.Choice(
-                title=[("class:name", f"{name:15}"), ("class:seperator", " - "), ("class:url", url)], value=url
+                title=[("class:name", f"{name:15}"), ("class:separator", " - "), ("class:url", url)], value=url
             )
             for name, url in urls.items()
             if url
@@ -1379,7 +1379,7 @@ def version(
     if response.status_code != 200:
         if response.status_code == 404:
             rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occured. response code {response.status_code}[/]")
+        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)

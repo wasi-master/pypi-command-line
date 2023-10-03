@@ -210,7 +210,7 @@ Reloads the packages cache and shows the number of new packages added after the 
 
 Shows the description of a package as gotten from PyPI or GitHub.
 
-This first gets the information about the package and then finds the descripton. If the package has a descripton it gets the description format, if it's reStructuredText or Markdown then it shows the description formatted according to the format.
+This first gets the information about the package and then finds the description. If the package has a description it gets the description format, if it's reStructuredText or Markdown then it shows the description formatted according to the format.
 
 If it doesn't get a description in PyPI then it looks for github repos mentioned in the json response gotten from the pypi api. this makes sure it gets the repo if it is supplied no matter where it is. If it finds multiple repos then it asks the user to pick one. Then it uses the github api to find the name of the readme file of the repo, this uses the api instead of manually finding it just in case. Then it reads the contents from the readme file and determines the format using the file extension then it shows the description formatted according to the format.
 
@@ -325,7 +325,7 @@ You can also see classifiers if you want to
 
 ## largest-files
 
-This command shows the all time largest pypi packages. The layout is simillar to the [one found in PyPI](https://pypi.org/stats/)
+This command shows the all time largest pypi packages. The layout is similar to the [one found in PyPI](https://pypi.org/stats/)
 
 ### **Demo**
 
@@ -463,7 +463,7 @@ If the packages cache is empty it then loads the packages first, the cache is ke
 
 - `--compact`
     Compact formatting </br>
-    This removes the table and just shows the package names seperated by commas, it also adds hyperlinks on supported terminals
+    This removes the table and just shows the package names separated by commas, it also adds hyperlinks on supported terminals
 
 - `-h`, `--help`
     Show the help message.
