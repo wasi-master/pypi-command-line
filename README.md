@@ -90,33 +90,46 @@ I've included both [PePy](https://pepy.tech/) and [PyPIStats](https://pypistats.
 <summary>Click to hide screenshots</summary>
 
 Command name and parameter autocompletion
-![Autocomplete](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/autocomplete%20example.gif "Autocomplete")
+![Autocomplete](images/autocomplete%20example.gif "Autocomplete")
+
 Smart error handling
-![Error Handling](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/error%20handling.gif "Error Handling")
+![Error Handling](images/error%20handling.gif "Error Handling")
+
 Auto command aliases
-![Smart Command Aliasing](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/smart_alias.png "Smart Command Aliasing")
+![Smart Command Aliasing](images/smart_alias.png "Smart Command Aliasing")
+
 Search feature that gives the same results as on PyPI
-![Search for a package using PyPI](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search.gif "Search for a package using PyPI")
+![Search for a package using PyPI](images/pypi%20search.gif "Search for a package using PyPI")
+
 See detailed information about a project
-![See project information](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info.gif "See project information")
+![See project information](images/pypi%20info.gif "See project information")
+
 View the project description right in your terminal with rich Markdown and reStructuredText formatting
-![Get description from PyPI](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc.gif "Get description from PyPI")
+![Get description from PyPI](images/pypi%20desc.gif "Get description from PyPI")
+
 View the project readme from github
-![Get readme content from GitHub](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc%20github.gif "Get readme content from GitHub")
+![Get readme content from GitHub](images/pypi%20desc%20github.gif "Get readme content from GitHub")
+
 Search for packages using regular expresssions
-![Search for packages using regex](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20rsearch.gif "Search for packages using regex")
+![Search for packages using regex](images/pypi%20rsearch.gif "Search for packages using regex")
+
 Open the package's URLs gotten from PyPI
-![Browse for URLs](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse%20alligned.gif "Browse for URLs")
+![Browse for URLs](images/pypi%20browse%20alligned.gif "Browse for URLs")
+
 See the project information with classifiers
-![See project information with classifiers](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif "See !project information with classifiers")
+![See project information with classifiers](images/pypi%20info%20with%20classifiers.gif "See !project information with classifiers")
+
 See the all time largest projects in PyPI
-![See all time largest projects in PyPI](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20largest-files.gif "See all time largest !projects in PyPI")
+![See all time largest projects in PyPI](images/pypi%20largest-files.gif "See all time largest !projects in PyPI")
+
 Install autocompletion for the current shell
-![Install Completion](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20--install-completion.gif "Install Completion")
+![Install Completion](images/pypi%20--install-completion.gif "Install Completion")
+
 See the source code for the autocompletion
-![Show Completion](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20--show-completion.gif "Show Completion")
+![Show Completion](images/pypi%20--show-completion.gif "Show Completion")
+
 See a specific page of the search results
-![Specify a page to search to](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search%20with%20page.gif "Specify a page to search to")
+![Specify a page to search to](images/pypi%20search%20with%20page.gif "Specify a page to search to")
 
 </details>
 
@@ -174,19 +187,19 @@ Now this probably was the best option before `pypi-command-line` came out and it
 
 So this can just search for packages on pypi and thats it. Now don't you think that this is inherently bad as per se. So I tried it out immediately and it just got stuck loading the packages, pypi-client gets names of all the packages that exist pypi<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=fetches%20all%20package%20names%20from%20pypi" target="_blank">‾</a></sup> which took like 4 mins, then I assume it downloads the github stars data?<sup><a title=Reference href="https://github.com/abahdanovich/pypi-client#:~:text=downloads%20github%20stars" target="_blank">‾</a></sup> Which takes like another 3 mins and then It just asked me to authorize with github… like why does pypi-client even need authorization from me since github has a public api. And then it showed [this](https://i.imgur.com/D0VJhmZ.png "Demo of the program that has been badly formatted") which isn't really unreadable just badly formatted for screens that are not ultra wide. by changing the font size a bit I could make it look like [this](https://i.imgur.com/usU2AnJ.jpeg "Demo of the program after lowering the font size") which still isn't bad just a bit convoluted. And even at the end of the day the results are manually searched through therefore different from pypi<sup><a title=Example href="https://i.imgur.com/2AuCKuX.jpg" target="_blank">‾</a></sup>
 
-**TL;DR:**
+**TL;DR**
 Takes too long (≈7 mins), Needs github authorization, badly formatted for non ultra wide monitors, searches manually so results are different compared to pypi
 
 ### [yolk](https://pypi.org/project/yolk/ "yolk")
 
 Discontinued 9 years ago, only supports python 2. Uses flags instead of subcommands for everything.
 
-**TL;DR:**
+**TL;DR**
 Is this really necessary?
 
 ### [qypi](https://pypi.org/project/qypi/ "qypi")
 
 So, this library is most likely the best alternative for pypi-command-line. But the output is in json, uses the xml-rpc api for search which is discontinued, the readme command doesn't work for me, the list command doesn't have a progressbar
 
-**TL;DR:**
+**TL;DR**
 Output is only in json, without color. The search command doesn't work anymore. Has no progressbar for long running tasks
