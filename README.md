@@ -106,7 +106,7 @@ View the project readme from github
 Search for packages using regular expressions
 ![Search for packages using regex](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20rsearch.gif "Search for packages using regex")
 Open the package's URLs gotten from PyPI
-![Browse for URLs](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse%20alligned.gif "Browse for URLs")
+![Browse for URLs](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse%20aligned.gif "Browse for URLs")
 See the project information with classifiers
 ![See project information with classifiers](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif "See !project information with classifiers")
 See the all time largest projects in PyPI
