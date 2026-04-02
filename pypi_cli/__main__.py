@@ -1408,13 +1408,14 @@ def version(
     if minimal_output:
         output = f"[green]{package_name}[/] -"
     else:
+        version_info = ""
         if show_installed_version:
             import pkg_resources
 
             try:
                 installed_version = pkg_resources.get_distribution(package_name).version
             except Exception:
-                pass
+                version_info = " [red](Not Installed)[/]"
             else:
                 version_info = f" [dark_orange](Installed Version: {installed_version})[/]"
         output = f"Top {limit} latest versions of [green]{package_name}[/]{version_info if show_installed_version else ''}{' [yellow](excluding pre-releases)[/]' if no_pre_releases else ''}:\n"
