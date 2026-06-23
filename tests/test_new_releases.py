@@ -7,14 +7,14 @@ def test_new_releases(runner):
 
 
 def test_new_releases_with_author(runner):
-    result = runner.run("pypi new-releases ---author")
+    result = runner.run("pypi new-releases --show-author")
     output = result.stdout.decode("utf-8")
     assert output, "No output was gotten"  # Assert if a output was returned
     assert re.search(r"\S+@\S+\.\S+", output)
 
 
 def test_new_releases_without_link(runner):
-    result = runner.run("pypi new-releases --no--link")
+    result = runner.run("pypi new-releases --hide-link")
     output = result.stdout.decode("utf-8")
     assert output, "No output was gotten"  # Assert if a output was returned
     assert " ┃ Link " not in output, "Link was found"

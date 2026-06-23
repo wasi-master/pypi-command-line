@@ -20,7 +20,7 @@ def test_releases_with_version_alt(runner):
 
 
 def test_releases_with_link(runner):
-    result = runner.run("pypi releases charinfo==0.1.0 ---link")
+    result = runner.run("pypi releases charinfo==0.1.0 --show-links")
     output = result.stdout.decode("utf-8")
     assert output, "No output was gotten"  # Assert if a output was returned
     assert re.search(r"(https?:\/\/)?([\w\-])+\.{1}([a-zA-Z]{2,63})([\/\w-]*)*\/?\??([^#\n\r]*)?#?([^\n\r]*)", output)

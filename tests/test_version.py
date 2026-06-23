@@ -24,7 +24,7 @@ def test_version_with_no_pre_releases(runner):
 
 
 def test_version_with_show_installed_versions(runner):
-    result = runner.run("pypi version discord --show-installed-versions")
+    result = runner.run("pypi version discord --show-installed-version")
     output = result.stdout.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n").strip()
     assert output, "No output was gotten"  # Assert if a output was returned
 
