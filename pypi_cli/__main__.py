@@ -419,8 +419,14 @@ def _get_github_readme(repo):
     if readme.get("message") == "Not Found":
         console.print(f"[red]:x: Could not find readme for[/] [yellow]{repo}[/]")
         raise typer.Exit()
+    if "API rate limit exceeded" in readme.get("message"):
+            console.print(f"[red]:x: API rate limit exceeded for GitHub[/]")
+            raise typer.Exit()
     content = session.get(f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
     if content.status_code == 200:
+        if "API rate limit exceeded" in content.text:
+            console.print(f"[red]:x: API rate limit exceeded for GitHub[/]")
+            raise typer.Exit()
         return content.text, readme["path"]
     return None, None
 
