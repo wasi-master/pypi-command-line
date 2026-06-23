@@ -722,8 +722,7 @@ def search(
 def releases(
     package_name: str = Argument(
         ...,
-        help="The name of package to show releases for, this can "
-        "also include the version with this syntax: `package_name==version`",
+        help="The name of package to show releases for",
     ),
     version: str = Option(None, help="The version of the package to show releases for"),
     show_links: bool = Option(False, metavar="link", help="Display the links to the releases"),
@@ -735,7 +734,7 @@ def releases(
     """
     if not version and "==" in package_name:
         package_name, _, version = package_name.partition("==")
-    url = f"{base_url}/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
+    url = f"{base_url}/pypi/{quote(package_name)}/json"
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
