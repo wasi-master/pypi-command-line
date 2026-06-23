@@ -43,7 +43,7 @@ class CommandRunner:
         subprocess.CompletedProcess
             The process that was completed
         """
-        return subprocess.run(command.split(), shell=True, check=True, stdout=PIPE, stderr=PIPE)
+        return subprocess.run(command.split(), check=True, stdout=PIPE, stderr=PIPE)
 
     # @staticmethod
     # def run_interactive(command: str) -> "InteractiveCommand":
