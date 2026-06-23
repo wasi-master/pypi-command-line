@@ -14,7 +14,7 @@ def test_version_with_limit(runner):
     result = runner.run("pypi version discord --limit 1")
     output = result.stdout.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n").strip()
     assert output, "No output was gotten"  # Assert if a output was returned
-    assert len(output.splitlines()) == 2, "More that one item was gotten"
+    assert len(output.splitlines()) == 1, "More that one item was gotten"
 
 
 def test_version_with_no_pre_releases(runner):
