@@ -904,7 +904,7 @@ def information(
     parsed_data = json.loads(response.text)
 
     info = parsed_data["info"]
-    releases = parsed_data["releases"]
+    releases = parsed_data.get("releases", {})
     urls = parsed_data["urls"]
 
     try:
@@ -923,7 +923,7 @@ def information(
     else:
         natural_time = "UNKNOWN"
     description = info["summary"]
-    latest_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0]
+    latest_version = list(sorted(map(parse_version, releases.keys()), reverse=True))[0] if releases else "Unknown"
     version_comment = (
         "[green]Latest Version[/]"
         if str(latest_version) == str(info["version"])
