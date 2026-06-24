@@ -428,7 +428,7 @@ def _get_github_readme(repo):
     return None, None
 
 
-def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=False):
+def _format_xml_packages(url, title, pubmsg, show_author, hide_link, *, split_title=False):
     try:
         import bs4  # pylint: disable=import-outside-toplevel
     except ImportError:
@@ -436,10 +436,10 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
     table = Table(title=title, show_lines=True)
     table.add_column("Index", style="magenta", header_style="bold magenta")
     table.add_column("Name", style="green", header_style="bold green")
-    if _author:
+    if show_author:
         table.add_column("Author", style="red", header_style="bold red")
     table.add_column("Description", style="white", header_style="bold white")
-    if _link:
+    if not hide_link:
         table.add_column("Link", style="cyan", header_style="bold blue")
     table.add_column(pubmsg, style="yellow", header_style="bold yellow")
     with console.status("Fetching packages"):
@@ -462,7 +462,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
         link = package.find("link").text
 
         date = utc_to_local(datetime.strptime(package.find("pubDate").text, "%a, %d %b %Y %H:%M:%S GMT"), timezone.utc)
-        if _link and _author:
+        if (not hide_link) and show_author:
             table.add_row(
                 f"{index}.",
                 title,
@@ -471,7 +471,7 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
                 link,
                 humanize.naturaltime(utc_to_local(date, timezone.utc)),
             )
-        elif _link and not _author:
+        elif (not hide_link) and (not show_author):
             table.add_row(
                 f"{index}.",
                 title,
@@ -479,10 +479,18 @@ def _format_xml_packages(url, title, pubmsg, _author, _link, *, split_title=Fals
                 link,
                 humanize.naturaltime(utc_to_local(date, timezone.utc)),
             )
-        elif not _link and not _author:
+        elif hide_link and not show_author:
             table.add_row(
                 f"{index}.",
                 title,
+                description.text if description else "",
+                humanize.naturaltime(utc_to_local(date, timezone.utc)),
+            )
+        elif hide_link and show_author:
+            table.add_row(
+                f"{index}.",
+                title,
+                author.text if author else None,
                 description.text if description else "",
                 humanize.naturaltime(utc_to_local(date, timezone.utc)),
             )
