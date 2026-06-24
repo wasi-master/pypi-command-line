@@ -264,6 +264,12 @@ console = Console(
             "wheel.abi_tag": "#9263FB",
             "wheel.platform_tag": "#33F1C8",
             "wheel.file_extension": "#4AA0FC",
+
+            "requirement.name": "#92EC5A",
+            "requirement.extras": "#9263FB",
+            "requirement.url": "#4AA0FC",
+            "requirement.versionspec": "#33F1C8",
+            "requirement.marker": "#F2C259",
         }
     ),
     emoji=True,
@@ -1082,13 +1088,15 @@ def information(
                 )
             )
     if not hide_requirements:
+        reqs = ""
+        for req in info["requires_dist"] or []:
+            reqs += f"{req}\n"
+        requirements = Text(reqs or "No requirements found")
+        requirements.highlight_regex(r"\b(?P<name>[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)\s*(?:\[\s*(?P<extras>[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?(?:\s*,\s*[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?)*)\s*\])?\s*(?:@\s*(?P<url>[^\s;\n]+)|(?P<versionspec>\(?\s*(?:~=|===|==|!=|<=|>=|<|>)\s*[A-Za-z0-9_.!+*-]+\s*(?:,\s*(?:~=|===|==|!=|<=|>=|<|>)\s*[A-Za-z0-9_.!+*-]+\s*)*\)?))?\s*(?:;\s*(?P<marker>[^\n\r]+?))?\s*(?=\n|\r|$)", style_prefix="requirement.")
         if info["requires_dist"]:
             metadata.add_row(
                 Panel(
-                    "\n".join(
-                        f"[light_red link={base_url}/project/{name.split()[0]}]{name}[/]"
-                        for name in info["requires_dist"]
-                    ),
+                    requirements,
                     expand=False,
                     border_style="red",
                     title="Requirements",
