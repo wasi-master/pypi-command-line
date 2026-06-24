@@ -57,7 +57,7 @@ Output is only in json, without color. The search command doesn't work anymore. 
 
 - pypi-command-line - **1.4221807**
 
-    Takes around 1.5 secs to do a get request to the pypi search page then parse and return the results so that the results are the exact same as shown in [pypi.org](https://pypi.org "The Python Package Index (PyPI) is a repository of software for the Python programming language.")
+    Takes around 1.5 secs to do a get request to the pypi search page then parse and return the results so that the results are the exact same as shown in [pypi.org](https://pypi.org "The Python Package Index (PyPI) is a repository of software for the Python programming language.") This is not possible anymore on PyPI as well due to API issues and regex-search is suggested instead which takes `1.22` seconds
 
 - pypi-client - **7.4170682**
 

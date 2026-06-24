@@ -30,8 +30,8 @@ Sends a help message, each command also has this flag that you can use to see th
 
 > pypi --help
 
-For command specific help: ([`search`](#search) in this case)
-> pypi search --help
+For command specific help: ([`info`](#information) in this case)
+> pypi info --help
 
 ## --install-completion
 
@@ -515,7 +515,7 @@ This just gets the documentation url and opens it's search results page with the
 
 ## search
 
-Search for a package on PyPI.
+Search for a package on PyPI. <span style="color: red">NOTE: This command is currently unavailable due to API Issues</span>
 
 ### **Demo**
 
@@ -557,7 +557,7 @@ See the available wheels of a release on PyPI. The wheel names are color coded a
 
 ### **Usage**
 
-> pypi search [OPTIONS] PACKAGE_NAME [VERSION]
+> pypi wheels [OPTIONS] PACKAGE_NAME [VERSION]
 
 ### **Options**
 
