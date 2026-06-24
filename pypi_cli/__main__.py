@@ -136,7 +136,7 @@ class AliasedGroup(Group):
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
             return rv
-        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"), "rs": "rsearch"}
+        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"), "rs": "regex-search", "rsearch": "regex-search"}
         if cmd_name in alias_mapping:
             return click.Group.get_command(self, ctx, alias_mapping[cmd_name])
         commands = self.list_commands(ctx)
@@ -275,7 +275,7 @@ __color_error_message()  # makes the error messages colored
 class Package:
     """Represents a package gotten from scraping the search results."""
 
-    __slots__ = ("name", "version", "date", "released", "description")
+    __slots__ = ("name", "date", "released", "description")
 
     def __init__(self, soup):
         """Instantiate a package object gotten from scraping the search results.
@@ -286,13 +286,10 @@ class Package:
             The soup that was gotten from PyPI
         """
         self.name = soup.find(class_="package-snippet__name").get_text()
-        self.version = soup.find(class_="package-snippet__version").get_text()
         time = soup.find(class_="package-snippet__created")
         self.date = time.get_text().strip()
         self.released = datetime.strptime(time.find("time")["datetime"][:-5], "%Y-%m-%dT%H:%M:%S")
-        self.name = soup.find(class_="package-snippet__name").get_text()
         self.description = soup.find(class_="package-snippet__description").get_text()
-
 
 def utc_to_local(utc_dt, tzinfo):
     """Convert a datetime from utc to local time."""
@@ -669,7 +666,9 @@ def search(
     #     None, help="Can be used multiple times to specify a list of classifiers to filter the results."
     # ),
 ):
-    """Search for a package on PyPI."""
+    """Search for a package on PyPI. Currently not available"""
+    console.print('[red]:warning: WARNING:[/] The search command is currently not available due to PyPI blocking the requests. Please use the [blue]rsearch[/] command instead.')
+    raise typer.Exit()
     url = f"{base_url}/search/"
     parameters = {"q": package_name, "page": page}
     # if classifier:
@@ -685,7 +684,9 @@ def search(
         import bs4  # pylint: disable=import-outside-toplevel
 
         soup = bs4.BeautifulSoup(response.text, "lxml" if lxml else "html.parser")
-        result_list = soup.find(attrs={"aria-label": "Search results"}, class_="unstyled")
+        result_list = soup.find("h2", string="Search results", class_="sr-only")
+        print(response.url)
+        print(soup.prettify())
         if not result_list:
             comment = soup.select(
                 "div.split-layout.split-layout--table.split-layout--wrap-on-tablet > div:nth-child(1) > p"
@@ -708,7 +709,7 @@ def search(
         caption=f"Page {page} of {amount_of_pages}",
     )
     table.add_column("[purple]No.[/]", width=3, style="purple")
-    table.add_column("[white]Version[/]", style="bright_black")
+    # table.add_column("[white]Version[/]", style="bright_black")
     table.add_column("[green]Name[/]", justify="center", style="green")
     table.add_column("[yellow]Description[/]", justify="center", style="white")
     table.add_column("[cyan]Release date[/]", justify="right", style="cyan")
@@ -716,7 +717,7 @@ def search(
     for index, package in enumerate(results, 1):
         table.add_row(
             f"{index}.",
-            package.version,
+            # package.version,
             f"[link={base_url}/project/{package.name}]{package.name}[/]",
             package.description,
             package.date,
@@ -1088,11 +1089,15 @@ def information(
 def regex_search(
     regex: str = Argument(..., help="The regular expression to search with"),
     compact: bool = Option(False, help="Compact formatting"),
+    limit: int = Option(50, help="Limit the number of results to show")
 ) -> None:
     """Search for packages that match the regular expression."""
     packages = load_cache()
 
     import re  # pylint: disable=import-outside-toplevel
+
+    # We explicitly set the limit to unlimited if it's -1
+    limit = float('inf') if limit == -1 else limit
 
     # We compile the regex because it's twice as fast (https://imgur.com/a/MoUyEMg)
     _regex = re.compile(regex)
@@ -1101,7 +1106,7 @@ def regex_search(
         for package in packages:
             if _regex.match(package):
                 matches.append(f"[link={base_url}/project/{package}]{package}[/]")
-        console.print(", ".join(matches))
+        console.print(", ".join(matches[:limit]))
     else:
         table = Table(show_header=True, show_lines=True)
         table.add_column("[purple]No.[/]", style="purple")
@@ -1111,6 +1116,8 @@ def regex_search(
         for package in packages:
             if _regex.match(package):
                 matches += 1
+                if matches > limit:
+                    break
                 table.add_row(
                     f"{matches}.",
                     f"[link={base_url}/project/{package}]{package}[/]",
@@ -1118,9 +1125,10 @@ def regex_search(
                 )
         table.title = f"{table.row_count} matches for [#ffffff on #000000]{regex}[/]"
         console.print(table)
+        # Whatever the limit is if the user tries to see more than 50 items at once the compact option is recommended to avoid cluttering the terminal with too much information
         if table.row_count > 50:
             console.print(
-                "[yellow]:warning: WARNING:[/] There are more than 50 matches, consider using the --compact flag"
+                f"[yellow]:warning: WARNING:[/] There are more than 50 matches, consider using the --compact flag"
             )
 
 
