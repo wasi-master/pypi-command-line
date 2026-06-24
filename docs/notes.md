@@ -177,16 +177,17 @@ For the packages cache it makes it so that the data doesn't need to be re-downlo
 
 For the web requests cache it stores the recent few web requests so that if you are using the same command again it doesn't load the data again. This cache is automatically shortened by removing specific urls from the cache after they have expired depending on the url. Currently these are the cache expiry durations for commands
 
-| Command       | Duration                                                    |
-| ------------- | ----------------------------------------------------------- |
-| browse        | 3 hours                                                     |
-| description   | 3 hours if gotten from PyPI and 1 day if gotten from GitHub |
-| information   | 3 hours                                                     |
-| largest-files | 1 day                                                       |
-| new-packages  | 1 minute                                                    |
-| new-releases  | 1 minute                                                    |
-| new-releases  | 3 hours                                                     |
-| regex-search  | 1 day                                                       |
-| releases      | 3 hours                                                     |
-| rtfd          | No cache needed                                             |
-| wheels        | 3 hours                                                     |
+| Command         | Duration                                                    |
+| --------------- | ----------------------------------------------------------- |
+| browse          | 3 hours                                                     |
+| description     | 3 hours if gotten from PyPI and 1 day if gotten from GitHub |
+| information     | 3 hours                                                     |
+| vulnerabilities | 3 hours                                                     |
+| largest-files   | 1 day                                                       |
+| new-packages    | 1 minute                                                    |
+| new-releases    | 1 minute                                                    |
+| new-releases    | 3 hours                                                     |
+| regex-search    | 1 day                                                       |
+| releases        | 3 hours                                                     |
+| rtfd            | No cache needed                                             |
+| wheels          | 3 hours                                                     |

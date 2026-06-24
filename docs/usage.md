@@ -547,6 +547,34 @@ Search for a package on PyPI. <span style="color: red">NOTE: This command is cur
 
 Shown when the pypi api returns a 404 response meaning the page number specified most likely doesn't exist
 
+## vulnerabilities
+
+See the known vulnerabilities for a package.
+
+### **Usage**
+
+> pypi vulnerabilities PACKAGE_NAME VERSION
+
+### **Options**
+
+- `PACKAGE_NAME`
+
+    The name of the package to show vulnerability info for <span style="color: red">[required]</span>
+
+- `VERSION`
+
+    The version of the package to show info for <span style="color: red">[required]</span>
+
+- `-h, `--help`
+
+    Shows the help message.
+
+### **Errors and Warnings**
+
+#### <span style="color: red">E:</span> Project not found
+
+Shown when the pypi api returns a 404 response meaning the page number specified most likely doesn't exist
+
 ## wheels
 
 See the available wheels of a release on PyPI. The wheel names are color coded and the information is colored too.
