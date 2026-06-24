@@ -822,7 +822,7 @@ def vulnerabilities(
     table.add_column("Fixed in", style="green", header_style="bold green")
     for vulnerability in vulnerabilities:
         table.add_row(
-            vulnerability["id"],
+            f"[link={vulnerability['link']}]{vulnerability['id']}[/]",
             vulnerability["details"],
             ", ".join(vulnerability["aliases"]) if vulnerability["aliases"] else "N/A",
             ", ".join(vulnerability["fixed_in"]) if vulnerability["fixed_in"] else "N/A",
