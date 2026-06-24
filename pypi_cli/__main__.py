@@ -6,6 +6,7 @@ from urllib.parse import quote
 
 import humanize
 import rich
+from tomlkit import key
 import typer
 from rich.align import Align
 from rich.console import Console
@@ -1094,6 +1095,15 @@ def information(
                 )
             )
     if not hide_meta:
+        if parsed_data.get("ownership"):
+            ownership_information = ""
+            roles = parsed_data['ownership'].get("roles", [])
+            for n, role in enumerate(roles, start=1):
+                ownership_information += f"[dark_goldenrod]{role['role']}{f' #{n}' if len(roles) > 1 else ''}:[/] {role['user']}\n"
+            if parsed_data.get("ownership").get("organization"):
+                ownership_information += f"[dark_goldenrod]Organization:[/] {parsed_data['ownership']['organization']}\n"
+        else:
+            ownership_information = None
         metadata.add_row(
             Panel(
                 "\n".join(
@@ -1107,6 +1117,7 @@ def information(
                         if info["maintainer_email"]
                         else "",
                         f"[dark_goldenrod]Requires Python[/]: {info['requires_python'] or None}",
+                        ownership_information.strip() if ownership_information else None
                     )
                     if i
                 ),
