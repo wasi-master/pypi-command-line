@@ -136,7 +136,7 @@ class AliasedGroup(Group):
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
             return rv
-        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"), "rs": "regex-search", "rsearch": "regex-search"}
+        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"), "rs": "regex-search", "rsearch": "regex-search", "vuln": "vulnerabilities"}
         if cmd_name in alias_mapping:
             return click.Group.get_command(self, ctx, alias_mapping[cmd_name])
         commands = self.list_commands(ctx)
@@ -793,6 +793,41 @@ def releases(
             )
     console.print(table)
 
+@app.command()
+def vulnerabilities(
+    package_name: str = Argument(..., help="The name of the package to show vulnerabilities for"),
+    version: str = Argument(..., help="The version of the package to show vulnerabilities for"),
+):
+    """See all the known vulnerabilities for a package."""
+
+    url = f"{base_url}/pypi/{quote(package_name)}/{quote(version)}/json"
+    with console.status("Getting data from PyPI"):
+        response = session.get(url)
+
+    if response.status_code != 200:
+        if response.status_code == 404:
+            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
+        raise typer.Exit()
+
+    parsed_data = json.loads(response.text)
+    vulnerabilities = parsed_data["vulnerabilities"]
+    if not vulnerabilities:
+        console.print(f"[green]:white_check_mark: No known vulnerabilities for {package_name} {version}[/]")
+        raise typer.Exit()
+    table = Table(title=f"Known Vulnerabilities for {package_name}", show_lines=True)
+    table.add_column("ID", style="red", header_style="bold red")
+    table.add_column("Details", style="yellow", header_style="bold yellow")
+    table.add_column("Aliases", style="magenta", header_style="bold magenta")
+    table.add_column("Fixed in", style="green", header_style="bold green")
+    for vulnerability in vulnerabilities:
+        table.add_row(
+            vulnerability["id"],
+            vulnerability["details"],
+            ", ".join(vulnerability["aliases"]) if vulnerability["aliases"] else "N/A",
+            ", ".join(vulnerability["fixed_in"]) if vulnerability["fixed_in"] else "N/A",
+        )
+    console.print(table)
 
 @app.command()
 def wheels(
