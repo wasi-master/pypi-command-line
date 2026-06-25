@@ -31,19 +31,13 @@ class CommandRunner:
 
     @staticmethod
     def run(command: str) -> subprocess.CompletedProcess:
-        """Runs a command
-
-        Parameters
-        ----------
-        command : str
-            The command content as a string
-
-        Returns
-        -------
-        subprocess.CompletedProcess
-            The process that was completed
-        """
-        return subprocess.run(command.split(), check=True, stdout=PIPE, stderr=PIPE)
+        import os
+        args = command.split()
+        if args and args[0] == "pypi":
+            args = ["python", "-m", "pypi_cli"] + args[1:]
+        env = os.environ.copy()
+        env["COLUMNS"] = "200"
+        return subprocess.run(args, check=True, stdout=PIPE, stderr=PIPE, env=env)
 
     # @staticmethod
     # def run_interactive(command: str) -> "InteractiveCommand":

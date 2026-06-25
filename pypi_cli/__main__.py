@@ -1,15 +1,10 @@
 """The main file."""
-from typing import Any, Callable
+from typing import Callable
 
 from datetime import datetime
 from urllib.parse import quote
 
-import humanize
-import rich
-from rich.layout import Layout
-from tomlkit import key
 import typer
-from rich.align import Align
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -304,6 +299,19 @@ def utc_to_local(utc_dt, tzinfo):
     return utc_dt.replace(tzinfo=tzinfo).astimezone(tz=None).replace(tzinfo=None)
 
 
+def _parse_iso_datetime(dt_str: str) -> datetime:
+    """Parse ISO 8601 datetime string from PyPI."""
+    if dt_str.endswith("Z"):
+        dt_str = dt_str[:-1] + "+00:00"
+    try:
+        return datetime.fromisoformat(dt_str)
+    except ValueError:
+        try:
+            return datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+        except ValueError:
+            return datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%SZ")
+
+
 def remove_dot_git(text):
     """Remove the .git suffix from a URL."""
     if text.endswith(".git"):
@@ -313,19 +321,15 @@ def remove_dot_git(text):
 
 def _format_classifiers(_classifiers: str):
     """Format classifiers gotten from the API."""
-    classifier_dict = {}
-    output = ""
+    from collections import defaultdict
+    classifier_dict = defaultdict(list)
     for classifier in _classifiers.splitlines():
         topic, content = map(str.strip, classifier.split("::", 1))
-        try:
-            classifier_dict[topic].append(content)
-        except KeyError:
-            classifier_dict[topic] = [content]
-    for topic, classifiers in classifier_dict.items():
-        output += f"[bold]{topic}[/]\n"
-        for classifier in classifiers:
-            output += f"  {classifier}\n"
-    return output
+        classifier_dict[topic].append(content)
+    return "".join(
+        f"[bold]{topic}[/]\n" + "".join(f"  {c}\n" for c in contents)
+        for topic, contents in classifier_dict.items()
+    )
 
 
 def get_latest_version():
@@ -349,8 +353,8 @@ def load_cache():
 
         if time.time() - last_refreshed > 86400:
             return fill_cache(msg="Cache is too old (>1d). Refreshing cache")
-        with open(cache_file, "r") as cache_file:
-            return cache_file.read().splitlines()
+        with open(cache_file, "r", encoding="utf-8") as f:
+            return f.read().splitlines()
 
 
 def fill_cache(msg="Fetching cache"):
@@ -366,26 +370,25 @@ def fill_cache(msg="Fetching cache"):
         os.makedirs(cache_path)
     cache_file = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
 
+    chunks = []
     with Progress(transient=True) as progress:
         response = requests.get(all_packages_url, stream=True)
-        response_data = ""
         content_length = response.headers.get("content-length")
         if content_length is not None:
             total_length = int(content_length)
             task = progress.add_task(msg, total=total_length)
-            downloaded = 0
             for data in response.iter_content(chunk_size=32768):
-                downloaded += len(data)
-                response_data += data.decode("utf-8")
-                progress.advance(task, 32768)
+                chunks.append(data)
+                progress.advance(task, len(data))
+            response_data = b"".join(chunks).decode("utf-8")
         else:
             response_data = response.content.decode("utf-8")
 
     import re  # pylint: disable=import-outside-toplevel
 
     packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response_data)
-    with open(cache_file, "w", encoding="utf-8") as cache_file:
-        cache_file.write("\n".join(packages))
+    with open(cache_file, "w", encoding="utf-8") as f:
+        f.write("\n".join(packages))
     return packages
 
 
@@ -406,7 +409,6 @@ def _clear_cache():
         console.print(f"[cyan]ℹ️ Info:[/] Emptied cache, now trying to delete the cache file")
 
     import os
-    import shutil
 
     folder = os.path.join(os.path.dirname(__file__), "cache")
     for filename in os.listdir(folder):
@@ -424,9 +426,10 @@ def _get_github_readme(repo):
     if readme.get("message") == "Not Found":
         console.print(f"[red]:x: Could not find readme for[/] [yellow]{repo}[/]")
         raise typer.Exit()
-    if "API rate limit exceeded" in readme.get("message"):
-            console.print(f"[red]:x: API rate limit exceeded for GitHub[/]")
-            raise typer.Exit()
+    msg = readme.get("message")
+    if msg is not None and "API rate limit exceeded" in msg:
+        console.print(f"[red]:x: API rate limit exceeded for GitHub[/]")
+        raise typer.Exit()
     content = session.get(f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
     if content.status_code == 200:
         if "API rate limit exceeded" in content.text:
@@ -460,6 +463,7 @@ def _format_xml_packages(url, title, pubmsg, show_author, hide_link, *, split_ti
         soup = ET.fromstring(response.text)
 
     from datetime import timezone  # pylint: disable=import-outside-toplevel
+    import humanize  # pylint: disable=import-outside-toplevel
 
     for index, package in enumerate(soup.find_all("item") if lxml else soup.iter("item"), 1):
         title = package.find("title").text
@@ -470,38 +474,15 @@ def _format_xml_packages(url, title, pubmsg, show_author, hide_link, *, split_ti
         link = package.find("link").text
 
         date = utc_to_local(datetime.strptime(package.find("pubDate").text, "%a, %d %b %Y %H:%M:%S GMT"), timezone.utc)
-        if (not hide_link) and show_author:
-            table.add_row(
-                f"{index}.",
-                title,
-                author.text if author else None,
-                description.text if description else "",
-                link,
-                humanize.naturaltime(utc_to_local(date, timezone.utc)),
-            )
-        elif (not hide_link) and (not show_author):
-            table.add_row(
-                f"{index}.",
-                title,
-                description.text if description else "",
-                link,
-                humanize.naturaltime(utc_to_local(date, timezone.utc)),
-            )
-        elif hide_link and not show_author:
-            table.add_row(
-                f"{index}.",
-                title,
-                description.text if description else "",
-                humanize.naturaltime(utc_to_local(date, timezone.utc)),
-            )
-        elif hide_link and show_author:
-            table.add_row(
-                f"{index}.",
-                title,
-                author.text if author else None,
-                description.text if description else "",
-                humanize.naturaltime(utc_to_local(date, timezone.utc)),
-            )
+        
+        row = [f"{index}.", title]
+        if show_author:
+            row.append(author.text if author is not None else None)
+        row.append(description.text if description is not None else "")
+        if not hide_link:
+            row.append(link)
+        row.append(humanize.naturaltime(utc_to_local(date, timezone.utc)))
+        table.add_row(*row)
     console.print(table)
     if not lxml:
         console.print(
@@ -523,8 +504,8 @@ def description(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
+            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)["info"]
@@ -647,6 +628,7 @@ def new_releases(
 @app.command()
 def largest_files():
     """See the top 100 projects with the largest file size."""
+    import humanize  # pylint: disable=import-outside-toplevel
 
     headers = {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
     url = f"{base_url}/stats/"
@@ -763,11 +745,12 @@ def releases(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
+            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
+    import humanize  # pylint: disable=import-outside-toplevel
 
     table = Table()
     table.add_column("Version", style="green", header_style="green")
@@ -781,10 +764,7 @@ def releases(
             table.add_row(version)
             continue
         release = releases[0]
-        try:
-            upload_time = datetime.strptime(release["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ")
-        except ValueError:
-            upload_time = datetime.strptime(release["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%SZ")
+        upload_time = _parse_iso_datetime(release["upload_time_iso_8601"])
 
         if show_links is True:
             table.add_row(
@@ -801,6 +781,7 @@ def releases(
             )
     console.print(table)
 
+
 @app.command()
 def vulnerabilities(
     package_name: str = Argument(..., help="The name of the package to show vulnerabilities for"),
@@ -814,8 +795,8 @@ def vulnerabilities(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
+            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -855,27 +836,14 @@ def wheels(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print("[red]:no_entry_sign: Project or version not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
+            console.print("[red]:no_entry_sign: Project or version not found[/]")
+        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
 
-    from packaging.version import parse as parse_version  # pylint: disable=import-outside-toplevel
     from rich.text import Text  # pylint: disable=import-outside-toplevel
-
-    # def is_wheel_supported(wheel_name):
-    #     try:
-    #         tag = parse_tag("-".join(wheel_name.split("-")[2:]))
-    #     except Exception as e:
-    #         return "white"
-    #     if not tag:
-    #         return "white"
-    #     else:
-    #         if list(tag)[-1] in sys_tags():
-    #             return "green"
-    #         else:
-    #             return "red"
+    import humanize  # pylint: disable=import-outside-toplevel
 
     data = parsed_data["urls"]
 
@@ -921,7 +889,7 @@ def wheels(
                             else None,
                             f"[yellow]Size:[/] {humanize.naturalsize(wheel['size'], binary=True)}",
                             f"[bright_cyan]Yanked Reason[/]: {wheel['yanked_reason']}" if wheel["yanked"] else None,
-                            f"[red]Upload Time[/]: {humanize.naturaltime(utc_to_local(datetime.strptime(wheel['upload_time_iso_8601'], '%Y-%m-%dT%H:%M:%S.%fZ'), timezone.utc))}",
+                            f"[red]Upload Time[/]: {humanize.naturaltime(utc_to_local(_parse_iso_datetime(wheel['upload_time_iso_8601']), timezone.utc))}",
                         ],
                     )
                 ),
@@ -954,10 +922,11 @@ def information(
     with console.status("Getting data from PyPI"):
         response = session.get(url)
 
+
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
+            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -974,16 +943,21 @@ def information(
     from datetime import timezone  # pylint: disable=import-outside-toplevel
 
     if urls:
-        # HACK: should use fromisotime
         release_time = utc_to_local(
-            datetime.strptime(urls[-1]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ"), timezone.utc
+            _parse_iso_datetime(urls[-1]["upload_time_iso_8601"]), timezone.utc
         )
         natural_time = release_time.strftime("%b %d, %Y")
     else:
         natural_time = "UNKNOWN"
     description = info["summary"]
     if not version:
-        latest_version = info["version"] if (info.get("version") and not version) else (list(sorted((i for i in map(parse_version, releases.keys()) if not i.pre), reverse=True))[0] if releases else "Unknown")
+        if info.get("version"):
+            latest_version = info["version"]
+        elif releases:
+            versions = [v for v in map(parse_version, releases.keys()) if not getattr(v, "pre", False)]
+            latest_version = max(versions) if versions else "Unknown"
+        else:
+            latest_version = "Unknown"
         version_comment = (
             "[green]Latest Version[/]"
             if str(latest_version) == str(info["version"])
@@ -991,6 +965,7 @@ def information(
         )
     else:
         version_comment = f"[green]Version[/]: {version}"
+
     import re  # pylint: disable=import-outside-toplevel
 
     repos = re.findall(
@@ -1243,7 +1218,9 @@ def regex_search(
         for package in packages:
             if _regex.match(package):
                 matches.append(f"[link={base_url}/project/{package}]{package}[/]")
-        console.print(", ".join(matches[:limit]))
+                if len(matches) >= limit:
+                    break
+        console.print(", ".join(matches))
     else:
         table = Table(show_header=True, show_lines=True)
         table.add_column("[purple]No.[/]", style="purple")
@@ -1353,8 +1330,8 @@ def read_the_docs(
 
                 if response.status_code != 200:
                     if response.status_code == 404:
-                        rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-                    rich.print(
+                        console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+                    console.print(
                         f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]"
                     )
                     raise typer.Exit()
@@ -1409,8 +1386,8 @@ def browse(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
+            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -1457,6 +1434,7 @@ def cache_clear():
 def cache_info():
     """See information about the cache"""
     import os.path  # pylint: disable=import-outside-toplevel
+    import humanize  # pylint: disable=import-outside-toplevel
 
     packages_cache = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
     requests_cache = os.path.join(os.path.dirname(__file__), "cache", "requests.sqlite")
@@ -1479,7 +1457,6 @@ def cache_info():
 
     console.print(f"ℹ️ Packages cache size: {humanize.naturalsize(packages_size or 0, binary=True)}")
 
-    console.print(f"ℹ️ Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
     console.print(f"ℹ️ Requests cache size: {humanize.naturalsize(requests_size or 0, binary=True)}")
     if packages_last_refreshed:
         from datetime import datetime
@@ -1528,8 +1505,8 @@ def version(
 
     if response.status_code != 200:
         if response.status_code == 404:
-            rich.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        rich.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
+            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
         raise typer.Exit()
 
     parsed_data = json.loads(response.text)
@@ -1538,26 +1515,23 @@ def version(
         from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
     except ImportError:
         if no_pre_releases:
-            rich.print(
+            console.print(
                 "[red]:no_entry_sign: Install packaging (`pip install packaging`) to use the --no-pre-releases flag[/]"
             )
             raise typer.Exit()
         from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
 
-    if not no_pre_releases:
-        latest_versions = list(sorted(map(parse_version, parsed_data["releases"].keys()), reverse=True))[:limit]
-    else:
-        latest_versions = list(
-            sorted(
-                filter(lambda x: not x.is_prerelease, map(parse_version, parsed_data["releases"].keys())), reverse=True
-            )
-        )[:limit]
+    versions = map(parse_version, parsed_data["releases"].keys())
+    if no_pre_releases:
+        versions = filter(lambda x: not x.is_prerelease, versions)
+    latest_versions = sorted(versions, reverse=True)[:limit]
 
     minimal_output = limit == 1
 
     if minimal_output:
         output = f"[green]{package_name}[/] -"
     else:
+        version_info = ""
         if show_installed_version:
             import pkg_resources
 
@@ -1567,9 +1541,10 @@ def version(
                 version_info = " [red](Not Installed)[/]"
             else:
                 version_info = f" [dark_orange](Installed Version: {installed_version})[/]"
-        output = f"Top {limit} latest versions of [green]{package_name}[/]{version_info if show_installed_version else ''}{' [yellow](excluding pre-releases)[/]' if no_pre_releases else ''}:\n"
+        output = f"Top {limit} latest versions of [green]{package_name}[/]{version_info}{' [yellow](excluding pre-releases)[/]' if no_pre_releases else ''}:\n"
 
     from datetime import timezone  # pylint: disable=import-outside-toplevel
+    import humanize  # pylint: disable=import-outside-toplevel
 
     for n, version in enumerate(latest_versions, start=1):
         output += f" {f'[magenta]{n}.[/] ' if not minimal_output else ''}"
@@ -1588,9 +1563,7 @@ def version(
 
         try:
             upload_time = utc_to_local(
-                datetime.strptime(
-                    parsed_data["releases"][str(version)][0]["upload_time_iso_8601"], "%Y-%m-%dT%H:%M:%S.%fZ"
-                ),
+                _parse_iso_datetime(parsed_data["releases"][str(version)][0]["upload_time_iso_8601"]),
                 timezone.utc,
             )
             output += f" [red]{humanize.naturaltime(upload_time)}[/] [cyan]({upload_time.strftime('%a %b %d %H:%M:%S %Y')})[/]"
@@ -1612,6 +1585,7 @@ def main(
     if not cache:
         from requests import Session
 
+        global session
         session = Session()
         session.headers.update({"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"})
     if repository:
