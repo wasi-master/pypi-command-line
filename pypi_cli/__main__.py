@@ -6,6 +6,7 @@ from urllib.parse import quote
 
 import humanize
 import rich
+from rich.layout import Layout
 from tomlkit import key
 import typer
 from rich.align import Align
@@ -943,6 +944,7 @@ def information(
     hide_github: bool = Option(False, metavar="github", help="Hide the github"),
     hide_stats: bool = Option(False, metavar="stats", help="Hide the stats"),
     hide_meta: bool = Option(False, metavar="meta", help="Hide the metadata"),
+    full_description: bool = Option(False, help="Show the full description instead of truncating"),
 ):
 
     """See the information about a package."""
@@ -980,12 +982,15 @@ def information(
     else:
         natural_time = "UNKNOWN"
     description = info["summary"]
-    latest_version = info["version"] if info.get("version") else list(sorted(map(parse_version, releases.keys()), reverse=True))[0] if releases else "Unknown"
-    version_comment = (
-        "[green]Latest Version[/]"
-        if str(latest_version) == str(info["version"])
-        else f"[red]Newer version available ({latest_version})[/]"
-    )
+    if not version:
+        latest_version = info["version"] if (info.get("version") and not version) else (list(sorted((i for i in map(parse_version, releases.keys()) if not i.pre), reverse=True))[0] if releases else "Unknown")
+        version_comment = (
+            "[green]Latest Version[/]"
+            if str(latest_version) == str(info["version"])
+            else f"[red]Newer version available ({latest_version})[/]"
+        )
+    else:
+        version_comment = f"[green]Version[/]: {version}"
     import re  # pylint: disable=import-outside-toplevel
 
     repos = re.findall(
@@ -1016,8 +1021,8 @@ def information(
     if info.get("project_urls") and not hide_project_urls:
         metadata.add_row(
             Panel(
-                "\n".join(f"[yellow]{name}[/]: [cyan]{url}[/]" for name, url in info["project_urls"].items()),
-                expand=False,
+                "\n".join(f"[yellow]{name}[/]: [link={url}][cyan]{url}[/][/link]" for name, url in info["project_urls"].items()),
+                expand=True,
                 border_style="magenta",
                 title="Project URLs",
             )
@@ -1033,7 +1038,7 @@ def information(
                     metadata.add_row(
                         Panel(
                             f"[red underline]Repo Not Found[/]\n[cyan]Link[/]: {url}\n[light_green]Name[/]: {repo}\n",
-                            expand=False,
+                            expand=True,
                             border_style="green",
                             title="GitHub",
                         )
@@ -1050,7 +1055,7 @@ def information(
                             f"[light_green]Stargazers[/]: {stars:,}\n"
                             f"[light_green]Issues/Pull Requests[/]: {issues:,}\n"
                             f"[light_green]Forks[/]: {forks:,}",
-                            expand=False,
+                            expand=True,
                             border_style="green",
                             title="GitHub",
                         )
@@ -1059,7 +1064,7 @@ def information(
                 metadata.add_row(
                         Panel(
                             f"Error {resp.status_code}",
-                            expand=False,
+                            expand=True,
                             border_style="green",
                             title="GitHub",
                         )
@@ -1082,7 +1087,7 @@ def information(
                     f"[blue]Last Month[/]: {stats['last_month']:,}\n"
                     f"[blue]Last Week[/]: {stats['last_week']:,}\n"
                     f"[blue]Last Day[/]: {stats['last_day']:,}",
-                    expand=False,
+                    expand=True,
                     border_style="yellow",
                     title="Downloads",
                 )
@@ -1097,7 +1102,7 @@ def information(
             metadata.add_row(
                 Panel(
                     requirements,
-                    expand=False,
+                    expand=True,
                     border_style="red",
                     title="Requirements",
                 )
@@ -1129,7 +1134,7 @@ def information(
                     )
                     if i
                 ),
-                expand=False,
+                expand=True,
                 border_style="yellow1",
                 title="Meta",
             )
@@ -1138,13 +1143,83 @@ def information(
         metadata.add_row(
             Panel(
                 _format_classifiers("\n".join(info["classifiers"])).strip(),
-                expand=False,
+                expand=True,
                 border_style="cyan",
                 title="Classifiers",
             )
         )
+    MIN_SIDEBAR_WIDTH = 30
+    MIN_DESC_WIDTH = 45
+
+    # Measure metadata width
+    measurement = console.measure(metadata)
+    max_needed = measurement.maximum
+
+    if console.width < MIN_SIDEBAR_WIDTH + MIN_DESC_WIDTH:
+        use_stacked = True
+        measure_width = console.width
+    else:
+        use_stacked = False
+        sidebar_width = min(max_needed, console.width - MIN_DESC_WIDTH, console.width // 2)
+        sidebar_width = max(sidebar_width, min(max_needed, MIN_SIDEBAR_WIDTH))
+        measure_width = sidebar_width
+
+    # Measure metadata height to dynamically size the description
+    from io import StringIO  # pylint: disable=import-outside-toplevel
+    from rich.console import Console as _Console  # pylint: disable=import-outside-toplevel
+
+    _buf = StringIO()
+    _temp = _Console(file=_buf, width=measure_width)
+    _temp.print(metadata)
+    metadata_height = _buf.getvalue().count("\n")
+    max_desc_lines = max(40, metadata_height)
+
+    # Truncate the raw description source if needed
+    truncation_notice = False
+    desc_source = info["description"] or ""
+    if not full_description:
+        lines = desc_source.splitlines()
+        if len(lines) > max_desc_lines:
+            desc_source = "\n".join(lines[:max_desc_lines])
+            truncation_notice = True
+
+    if info["description_content_type"] == "text/markdown":
+        from rich.markdown import Markdown  # pylint: disable=import-outside-toplevel
+
+        desc_renderable = Markdown(desc_source)
+    elif info["description_content_type"] == "text/x-rst":
+        from rich_rst import RestructuredText  # pylint: disable=import-outside-toplevel
+
+        desc_renderable = RestructuredText(desc_source)
+    else:
+        from rich.text import Text  # pylint: disable=import-outside-toplevel
+
+        desc_renderable = Text(desc_source)
+
+    from rich.console import Group  # pylint: disable=import-outside-toplevel
+
+    if truncation_notice:
+        from rich.text import Text  # pylint: disable=import-outside-toplevel
+
+        notice = Text(
+            "\nDescription truncated. Use the 'description' command or the '--full-description' flag for the full description.",
+            style="italic gray66",
+            justify="center"
+        )
+        description = Panel(Group(desc_renderable, notice), title="Description", border_style="bold magenta")
+    else:
+        description = Panel(desc_renderable, title="Description", border_style="bold magenta")
+
     console.print(Panel(table, border_style="green"))
-    console.print(metadata)
+    if use_stacked:
+        console.print(metadata)
+        console.print(description)
+    else:
+        side_by_side = Table.grid(padding=0)
+        side_by_side.add_column(width=sidebar_width)
+        side_by_side.add_column(width=console.width - sidebar_width)
+        side_by_side.add_row(metadata, description)
+        console.print(side_by_side)
 
 
 @app.command()
