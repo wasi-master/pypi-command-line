@@ -222,6 +222,21 @@ This command parses the project's requirement file, fetches information from PyP
 
     The path to the `requirements.txt` or `pyproject.toml` file to check. <span style="color: red">[required]</span>
 
+## compare
+
+Compare multiple libraries against each other
+
+This command compares the latest version, latest release date, github stars, open issues, downloads, and python version requirements across a given list of packages
+
+### **Usage**
+
+> pypi compare PACKAGE1 PACKAGE2...
+
+### Options
+
+- `PACKAGE_NAME...`
+    The list of packages to compare seperated by spaces
+
 ## description
 
 Shows the description of a package as gotten from PyPI or GitHub.
