@@ -35,8 +35,10 @@ Detailed Documentation available at <https://wasi-master.github.io/pypi-command-
       [`cache-clear`](https://wasi-master.github.io/pypi-command-line/usage/#cache-clear),
       [`new-packages`](https://wasi-master.github.io/pypi-command-line/usage/#new-packages),
       [`new-releases`](https://wasi-master.github.io/pypi-command-line/usage/#new-releases),
-      [`read-the-docs`](https://wasi-master.github.io/pypi-command-line/usage/#read-the-docs)
-    )
+      [`read-the-docs`](https://wasi-master.github.io/pypi-command-line/usage/#read-the-docs),
+      [`check`](https://wasi-master.github.io/pypi-command-line/usage/#check),
+      [`vulnerability`](https://wasi-master.github.io/pypi-command-line/usage/#vulnerability)
+    ) 
 - 💻 Cross-platform.
 - 🤯 Open source.
 - 📚 Extensive documentation.
