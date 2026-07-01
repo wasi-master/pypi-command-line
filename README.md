@@ -1,5 +1,7 @@
 # pypi-command-line
 
+![](./images/screenshot.webp "Screenshot of pypi-command-line")
+
 `pypi-command-line` is a **colorful**, **powerful**, and **beautiful** command line interface for [pypi.org](https://pypi.org "The Python Package Index (PyPI) is a repository of software for the Python programming language.") that is actively maintained
 
 Detailed Documentation available at <https://wasi-master.github.io/pypi-command-line/>
