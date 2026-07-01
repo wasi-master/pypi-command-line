@@ -392,6 +392,215 @@ def fill_cache(msg="Fetching cache"):
     return packages
 
 
+
+def parse_requirements_txt(content: str):
+    packages = []
+    for line in content.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or line.startswith("-"):
+            continue
+        if " #" in line:
+            line = line.split(" #", 1)[0].strip()
+        parts = []
+        for part in line.split():
+            if part.startswith("--"):
+                break
+            parts.append(part)
+        line = " ".join(parts).strip()
+        if not line:
+            continue
+        try:
+            from packaging.requirements import Requirement
+            req = Requirement(line)
+            if req.marker and not req.marker.evaluate():
+                continue
+            packages.append(req)
+        except Exception:
+            pass
+    return packages
+
+
+def parse_pyproject_toml(content: str):
+    tomllib = None
+    try:
+        import tomllib
+    except ImportError:
+        try:
+            import tomli as tomllib
+        except ImportError:
+            try:
+                import toml as tomllib
+            except ImportError:
+                pass
+
+    if tomllib is None:
+        return _fallback_parse_pyproject(content)
+
+    try:
+        data = tomllib.loads(content)
+    except Exception:
+        return []
+
+    packages = []
+    project = data.get("project", {})
+    dependencies = project.get("dependencies", [])
+    for dep in dependencies:
+        try:
+            from packaging.requirements import Requirement
+            packages.append(Requirement(dep))
+        except Exception:
+            pass
+
+    optional_dependencies = project.get("optional-dependencies", {})
+    for group, deps in optional_dependencies.items():
+        for dep in deps:
+            try:
+                from packaging.requirements import Requirement
+                packages.append(Requirement(dep))
+            except Exception:
+                pass
+
+    tool = data.get("tool", {})
+    poetry = tool.get("poetry", {})
+
+    poetry_deps = []
+    if "dependencies" in poetry:
+        poetry_deps.append(poetry["dependencies"])
+
+    group_data = poetry.get("group", {})
+    for group_name, group_val in group_data.items():
+        if "dependencies" in group_val:
+            poetry_deps.append(group_val["dependencies"])
+
+    for dep_dict in poetry_deps:
+        for pkg_name, val in dep_dict.items():
+            if pkg_name.lower() == "python":
+                continue
+            if isinstance(val, dict):
+                version_spec = val.get("version", "")
+            else:
+                version_spec = val
+
+            req_str = pkg_name
+            if version_spec:
+                if version_spec == "*":
+                    pass
+                elif version_spec.startswith("^"):
+                    v = version_spec[1:]
+                    parts = v.split(".")
+                    if parts[0] == "0" and len(parts) > 1:
+                        upper = f"0.{int(parts[1])+1}.0"
+                    else:
+                        upper = f"{int(parts[0])+1}.0.0"
+                    req_str = f"{pkg_name}>={v},<{upper}"
+                elif version_spec.startswith("~"):
+                    v = version_spec[1:]
+                    parts = v.split(".")
+                    if len(parts) > 1:
+                        upper = f"{parts[0]}.{int(parts[1])+1}.0"
+                    else:
+                        upper = f"{int(parts[0])+1}.0.0"
+                    req_str = f"{pkg_name}>={v},<{upper}"
+                else:
+                    if version_spec[0].isdigit():
+                        req_str = f"{pkg_name}=={version_spec}"
+                    else:
+                        req_str = f"{pkg_name}{version_spec}"
+            try:
+                from packaging.requirements import Requirement
+                packages.append(Requirement(req_str))
+            except Exception:
+                pass
+
+    return packages
+
+
+def _fallback_parse_pyproject(content: str):
+    packages = []
+    lines = content.splitlines()
+    in_dependencies = False
+    in_poetry_dependencies = False
+    current_section = ""
+    for line in lines:
+        line_stripped = line.strip()
+        if not line_stripped or line_stripped.startswith("#"):
+            continue
+
+        if line_stripped.startswith("[") and line_stripped.endswith("]"):
+            current_section = line_stripped[1:-1].strip()
+            in_dependencies = (current_section == "project" or current_section == "project.optional-dependencies")
+            in_poetry_dependencies = ("tool.poetry.dependencies" in current_section or "tool.poetry.group" in current_section)
+            continue
+
+        if current_section == "project":
+            if "dependencies" in line_stripped and "=" in line_stripped:
+                in_dependencies = True
+                continue
+
+        if in_dependencies:
+            import re
+            match = re.search(r'["\']([^"\']+)["\']', line_stripped)
+            if match:
+                req_str = match.group(1)
+                try:
+                    from packaging.requirements import Requirement
+                    packages.append(Requirement(req_str))
+                except Exception:
+                    pass
+            if "]" in line_stripped and not "[" in line_stripped:
+                if current_section == "project":
+                    in_dependencies = False
+            continue
+
+        if in_poetry_dependencies:
+            if "=" in line_stripped:
+                parts = line_stripped.split("=", 1)
+                pkg_name = parts[0].strip().strip('"\'')
+                if pkg_name.lower() == "python":
+                    continue
+                val = parts[1].strip()
+                import re
+                ver_match = re.search(r'version\s*=\s*["\']([^"\']+)["\']', val)
+                if ver_match:
+                    version_spec = ver_match.group(1)
+                else:
+                    str_match = re.search(r'^["\']([^"\']+)["\']', val)
+                    version_spec = str_match.group(1) if str_match else ""
+
+                req_str = pkg_name
+                if version_spec:
+                    if version_spec == "*":
+                        pass
+                    elif version_spec.startswith("^"):
+                        v = version_spec[1:]
+                        parts = v.split(".")
+                        if parts[0] == "0" and len(parts) > 1:
+                            upper = f"0.{int(parts[1])+1}.0"
+                        else:
+                            upper = f"{int(parts[0])+1}.0.0"
+                        req_str = f"{pkg_name}>={v},<{upper}"
+                    elif version_spec.startswith("~"):
+                        v = version_spec[1:]
+                        parts = v.split(".")
+                        if len(parts) > 1:
+                            upper = f"{parts[0]}.{int(parts[1])+1}.0"
+                        else:
+                            upper = f"{int(parts[0])+1}.0.0"
+                        req_str = f"{pkg_name}>={v},<{upper}"
+                    else:
+                        if version_spec[0].isdigit():
+                            req_str = f"{pkg_name}=={version_spec}"
+                        else:
+                            req_str = f"{pkg_name}{version_spec}"
+                try:
+                    from packaging.requirements import Requirement
+                    packages.append(Requirement(req_str))
+                except Exception:
+                    pass
+    return packages
+
+
+
 def _refresh_cache():
     with console.status("Getting current cache"):
         old_cache = load_cache()
@@ -900,6 +1109,181 @@ def wheels(
     from rich.columns import Columns  # pylint: disable=import-outside-toplevel
 
     console.print(Columns(wheel_panels))
+
+
+@app.command()
+def check(
+    file_path: str = Argument(
+        ...,
+        help="The requirements.txt or pyproject.toml file to check",
+    ),
+):
+    """Check a requirements.txt or pyproject.toml file for updates, wheel support, and abandoned packages."""
+    import os  # pylint: disable=import-outside-toplevel
+    from datetime import timezone  # pylint: disable=import-outside-toplevel
+    from concurrent.futures import ThreadPoolExecutor  # pylint: disable=import-outside-toplevel
+    from packaging.version import parse as parse_version  # pylint: disable=import-outside-toplevel
+    from packaging.tags import parse_tag, sys_tags  # pylint: disable=import-outside-toplevel
+    from wheel_filename import InvalidFilenameError, parse_wheel_filename  # pylint: disable=import-outside-toplevel
+    import humanize  # pylint: disable=import-outside-toplevel
+
+    if not os.path.exists(file_path):
+        console.print(f"[red]:no_entry_sign: File [green]{file_path}[/] not found[/]")
+        raise typer.Exit(code=1)
+
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+    except Exception as e:
+        console.print(f"[red]:no_entry_sign: Failed to read [green]{file_path}[/]: {e}[/]")
+        raise typer.Exit(code=1)
+
+    if file_path.endswith(".toml") or os.path.basename(file_path) == "pyproject.toml":
+        requirements = parse_pyproject_toml(content)
+    else:
+        requirements = parse_requirements_txt(content)
+
+    if not requirements:
+        console.print("[yellow]:grey_exclamation: No requirements found to check.[/]")
+        raise typer.Exit()
+
+    seen = set()
+    deduped_requirements = []
+    for req in requirements:
+        name_lower = req.name.lower()
+        if name_lower not in seen:
+            seen.add(name_lower)
+            deduped_requirements.append(req)
+
+    def extract_version(specifier):
+        for spec in specifier:
+            if spec.operator in ("==", "===", "~="):
+                return spec.version
+        for spec in specifier:
+            if spec.operator in (">=", ">", "<=", "<", "!="):
+                return spec.version
+        return None
+
+    def fetch_package_info(req):
+        url = f"{base_url}/pypi/{quote(req.name)}/json"
+        try:
+            res = session.get(url)
+            if res.status_code == 200:
+                return req, json.loads(res.text)
+            else:
+                return req, res.status_code
+        except Exception:
+            return req, None
+
+    results = []
+    with console.status("Checking requirements against PyPI..."):
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            futures = [executor.submit(fetch_package_info, req) for req in deduped_requirements]
+            for future in futures:
+                try:
+                    results.append(future.result())
+                except Exception:
+                    pass
+
+    table = Table()
+    table.add_column("Package", style="green", header_style="green")
+    table.add_column("Specified", style="cyan", header_style="cyan")
+    table.add_column("Latest", style="magenta", header_style="magenta")
+    table.add_column("Wheel Support", header_style="yellow")
+    table.add_column("Last Updated", header_style="blue")
+    table.add_column("Status", header_style="red")
+
+    def is_wheel_supported(wheel):
+        try:
+            parsed_wheel_file = parse_wheel_filename(wheel["filename"])
+        except InvalidFilenameError:
+            return True
+        for tag in parsed_wheel_file.tag_triples():
+            if any(tag in sys_tags() for tag in list(parse_tag(tag))):
+                return True
+        return False
+
+    for req, data in results:
+        specified = extract_version(req.specifier)
+        specified_str = str(req.specifier) if req.specifier else "*"
+
+        if data is None or isinstance(data, int):
+            status_str = "[red]Not Found[/]" if data == 404 else "[orange]Error[/]"
+            table.add_row(
+                req.name,
+                specified_str,
+                "N/A",
+                "N/A",
+                "N/A",
+                status_str,
+            )
+            continue
+
+        info = data.get("info", {})
+        latest_version = info.get("version", "Unknown")
+
+        latest_dt = None
+        for rel_list in data.get("releases", {}).values():
+            for rel in rel_list:
+                up_time = rel.get("upload_time_iso_8601")
+                if up_time:
+                    try:
+                        dt = _parse_iso_datetime(up_time)
+                        if latest_dt is None or dt > latest_dt:
+                            latest_dt = dt
+                    except Exception:
+                        pass
+
+        last_updated_str = "UNKNOWN"
+        is_abandoned = False
+        if latest_dt:
+            if latest_dt.tzinfo is None:
+                latest_dt = latest_dt.replace(tzinfo=timezone.utc)
+            is_abandoned = (datetime.now(timezone.utc) - latest_dt).days > 730
+            last_updated_str = humanize.naturaltime(utc_to_local(latest_dt, timezone.utc))
+
+        files = None
+        if specified and specified in data.get("releases", {}):
+            files = data["releases"][specified]
+        else:
+            files = data.get("urls", [])
+
+        wheel_status = "[green]Supported[/]"
+        wheels = [f for f in files if f.get("packagetype") == "bdist_wheel" or f.get("filename", "").endswith(".whl")]
+        if not wheels:
+            wheel_status = "[yellow]No wheels[/]"
+        elif not any(is_wheel_supported(w) for w in wheels):
+            wheel_status = "[red]Unsupported[/]"
+
+        status_parts = []
+        is_outdated = False
+        if specified:
+            try:
+                is_outdated = parse_version(latest_version) > parse_version(specified)
+            except Exception:
+                pass
+
+        if is_abandoned:
+            status_parts.append("[red][bold]Abandoned[/][/]")
+
+        if is_outdated:
+            status_parts.append("[yellow]Outdated[/]")
+
+        if not status_parts:
+            status_parts.append("[green]Up to date[/]")
+
+        status_str = " & ".join(status_parts)
+
+        table.add_row(
+            req.name,
+            specified_str,
+            latest_version,
+            wheel_status,
+            last_updated_str,
+            status_str,
+        )
+
+    console.print(table)
 
 
 @app.command()
