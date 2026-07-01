@@ -393,6 +393,125 @@ def fill_cache(msg="Fetching cache"):
 
 
 
+def fetch_comparison_data(package_name: str):
+    if not package_name:
+        return None
+
+    # Parse version if present
+    version = None
+    if "==" in package_name:
+        package_name, _, version = package_name.partition("==")
+
+    url = f"{base_url}/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
+    try:
+        response = session.get(url)
+        if response.status_code != 200:
+            return {
+                "name": package_name,
+                "version": "[red]Not Found[/]" if response.status_code == 404 else f"[red]Error {response.status_code}[/]",
+                "release_date": "N/A",
+                "stars": "N/A",
+                "open_issues": "N/A",
+                "downloads": "N/A",
+                "python_version": "N/A",
+            }
+        parsed_data = json.loads(response.text)
+    except Exception as e:
+        return {
+            "name": package_name,
+            "version": f"[red]Error: {str(e)}[/]",
+            "release_date": "N/A",
+            "stars": "N/A",
+            "open_issues": "N/A",
+            "downloads": "N/A",
+            "python_version": "N/A",
+        }
+
+    info = parsed_data.get("info", {})
+    releases = parsed_data.get("releases", {})
+    urls = parsed_data.get("urls", [])
+
+    latest_version = info.get("version", "Unknown")
+
+    # Extract release date
+    release_date = "Unknown"
+    from datetime import timezone  # pylint: disable=import-outside-toplevel
+    try:
+        if urls:
+            release_time = utc_to_local(
+                _parse_iso_datetime(urls[-1]["upload_time_iso_8601"]), timezone.utc
+            )
+            release_date = release_time.strftime("%b %d, %Y")
+        elif latest_version in releases and releases[latest_version]:
+            release_time = utc_to_local(
+                _parse_iso_datetime(releases[latest_version][0]["upload_time_iso_8601"]), timezone.utc
+            )
+            release_date = release_time.strftime("%b %d, %Y")
+    except Exception:
+        pass
+
+    # Extract Python version support
+    python_version = info.get("requires_python") or "Unknown"
+
+    # Extract GitHub repo URL
+    import re  # pylint: disable=import-outside-toplevel
+    repos = re.findall(
+        r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?", str(info)
+    )
+    if len(repos) > 1 and "project_urls" in info:
+        repos = list(
+            set(
+                re.findall(
+                    r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?",
+                    str(info["project_urls"]),
+                )
+            )
+        )
+    repo = remove_dot_git(repos[0]) if repos else None
+
+    stars = "N/A"
+    open_issues = "N/A"
+    if repo:
+        github_url = f"https://api.github.com/repos/{quote(repo)}"
+        try:
+            resp = session.get(github_url)
+            if resp.status_code == 200:
+                github_data = json.loads(resp.text)
+                if not (github_data.get("message") and github_data["message"] == "Not Found"):
+                    stars_val = github_data.get("stargazers_count")
+                    issues_val = github_data.get("open_issues")
+                    if stars_val is not None:
+                        stars = f"{stars_val:,}"
+                    if issues_val is not None:
+                        open_issues = f"{issues_val:,}"
+        except Exception as e:
+            pass
+
+    # Extract monthly downloads from pypistats
+    downloads = "N/A"
+    stats_url = f"https://pypistats.org/api/packages/{quote(package_name)}/recent"
+    try:
+        r = session.get(stats_url)
+        if r.status_code == 200:
+            parsed_stats = json.loads(r.text)
+            if isinstance(parsed_stats, dict) and "data" in parsed_stats:
+                last_month_downloads = parsed_stats["data"].get("last_month")
+                if last_month_downloads is not None:
+                    downloads = f"{last_month_downloads:,}"
+    except Exception:
+        pass
+
+    return {
+        "name": info.get("name", package_name),
+        "version": latest_version,
+        "release_date": release_date,
+        "stars": stars,
+        "open_issues": open_issues,
+        "downloads": downloads,
+        "python_version": python_version,
+    }
+
+
 def parse_requirements_txt(content: str):
     packages = []
     for line in content.splitlines():
@@ -1956,6 +2075,44 @@ def version(
         finally:
             output += "\n"
     console.print(output.strip())
+
+@app.command()
+def compare(
+    package_names: list[str] = Argument(..., help="The names of the packages to compare"),
+):
+    """Compare multiple packages side-by-side."""
+    from concurrent.futures import ThreadPoolExecutor  # pylint: disable=import-outside-toplevel
+
+    with console.status("Fetching comparison data..."):
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            results = list(executor.map(fetch_comparison_data, package_names))
+
+    table = Table(
+        title="[bold]PyPI Package Comparison[/bold]",
+        show_header=True,
+        show_lines=True,
+    )
+
+    table.add_column("[cyan]Metric[/]", style="cyan", header_style="cyan")
+    for pkg in results:
+        table.add_column(f"[green]{pkg['name']}[/]", justify="center", style="white")
+
+    metrics = [
+        ("Latest Version", "version"),
+        ("Latest Release", "release_date"),
+        ("GitHub Stars", "stars"),
+        ("Open Issues", "open_issues"),
+        ("Downloads (Month)", "downloads"),
+        ("Requires Python", "python_version"),
+    ]
+
+    for metric_name, key in metrics:
+        row = [metric_name]
+        for pkg in results:
+            row.append(pkg[key])
+        table.add_row(*row)
+
+    console.print(table)
 
 
 @app.callback()
