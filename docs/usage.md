@@ -292,6 +292,35 @@ Demo of getting description from github if pypi does not have one
 
     Shown when `--force-github` is enabled or the PyPI page doesn't have a description. If this is shown it will ask you to pick one
 
+## dependencies
+
+Shows the a rich, visual tree of a package's dependencies and sub-dependencies up to n levels deep.
+
+Examples:
+    pypi dependencies requests
+    pypi dependencies \"requests[security]\" --level 2
+
+### **Usage**
+
+> pypi dependencies [OPTIONS] PACKAGE_NAME
+
+### **Options**
+
+- `PACKAGE_NAME`
+
+    The name of the package to show dependencies for <span style="color: red">[required]</span>
+
+- `--limit INTEGER`
+
+    Limit the number of levels of dependencies to show [<span style="color: cyan">default:</span> 10]
+
+### Errors and Warnings
+
+- #### <span style="color: red">E:</span> Project not found
+
+    Shown when the pypi api returns a 404 response meaning a package with the specified name most likely doesn't exist
+
+
 ## information
 
 The information command gets data from [PyPI](https://pypi.org) and [GitHub](https://github.com) and [PyPIStats](https://pypistats.org) and shows them to the console
