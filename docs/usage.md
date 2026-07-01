@@ -206,6 +206,22 @@ Reloads the packages cache and shows the number of new packages added after the 
 
 > pypi cache-refresh
 
+## check
+
+Check a requirements.txt or pyproject.toml file for updates, compatibility, and abandoned status.
+
+This command parses the project's requirement file, fetches information from PyPI, and prints a table indicating whether the packages are outdated, abandoned, or have missing/unsupported wheel files on the current system.
+
+### **Usage**
+
+> pypi check FILE_PATH
+
+### **Options**
+
+- `FILE_PATH`
+
+    The path to the `requirements.txt` or `pyproject.toml` file to check. <span style="color: red">[required]</span>
+
 ## description
 
 Shows the description of a package as gotten from PyPI or GitHub.
