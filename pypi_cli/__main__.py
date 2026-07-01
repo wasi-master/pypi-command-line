@@ -133,7 +133,7 @@ class AliasedGroup(Group):
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
             return rv
-        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"), "rs": "regex-search", "rsearch": "regex-search", "vuln": "vulnerabilities"}
+        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"), "rs": "regex-search", "rsearch": "regex-search", "vuln": "vulnerabilities", "deps": "dependencies", "dep": "dependencies", "d": "dependencies", "b": "browse", "s": "rsearch", "i": "info", "c": "compare", "cmp": "compare"}
         if cmd_name in alias_mapping:
             return click.Group.get_command(self, ctx, alias_mapping[cmd_name])
         commands = self.list_commands(ctx)
@@ -817,6 +817,40 @@ def _format_xml_packages(url, title, pubmsg, show_author, hide_link, *, split_ti
             "[bold yellow]:warning: WARNING: There is a known bug that occurs when lxml is not installed. It"
             "doesn't show descriptions in some cases. Please install lxml using `pip install lxml`."
         )
+
+
+def _get_package_dependencies(info: dict, requested_extras: set) -> list:
+    """Parse requires_dist from package info, filtering by markers and extras.
+
+    Returns a list of packaging.requirements.Requirement objects that apply
+    to the current environment and the requested extras.
+    """
+    from packaging.requirements import Requirement  # pylint: disable=import-outside-toplevel
+
+    requires_dist = info.get("requires_dist") or []
+    deps = []
+    for req_str in requires_dist:
+        try:
+            req = Requirement(req_str)
+        except Exception:
+            continue
+        if req.marker:
+            # Only include if marker evaluates for current env + requested extras
+            extra_envs = [None] if not requested_extras else [None] + list(requested_extras)
+            included = False
+            for extra in extra_envs:
+                env = {"extra": extra} if extra else {}
+                try:
+                    if req.marker.evaluate(env):
+                        included = True
+                        break
+                except Exception:
+                    pass
+            if not included:
+                continue
+        deps.append(req)
+    return deps
+
 
 
 @app.command()
@@ -2113,6 +2147,198 @@ def compare(
         table.add_row(*row)
 
     console.print(table)
+
+@app.command()
+def dependencies(
+    package_name: str = Argument(..., help="The name of the package to explore (e.g. [green]requests[/] or [green]requests[security][/])"),
+    level: int = Option(5, "--level", "-l", help="Maximum depth of the dependency tree to display", show_default=True),
+    no_cache: bool = Option(False, "--no-cache", help="Bypass cache when fetching dependency data"),
+):
+    """Explore the dependency tree of a PyPI package.
+
+    Fetches and displays a rich, visual tree of a package's dependencies
+    and sub-dependencies up to [bold]n[/bold] levels deep.
+
+    [bold]Examples:[/bold]
+      [bold]pypi dependencies requests[/]
+      [bold]pypi dependencies \"requests[security]\" --level 2[/]
+    """
+    from concurrent.futures import ThreadPoolExecutor  # pylint: disable=import-outside-toplevel
+    from packaging.requirements import Requirement  # pylint: disable=import-outside-toplevel
+    from rich.tree import Tree  # pylint: disable=import-outside-toplevel
+    from rich.text import Text  # pylint: disable=import-outside-toplevel
+
+    # ── Parse package name and extras ────────────────────────────────────────
+    # Support "requests[security]" syntax as argument
+    root_extras: set = set()
+    bracket_pos = package_name.find("[")
+    if bracket_pos != -1 and package_name.endswith("]"):
+        root_extras = {e.strip() for e in package_name[bracket_pos + 1 : -1].split(",")}
+        package_name = package_name[:bracket_pos]
+
+    # ── Cache for fetched metadata ────────────────────────────────────────────
+    # Maps lowercase package name → parsed JSON info dict (or None on failure)
+    fetched: dict[str, dict | None] = {}
+
+    # ── Fetch helper ─────────────────────────────────────────────────────────
+    def fetch_info(name: str) -> tuple[str, dict | None]:
+        """Fetch /pypi/<name>/json from PyPI; return (name, info_dict or None)."""
+        _session = session
+        if no_cache:
+            from requests import Session  # pylint: disable=import-outside-toplevel
+            s = Session()
+            s.headers.update({"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"})
+            _session = s
+        try:
+            url = f"{base_url}/pypi/{quote(name)}/json"
+            resp = _session.get(url)
+            if resp.status_code == 200:
+                data = json.loads(resp.text)
+                return name.lower(), data.get("info")
+            return name.lower(), None
+        except Exception:
+            return name.lower(), None
+
+    # ── Formatting helpers ────────────────────────────────────────────────────
+    def _format_req_label(req: Requirement) -> Text:
+        """Return a styled rich Text label for a single Requirement."""
+        t = Text()
+        t.append(req.name, style="bold #92EC5A")           # package name – green
+        if req.extras:
+            t.append("[", style="#9263FB")
+            t.append(", ".join(sorted(req.extras)), style="#9263FB")
+            t.append("]", style="#9263FB")
+        if req.specifier:
+            t.append(str(req.specifier), style="#33F1C8")   # version spec – teal
+        if req.marker:
+            t.append(f" ; {req.marker}", style="dim #F2C259")  # marker – muted gold
+        return t
+
+    # ── BFS traversal ─────────────────────────────────────────────────────────
+    # We fetch the root package first (synchronously for status display), then
+    # explore level-by-level with ThreadPoolExecutor.
+
+    # Step 1 – fetch root
+    with console.status(f"[bold cyan]Fetching[/] [green]{package_name}[/] from PyPI…"):
+        _, root_info = fetch_info(package_name)
+
+    if root_info is None:
+        console.print(f"[red]:no_entry_sign: Package [green]{package_name}[/] not found on PyPI.[/]")
+        raise typer.Exit(code=1)
+
+    fetched[package_name.lower()] = root_info
+
+    # ── Build the tree root ───────────────────────────────────────────────────
+    root_label = Text()
+    root_label.append("📦 ", style="")
+    root_label.append(root_info["name"], style="bold #4AA0FC")      # blue
+    root_label.append(f" {root_info['version']}", style="bold #F2C259")  # gold
+    if root_extras:
+        root_label.append("[", style="#9263FB")
+        root_label.append(", ".join(sorted(root_extras)), style="#9263FB")
+        root_label.append("]", style="#9263FB")
+    if root_info.get("summary"):
+        root_label.append(f"  {root_info['summary'][:60]}", style="dim")
+
+    tree = Tree(root_label, guide_style="dim cyan")
+
+    # ── BFS queue: each entry is (parent_rich_node, req, extras, current_depth)
+    # We group by level to enable concurrent fetching at each level.
+    # queue items: (parent_node, req_object, extras_set, depth)
+    Level = list  # alias for readability
+    current_level_items: Level = [
+        (tree, req, req.extras or set(), 1)
+        for req in _get_package_dependencies(root_info, root_extras)
+    ]
+
+    # Track visited to avoid infinite loops (circular deps)
+    visited: set[str] = {package_name.lower()}
+
+    for depth in range(1, level + 1):
+        if not current_level_items:
+            break
+
+        # Collect names we still need to fetch at this level
+        names_to_fetch = [
+            req.name
+            for (_, req, _, _) in current_level_items
+            if req.name.lower() not in fetched
+        ]
+        names_to_fetch = list(dict.fromkeys(n.lower() for n in names_to_fetch))  # deduplicate
+
+        if names_to_fetch:
+            with console.status(
+                f"[bold cyan]Fetching[/] [dim]{len(names_to_fetch)} package(s)[/] at depth [yellow]{depth}[/]…"
+            ):
+                with ThreadPoolExecutor(max_workers=min(16, len(names_to_fetch))) as executor:
+                    for name, info in executor.map(fetch_info, names_to_fetch):
+                        fetched[name] = info
+
+        next_level_items: Level = []
+
+        for parent_node, req, req_extras, _ in current_level_items:
+            pkg_key = req.name.lower()
+            info = fetched.get(pkg_key)
+
+            if pkg_key in visited:
+                # Circular dependency — show it but don't recurse further
+                circ_label = Text()
+                circ_label.append("🔁 ", style="")
+                circ_label.append(req.name, style="bold #FF7F30")
+                if req.specifier:
+                    circ_label.append(str(req.specifier), style="#33F1C8")
+                circ_label.append("  (circular)", style="dim")
+                parent_node.add(circ_label)
+                continue
+
+            visited.add(pkg_key)
+
+            if info is None:
+                # Not found or fetch error
+                err_label = Text()
+                err_label.append("❌ ", style="")
+                err_label.append(req.name, style="bold red")
+                if req.specifier:
+                    err_label.append(str(req.specifier), style="#33F1C8")
+                err_label.append("  (not found)", style="dim red")
+                parent_node.add(err_label)
+                continue
+
+            # Build label with resolved version
+            node_label = Text()
+            node_label.append("📦 " if depth == 1 else "  ", style="")
+            node_label.append(req.name, style="bold #92EC5A")
+            if req_extras:
+                node_label.append("[", style="#9263FB")
+                node_label.append(", ".join(sorted(req_extras)), style="#9263FB")
+                node_label.append("]", style="#9263FB")
+            if req.specifier:
+                node_label.append(str(req.specifier), style="#33F1C8")
+            # Show resolved version dimly
+            resolved_ver = info.get("version", "?")
+            node_label.append(f"  → {resolved_ver}", style="dim #4AA0FC")
+            if req.marker:
+                node_label.append(f"  ; {req.marker}", style="dim #F2C259")
+
+            child_node = parent_node.add(node_label)
+
+            # Queue children for the next level (if we haven't hit max depth)
+            if depth < level:
+                child_deps = _get_package_dependencies(info, req_extras)
+                for child_req in child_deps:
+                    next_level_items.append((child_node, child_req, child_req.extras or set(), depth + 1))
+
+        current_level_items = next_level_items
+
+    # ── Final summary line ────────────────────────────────────────────────────
+    total_pkgs = len(visited) - 1  # exclude root itself
+    console.print()
+    console.print(tree)
+    console.print()
+    console.print(
+        f"[dim]Explored [bold cyan]{total_pkgs}[/bold cyan] unique package(s) "
+        f"across [bold yellow]{min(depth, level)}[/bold yellow] level(s) of depth.[/dim]"
+    )
 
 
 @app.callback()
