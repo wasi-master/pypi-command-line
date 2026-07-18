@@ -38,6 +38,23 @@ _timeout = DEFAULT_TIMEOUT
 DEFAULT_HEADERS = {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
 
 
+def _is_interactive() -> bool:
+    """Return True when both stdin and stdout are attached to a TTY."""
+    import sys  # pylint: disable=import-outside-toplevel
+
+    return sys.stdin.isatty() and sys.stdout.isatty()
+
+
+def _github_headers() -> dict:
+    """Headers for GitHub API requests, including auth when GITHUB_TOKEN is set."""
+    import os  # pylint: disable=import-outside-toplevel
+
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        return {"Authorization": f"Bearer {token}"}
+    return {}
+
+
 def get_cache_dir() -> str:
     """Return (and create) the user cache directory for pypi-command-line."""
     import os  # pylint: disable=import-outside-toplevel
@@ -130,6 +147,8 @@ def __color_error_message():
         except ImportError:
             pass
         else:
+            if not _is_interactive():
+                return
             style = Style([("link", "cyan"), ("command", "blue"), ("cancel", "gray")])
             print("\n")
             resp = questionary.select(
@@ -252,6 +271,8 @@ class AliasedGroup(Group):
             try:
                 import questionary  # pylint: disable=import-outside-toplevel
             except ImportError:
+                questionary = None
+            if questionary is None or not _is_interactive():
                 console.print(
                     f"""[cyan]ℹ️ Info:[/] Found invalid command '{cmd_name}', did you mean any of these: {', '.join(f"'[red]{match}[/]'" for match in closest_matches)}"""
                 )
@@ -276,6 +297,8 @@ class AliasedGroup(Group):
         try:
             import questionary
         except ImportError:
+            questionary = None
+        if questionary is None or not _is_interactive():
             ctx.fail(f"Found Too many matches for '{cmd_name}': {formatted_matches}")
         else:
             import difflib  # pylint: disable=import-outside-toplevel
@@ -480,10 +503,15 @@ def _format_classifiers(_classifiers: str):
 
 
 def get_latest_version():
-    import re
-
-    r = session.get("https://img.shields.io/pypi/v/pypi-command-line")
-    return re.search(r"<text.+>v(.*?)</text>", r.text).group(1)
+    """Return the latest released version of pypi-command-line, or None on failure."""
+    try:
+        r = session.get("https://pypi.org/pypi/pypi-command-line/json")
+        if r.status_code != 200:
+            return None
+        return json.loads(r.text)["info"]["version"]
+    except Exception:  # pylint: disable=broad-except
+        logger.debug("Failed to fetch the latest version from PyPI", exc_info=True)
+        return None
 
 
 def _get_installed_version(package_name: str):
@@ -543,18 +571,24 @@ def fill_cache(msg="Fetching cache"):
     # format. Indexes that don't support it fall back to the legacy HTML.
     headers = {**DEFAULT_HEADERS, "Accept": "application/vnd.pypi.simple.v1+json"}
     chunks = []
-    with Progress(transient=True) as progress:
-        response = requests.get(all_packages_url, stream=True, timeout=_timeout, headers=headers)
-        content_length = response.headers.get("content-length")
-        if content_length is not None:
-            total_length = int(content_length)
-            task = progress.add_task(msg, total=total_length)
-            for data in response.iter_content(chunk_size=32768):
-                chunks.append(data)
-                progress.advance(task, len(data))
-            response_data = b"".join(chunks).decode("utf-8")
-        else:
-            response_data = response.content.decode("utf-8")
+    try:
+        with Progress(transient=True) as progress:
+            response = requests.get(all_packages_url, stream=True, timeout=_timeout, headers=headers)
+            response.raise_for_status()
+            content_length = response.headers.get("content-length")
+            if content_length is not None:
+                total_length = int(content_length)
+                task = progress.add_task(msg, total=total_length)
+                for data in response.iter_content(chunk_size=32768):
+                    chunks.append(data)
+                    progress.advance(task, len(data))
+                response_data = b"".join(chunks).decode("utf-8")
+            else:
+                response_data = response.content.decode("utf-8")
+    except requests.exceptions.RequestException as exc:
+        logger.debug("Failed to fetch the package list", exc_info=True)
+        console.print(f"[red]:x: Failed to fetch the package list from {all_packages_url}: {exc}[/]")
+        raise typer.Exit(code=1)
 
     packages = None
     if "json" in response.headers.get("content-type", ""):
@@ -567,8 +601,11 @@ def fill_cache(msg="Fetching cache"):
         import re  # pylint: disable=import-outside-toplevel
 
         packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response_data)
-    with open(cache_file, "w", encoding="utf-8") as f:
+    # Write atomically so an interrupted refresh can't leave a truncated cache
+    temp_file = cache_file + ".tmp"
+    with open(temp_file, "w", encoding="utf-8") as f:
         f.write("\n".join(packages))
+    os.replace(temp_file, cache_file)
     return packages
 
 
@@ -642,7 +679,7 @@ def fetch_comparison_data(package_name: str):
     if repo:
         github_url = f"https://api.github.com/repos/{quote(repo)}"
         try:
-            resp = session.get(github_url)
+            resp = session.get(github_url, headers=_github_headers())
             if resp.status_code == 200:
                 github_data = json.loads(resp.text)
                 if not (github_data.get("message") and github_data["message"] == "Not Found"):
@@ -873,7 +910,7 @@ def _clear_cache():
 
 
 def _get_github_readme(repo):
-    readme = session.get(f"https://api.github.com/repos/{repo}/readme").json()
+    readme = session.get(f"https://api.github.com/repos/{repo}/readme", headers=_github_headers()).json()
     if readme.get("message") == "Not Found":
         console.print(f"[red]:x: Could not find readme for[/] [yellow]{repo}[/]")
         raise typer.Exit()
@@ -881,7 +918,12 @@ def _get_github_readme(repo):
     if msg is not None and "API rate limit exceeded" in msg:
         console.print(f"[red]:x: API rate limit exceeded for GitHub[/]")
         raise typer.Exit()
-    content = session.get(f"https://raw.githubusercontent.com/{repo}/master/{readme['path']}")
+    # The readme API response points at the file on the repo's actual default
+    # branch; building a raw URL by hand would wrongly assume it is "master".
+    download_url = readme.get("download_url")
+    if not download_url:
+        return None, None
+    content = session.get(download_url)
     if content.status_code == 200:
         if "API rate limit exceeded" in content.text:
             console.print(f"[red]:x: API rate limit exceeded for GitHub[/]")
@@ -995,6 +1037,9 @@ def description(
                 "Please specify the repo you want to use.",
                 choices=[questionary.Choice([("cyan", r)]) for r in repos],
             ).ask()
+            if not repo:
+                console.print("[dim gray]:ok: Cancelled![/]")
+                raise typer.Exit()
         elif len(repos) == 1:
             repo = repos[0]
         else:
@@ -1039,6 +1084,9 @@ def description(
                     "Please specify the repo you want to see the description from (Ctrl+C to cancel).",
                     choices=[questionary.Choice([("cyan", r)]) for r in list(repos)],
                 ).ask()
+                if not repo:
+                    console.print("[dim gray]:ok: Cancelled![/]")
+                    raise typer.Exit()
             readme, filename = _get_github_readme(repo)
             if not readme or not filename:
                 console.print("[red]:x: I could not find a readme inside the GitHub repository[/]")
@@ -1629,7 +1677,7 @@ def information(
             url = f"https://api.github.com/repos/{quote(repo)}"
             try:
                 with console.status("Getting data from GitHub"):
-                    resp = session.get(url)
+                    resp = session.get(url, headers=_github_headers())
             except Exception:
                 logger.debug("Failed to fetch GitHub data for %s", repo, exc_info=True)
                 resp = None
@@ -2090,7 +2138,7 @@ def cache_info():
             f"⏰ Requests cache last updated: {humanize.naturaltime(datetime.fromtimestamp(packages_last_refreshed))}"
         )
 
-    if requests_size:
+    if requests_size and hasattr(session, "cache"):
         table = Table(title="All cached requests")
         table.add_column("Index", style="dim magenta", header_style="bold magenta")
         table.add_column("Link", style="cyan", header_style="bold cyan")
@@ -2121,7 +2169,10 @@ def version(
         console.print(f"Current version of [yellow]pypi-command-line[/] is [red]{__version__}[/]")
         with console.status("Getting latest version"):
             latest_version = get_latest_version()
-        console.print(f"Latest  version of [yellow]pypi-command-line[/] is [red]{latest_version}[/]")
+        if latest_version is None:
+            console.print("[yellow]:warning: Could not fetch the latest version from PyPI[/]")
+        else:
+            console.print(f"Latest  version of [yellow]pypi-command-line[/] is [red]{latest_version}[/]")
         raise typer.Exit()
 
     parsed_data = fetch_pypi_json(package_name)
