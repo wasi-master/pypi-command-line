@@ -1,13 +1,16 @@
 def test_version(runner):
     result = runner.run("pypi version")
     output = result.stdout.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")
-    assert output, "No output was gotten"  # Assert if a output was returned
+    assert "pypi-command-line" in output
+    assert "Current version" in output
 
 
 def test_version_with_another_package(runner):
     result = runner.run("pypi version charinfo")
     output = result.stdout.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")
-    assert output, "No output was gotten"  # Assert if a output was returned
+    assert "charinfo" in output
+    import re
+    assert re.search(r"\d+\.\d+", output), "No version number found in output"
 
 
 def test_version_with_limit(runner):

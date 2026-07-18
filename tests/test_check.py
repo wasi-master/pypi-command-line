@@ -57,3 +57,35 @@ charinfo = "^0.1.0"
     output = result.stdout.decode("utf-8")
     assert "charinfo" in output
     assert "Specified" in output
+
+
+def test_check_json_output(runner, tmp_path):
+    import json
+
+    req_file = tmp_path / "requirements.txt"
+    req_file.write_text("requests==2.0.0\n")
+
+    result = runner.run(f"pypi check {req_file} --json")
+    records = json.loads(result.stdout.decode("utf-8"))
+    assert len(records) == 1
+    record = records[0]
+    assert record["name"] == "requests"
+    assert record["specified"] == "==2.0.0"
+    assert record["error"] is None
+    assert record["outdated"] is True
+    assert record["wheel_support"] in ("supported", "no_wheels", "unsupported")
+    assert record["last_updated"]  # ISO 8601 timestamp
+    assert isinstance(record["abandoned"], bool)
+
+
+def test_check_json_output_not_found(runner, tmp_path):
+    import json
+
+    req_file = tmp_path / "requirements.txt"
+    req_file.write_text("this-package-definitely-does-not-exist-12345\n")
+
+    result = runner.run(f"pypi check {req_file} --json")
+    records = json.loads(result.stdout.decode("utf-8"))
+    assert len(records) == 1
+    assert records[0]["error"] == "not_found"
+    assert records[0]["latest"] is None

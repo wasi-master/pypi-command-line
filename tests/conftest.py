@@ -30,14 +30,24 @@ class CommandRunner:
     """A utility class for running commands and logging info"""
 
     @staticmethod
-    def run(command: str) -> subprocess.CompletedProcess:
+    def run_raw(command: str) -> subprocess.CompletedProcess:
+        """Run a command without raising on a nonzero exit code."""
         import os
         args = command.split()
         if args and args[0] == "pypi":
             args = ["python", "-m", "pypi_cli"] + args[1:]
         env = os.environ.copy()
         env["COLUMNS"] = "200"
-        return subprocess.run(args, check=True, stdout=PIPE, stderr=PIPE, env=env)
+        return subprocess.run(args, check=False, stdout=PIPE, stderr=PIPE, env=env)
+
+    @staticmethod
+    def run(command: str) -> subprocess.CompletedProcess:
+        result = CommandRunner.run_raw(command)
+        if result.returncode != 0:
+            raise subprocess.CalledProcessError(
+                result.returncode, result.args, output=result.stdout, stderr=result.stderr
+            )
+        return result
 
     # @staticmethod
     # def run_interactive(command: str) -> "InteractiveCommand":

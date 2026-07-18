@@ -1,0 +1,90 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pypi_command_line"
+description = "A beautiful command line interface for the Python Package Index"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { text = "MIT" }
+authors = [{ name = "Wasi Master", email = "arianmollik323@gmail.com" }]
+requires-python = ">=3.9"
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Terminals",
+]
+keywords = [
+    "pypi",
+    "cli",
+    "pypi cli",
+    "pypi-cli",
+    "pypi command line",
+    "pypi-command-line",
+    "command line",
+    "command-line",
+    "pypi command line interface",
+    "pypi-command-line-interface",
+    "command line interface",
+    "command-line-interface",
+    "pypi command line application",
+    "pypi-command-line-application",
+    "command line application",
+    "command-line-application",
+]
+dependencies = [
+    "beautifulsoup4",
+    "humanize",
+    "packaging",
+    "platformdirs",
+    "questionary",
+    "requests",
+    "rich",
+    "rich-click",
+    "rich-rst",
+    "thefuzz",
+    "typer",
+    "wheel-filename",
+]
+
+[project.optional-dependencies]
+speedups = [
+    "lxml",
+    "rapidfuzz",
+    "requests-cache",
+    "shellingham",
+    "ujson",
+]
+
+[project.urls]
+Homepage = "https://wasi-master.github.io/pypi-command-line/"
+"Bug Tracker" = "https://github.com/wasi-master/pypi-command-line/issues"
+Source = "https://github.com/wasi-master/pypi-command-line"
+Documentation = "https://wasi-master.github.io/pypi-command-line"
+"Say Thanks" = "https://saythanks.io/to/wasi-master"
+
+[project.scripts]
+pypi = "pypi_cli.__main__:run"
+
+[project.entry-points."pipx.run"]
+pypi-command-line = "pypi_cli.__main__:run"
+
+[tool.setuptools]
+packages = ["pypi_cli"]
+zip-safe = false
+
+[tool.setuptools.dynamic]
+version = { attr = "pypi_cli.__version__" }

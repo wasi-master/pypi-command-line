@@ -1,15 +1,12 @@
-def test_search(runner):
+def test_search_is_deprecated(runner):
+    """The search command is disabled because PyPI blocks the requests; it should say so."""
     result = runner.run("pypi search charinfo")
     output = result.stdout.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")
-    assert output, "No output was gotten"  # Assert if a output was returned
-
-
-def test_search_with_page(runner):
-    result = runner.run("pypi search discord --page 2")
-    output = result.stdout.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")
-    assert output, "No output was gotten"  # Assert if a output was returned
+    assert "not available" in output
+    assert "rsearch" in output
 
 
 def test_search_help_message(runner):
     result = runner.run("pypi search --help")
-    assert result.stdout.decode("utf-8"), "No output was gotten"  # Assert if a output was returned
+    output = result.stdout.decode("utf-8")
+    assert "Search for a package" in output

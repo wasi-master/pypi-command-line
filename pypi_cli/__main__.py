@@ -1,4 +1,7 @@
 """The main file."""
+from __future__ import annotations
+
+import logging
 from typing import Callable
 
 from datetime import datetime
@@ -27,32 +30,74 @@ else:
 
 base_url = "https://pypi.org"
 
+logger = logging.getLogger("pypi_cli")
+
+DEFAULT_TIMEOUT = 15.0
+_timeout = DEFAULT_TIMEOUT
+
+DEFAULT_HEADERS = {"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"}
+
+
+def get_cache_dir() -> str:
+    """Return (and create) the user cache directory for pypi-command-line."""
+    import os  # pylint: disable=import-outside-toplevel
+
+    try:
+        from platformdirs import user_cache_dir  # pylint: disable=import-outside-toplevel
+
+        cache_dir = user_cache_dir("pypi-command-line")
+    except ImportError:
+        cache_dir = os.path.join(os.path.dirname(__file__), "cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    return cache_dir
+
+
+def _with_default_timeout(session_obj):
+    """Make every request on the session use the configured timeout unless one is given."""
+    original_request = session_obj.request
+
+    def request(method, url, **kwargs):
+        kwargs.setdefault("timeout", _timeout)
+        return original_request(method, url, **kwargs)
+
+    session_obj.request = request
+    return session_obj
+
+
+def _make_plain_session():
+    """Create a non-caching requests session with the default headers and timeout."""
+    from requests import Session  # pylint: disable=import-outside-toplevel
+
+    plain_session = Session()
+    plain_session.headers.update(DEFAULT_HEADERS)
+    return _with_default_timeout(plain_session)
+
+
 try:
     from requests_cache.session import CachedSession
 except ImportError:
-    from requests import Session
-
-    session = Session()
-    session.headers.update({"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"})
+    session = _make_plain_session()
 else:
     import os.path  # pylint: disable=import-outside-toplevel
 
-    cache_path = os.path.join(os.path.dirname(__file__), "cache", "requests")
-    session = CachedSession(
-        cache_path,
-        backend="sqlite",
-        urls_expire_after={
-            **dict.fromkeys(
-                [f"{base_url}/simple", f"{base_url}/stats", "https://api.github.com/repos/*/readme"], 86400
-            ),
-            f"{base_url}/pypi": 10800,
-            f"{base_url}/search": 3600,
-            f"{base_url}/rss": 60,
-            "https://pypistats.org/api/packages/": 21600,
-            "https://img.shields.io": 30,
-        },
-        headers={"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"},
-        cache_control=True,
+    cache_path = os.path.join(get_cache_dir(), "requests")
+    session = _with_default_timeout(
+        CachedSession(
+            cache_path,
+            backend="sqlite",
+            urls_expire_after={
+                **dict.fromkeys(
+                    [f"{base_url}/simple", f"{base_url}/stats", "https://api.github.com/repos/*/readme"], 86400
+                ),
+                f"{base_url}/pypi": 10800,
+                f"{base_url}/search": 3600,
+                f"{base_url}/rss": 60,
+                "https://pypistats.org/api/packages/": 21600,
+                "https://img.shields.io": 30,
+            },
+            headers=DEFAULT_HEADERS,
+            cache_control=True,
+        )
     )
 
 try:
@@ -128,14 +173,37 @@ def __color_error_message():
 
     click.exceptions.UsageError.show = show
 
+# Aliases for each command. Also rendered in the documentation's "Aliases" sections.
+COMMAND_ALIASES = {
+    "browse": ["b"],
+    "cache-clear": ["cc"],
+    "cache-info": ["ci"],
+    "cache-refresh": ["cr"],
+    "check": ["chk"],
+    "compare": ["c", "cmp"],
+    "dependencies": ["d", "dep", "deps", "tree"],
+    "description": ["desc", "readme"],
+    "information": ["i", "info", "show"],
+    "largest-files": ["lf"],
+    "new-packages": ["np"],
+    "new-releases": ["nr"],
+    "read-the-docs": ["rtd", "docs", "documentation"],
+    "regex-search": ["rs", "rsearch", "s"],
+    "releases": ["rel"],
+    "version": ["v", "ver"],
+    "vulnerabilities": ["vuln", "vulns"],
+    "wheels": ["w", "whl"],
+}
+ALIAS_MAPPING = {alias: command for command, aliases in COMMAND_ALIASES.items() for alias in aliases}
+
+
 class AliasedGroup(Group):
     def get_command(self, ctx, cmd_name):
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
             return rv
-        alias_mapping = {**dict.fromkeys(["rtd", "docs", "documentation"], "read-the-docs"), "rs": "regex-search", "rsearch": "regex-search", "vuln": "vulnerabilities", "deps": "dependencies", "dep": "dependencies", "d": "dependencies", "b": "browse", "s": "rsearch", "i": "info", "c": "compare", "cmp": "compare"}
-        if cmd_name in alias_mapping:
-            return click.Group.get_command(self, ctx, alias_mapping[cmd_name])
+        if cmd_name in ALIAS_MAPPING:
+            return click.Group.get_command(self, ctx, ALIAS_MAPPING[cmd_name])
         commands = self.list_commands(ctx)
         matches = [x for x in commands if x.startswith(cmd_name)]
         if not matches:
@@ -165,8 +233,8 @@ class AliasedGroup(Group):
                         ]
                     except UserWarning:
                         console.print(
-                            "[yellow]WARNING:[/] Using slow [red]thefuzz[/] and [red]]difflib.SequenceMatcher[/]. "
-                            "Consider installing `=[red]rapidfuzz[/] or [red]python-levenstein[/]"
+                            "[yellow]WARNING:[/] Using slow [red]thefuzz[/] and [red]difflib.SequenceMatcher[/]. "
+                            "Consider installing [red]rapidfuzz[/] or [red]python-Levenshtein[/]"
                         )
                 except ImportError:
                     import difflib  # pylint: disable=import-outside-toplevel
@@ -319,6 +387,82 @@ def remove_dot_git(text):
     return text
 
 
+GITHUB_REPO_RE = r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?"
+
+
+def find_github_repos(info: dict) -> list:
+    """Find GitHub repositories mentioned in package metadata, preferring project_urls.
+
+    Returns a deduplicated list of "owner/repo" strings in order of appearance.
+    """
+    import re  # pylint: disable=import-outside-toplevel
+
+    repos = re.findall(GITHUB_REPO_RE, str(info))
+    if len(repos) > 1 and info.get("project_urls"):
+        repos = re.findall(GITHUB_REPO_RE, str(info["project_urls"]))
+    return list(dict.fromkeys(remove_dot_git(repo) for repo in repos))
+
+
+def fetch_pypi_json(package_name: str, version: str = None) -> dict:
+    """Fetch a package's JSON metadata from the index, exiting with an error message on failure."""
+    import requests  # pylint: disable=import-outside-toplevel
+
+    url = f"{base_url}/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
+    try:
+        with console.status("Getting data from PyPI"):
+            response = session.get(url)
+    except requests.exceptions.RequestException as exc:
+        logger.debug("Request to %s failed", url, exc_info=True)
+        console.print(f"[red]:x: Network error while contacting {base_url}: {exc}[/]")
+        raise typer.Exit(code=1)
+
+    if response.status_code != 200:
+        if response.status_code == 404:
+            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
+        else:
+            console.print(f"[orange1]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
+        raise typer.Exit(code=1)
+    return json.loads(response.text)
+
+
+def poetry_spec_to_req_str(pkg_name: str, version_spec: str) -> str:
+    """Convert a poetry-style version spec (with ^ or ~) to a PEP 508 requirement string."""
+    if not version_spec or version_spec == "*":
+        return pkg_name
+    if version_spec[0] in ("^", "~"):
+        v = version_spec[1:]
+        parts = v.split(".")
+        if version_spec[0] == "^":
+            if parts[0] == "0" and len(parts) > 1:
+                upper = f"0.{int(parts[1]) + 1}.0"
+            else:
+                upper = f"{int(parts[0]) + 1}.0.0"
+        else:
+            if len(parts) > 1:
+                upper = f"{parts[0]}.{int(parts[1]) + 1}.0"
+            else:
+                upper = f"{int(parts[0]) + 1}.0.0"
+        return f"{pkg_name}>={v},<{upper}"
+    if version_spec[0].isdigit():
+        return f"{pkg_name}=={version_spec}"
+    return f"{pkg_name}{version_spec}"
+
+
+def is_wheel_supported(wheel: dict) -> bool:
+    """Check whether a wheel file (a PyPI "urls" entry) is installable on the current platform."""
+    from packaging.tags import parse_tag, sys_tags  # pylint: disable=import-outside-toplevel
+    from wheel_filename import InvalidFilenameError, parse_wheel_filename  # pylint: disable=import-outside-toplevel
+
+    try:
+        parsed_wheel_file = parse_wheel_filename(wheel["filename"])
+    except InvalidFilenameError:
+        return True
+    for tag in parsed_wheel_file.tag_triples():
+        if any(tag in sys_tags() for tag in list(parse_tag(tag))):
+            return True
+    return False
+
+
 def _format_classifiers(_classifiers: str):
     """Format classifiers gotten from the API."""
     from collections import defaultdict
@@ -342,7 +486,7 @@ def get_latest_version():
 def load_cache():
     import os  # pylint: disable=import-outside-toplevel
 
-    cache_file = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
+    cache_file = os.path.join(get_cache_dir(), "packages.txt")
 
     try:
         last_refreshed = os.path.getmtime(cache_file)
@@ -365,14 +509,11 @@ def fill_cache(msg="Fetching cache"):
     from rich.progress import Progress  # pylint: disable=import-outside-toplevel
 
     all_packages_url = f"{base_url}/simple/"
-    cache_path = os.path.join(os.path.dirname(__file__), "cache")
-    if not os.path.exists(cache_path):
-        os.makedirs(cache_path)
-    cache_file = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
+    cache_file = os.path.join(get_cache_dir(), "packages.txt")
 
     chunks = []
     with Progress(transient=True) as progress:
-        response = requests.get(all_packages_url, stream=True)
+        response = requests.get(all_packages_url, stream=True, timeout=_timeout)
         content_length = response.headers.get("content-length")
         if content_length is not None:
             total_length = int(content_length)
@@ -448,26 +589,14 @@ def fetch_comparison_data(package_name: str):
             )
             release_date = release_time.strftime("%b %d, %Y")
     except Exception:
-        pass
+        logger.debug("Failed to determine release date for %s", package_name, exc_info=True)
 
     # Extract Python version support
     python_version = info.get("requires_python") or "Unknown"
 
     # Extract GitHub repo URL
-    import re  # pylint: disable=import-outside-toplevel
-    repos = re.findall(
-        r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?", str(info)
-    )
-    if len(repos) > 1 and "project_urls" in info:
-        repos = list(
-            set(
-                re.findall(
-                    r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?",
-                    str(info["project_urls"]),
-                )
-            )
-        )
-    repo = remove_dot_git(repos[0]) if repos else None
+    repos = find_github_repos(info)
+    repo = repos[0] if repos else None
 
     stars = "N/A"
     open_issues = "N/A"
@@ -484,8 +613,8 @@ def fetch_comparison_data(package_name: str):
                         stars = f"{stars_val:,}"
                     if issues_val is not None:
                         open_issues = f"{issues_val:,}"
-        except Exception as e:
-            pass
+        except Exception:
+            logger.debug("Failed to fetch GitHub data for %s", repo, exc_info=True)
 
     # Extract monthly downloads from pypistats
     downloads = "N/A"
@@ -499,7 +628,7 @@ def fetch_comparison_data(package_name: str):
                 if last_month_downloads is not None:
                     downloads = f"{last_month_downloads:,}"
     except Exception:
-        pass
+        logger.debug("Failed to fetch download stats for %s", package_name, exc_info=True)
 
     return {
         "name": info.get("name", package_name),
@@ -535,7 +664,7 @@ def parse_requirements_txt(content: str):
                 continue
             packages.append(req)
         except Exception:
-            pass
+            logger.debug("Skipping unparseable requirement line: %r", line, exc_info=True)
     return packages
 
 
@@ -558,6 +687,7 @@ def parse_pyproject_toml(content: str):
     try:
         data = tomllib.loads(content)
     except Exception:
+        logger.debug("Failed to parse pyproject.toml content", exc_info=True)
         return []
 
     packages = []
@@ -568,7 +698,7 @@ def parse_pyproject_toml(content: str):
             from packaging.requirements import Requirement
             packages.append(Requirement(dep))
         except Exception:
-            pass
+            logger.debug("Skipping unparseable dependency: %r", dep, exc_info=True)
 
     optional_dependencies = project.get("optional-dependencies", {})
     for group, deps in optional_dependencies.items():
@@ -577,7 +707,7 @@ def parse_pyproject_toml(content: str):
                 from packaging.requirements import Requirement
                 packages.append(Requirement(dep))
             except Exception:
-                pass
+                logger.debug("Skipping unparseable dependency: %r", dep, exc_info=True)
 
     tool = data.get("tool", {})
     poetry = tool.get("poetry", {})
@@ -600,36 +730,12 @@ def parse_pyproject_toml(content: str):
             else:
                 version_spec = val
 
-            req_str = pkg_name
-            if version_spec:
-                if version_spec == "*":
-                    pass
-                elif version_spec.startswith("^"):
-                    v = version_spec[1:]
-                    parts = v.split(".")
-                    if parts[0] == "0" and len(parts) > 1:
-                        upper = f"0.{int(parts[1])+1}.0"
-                    else:
-                        upper = f"{int(parts[0])+1}.0.0"
-                    req_str = f"{pkg_name}>={v},<{upper}"
-                elif version_spec.startswith("~"):
-                    v = version_spec[1:]
-                    parts = v.split(".")
-                    if len(parts) > 1:
-                        upper = f"{parts[0]}.{int(parts[1])+1}.0"
-                    else:
-                        upper = f"{int(parts[0])+1}.0.0"
-                    req_str = f"{pkg_name}>={v},<{upper}"
-                else:
-                    if version_spec[0].isdigit():
-                        req_str = f"{pkg_name}=={version_spec}"
-                    else:
-                        req_str = f"{pkg_name}{version_spec}"
+            req_str = poetry_spec_to_req_str(pkg_name, version_spec)
             try:
                 from packaging.requirements import Requirement
                 packages.append(Requirement(req_str))
             except Exception:
-                pass
+                logger.debug("Skipping unparseable dependency: %r", req_str, exc_info=True)
 
     return packages
 
@@ -665,7 +771,7 @@ def _fallback_parse_pyproject(content: str):
                     from packaging.requirements import Requirement
                     packages.append(Requirement(req_str))
                 except Exception:
-                    pass
+                    logger.debug("Skipping unparseable dependency: %r", req_str, exc_info=True)
             if "]" in line_stripped and not "[" in line_stripped:
                 if current_section == "project":
                     in_dependencies = False
@@ -686,36 +792,12 @@ def _fallback_parse_pyproject(content: str):
                     str_match = re.search(r'^["\']([^"\']+)["\']', val)
                     version_spec = str_match.group(1) if str_match else ""
 
-                req_str = pkg_name
-                if version_spec:
-                    if version_spec == "*":
-                        pass
-                    elif version_spec.startswith("^"):
-                        v = version_spec[1:]
-                        parts = v.split(".")
-                        if parts[0] == "0" and len(parts) > 1:
-                            upper = f"0.{int(parts[1])+1}.0"
-                        else:
-                            upper = f"{int(parts[0])+1}.0.0"
-                        req_str = f"{pkg_name}>={v},<{upper}"
-                    elif version_spec.startswith("~"):
-                        v = version_spec[1:]
-                        parts = v.split(".")
-                        if len(parts) > 1:
-                            upper = f"{parts[0]}.{int(parts[1])+1}.0"
-                        else:
-                            upper = f"{int(parts[0])+1}.0.0"
-                        req_str = f"{pkg_name}>={v},<{upper}"
-                    else:
-                        if version_spec[0].isdigit():
-                            req_str = f"{pkg_name}=={version_spec}"
-                        else:
-                            req_str = f"{pkg_name}{version_spec}"
+                req_str = poetry_spec_to_req_str(pkg_name, version_spec)
                 try:
                     from packaging.requirements import Requirement
                     packages.append(Requirement(req_str))
                 except Exception:
-                    pass
+                    logger.debug("Skipping unparseable dependency: %r", req_str, exc_info=True)
     return packages
 
 
@@ -737,13 +819,15 @@ def _clear_cache():
         console.print(f"[cyan]ℹ️ Info:[/] Emptied cache, now trying to delete the cache file")
 
     import os
+    from contextlib import nullcontext
 
-    folder = os.path.join(os.path.dirname(__file__), "cache")
+    folder = get_cache_dir()
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
             if os.path.isfile(file_path):
-                with session.cache_disabled():
+                disable_cache = session.cache_disabled() if hasattr(session, "cache_disabled") else nullcontext()
+                with disable_cache:
                     os.remove(file_path)
         except Exception as exc:
             console.print(f"[red]:x: Failed to delete {file_path}. Reason: {exc}[/]")
@@ -809,7 +893,7 @@ def _format_xml_packages(url, title, pubmsg, show_author, hide_link, *, split_ti
         row.append(description.text if description is not None else "")
         if not hide_link:
             row.append(link)
-        row.append(humanize.naturaltime(utc_to_local(date, timezone.utc)))
+        row.append(humanize.naturaltime(date))
         table.add_row(*row)
     console.print(table)
     if not lxml:
@@ -833,6 +917,7 @@ def _get_package_dependencies(info: dict, requested_extras: set) -> list:
         try:
             req = Requirement(req_str)
         except Exception:
+            logger.debug("Skipping unparseable requirement: %r", req_str, exc_info=True)
             continue
         if req.marker:
             # Only include if marker evaluates for current env + requested extras
@@ -845,7 +930,7 @@ def _get_package_dependencies(info: dict, requested_extras: set) -> list:
                         included = True
                         break
                 except Exception:
-                    pass
+                    logger.debug("Failed to evaluate marker for %r", req_str, exc_info=True)
             if not included:
                 continue
         deps.append(req)
@@ -860,33 +945,19 @@ def description(
     syntax_theme: str = Option("monokai", help="Override the default syntax highlighting theme"),
 ):
     """See the description for a package."""
-    url = f"{base_url}/pypi/{quote(package_name)}/json"
-    with console.status("Getting data from PyPI"):
-        response = session.get(url)
-
-    if response.status_code != 200:
-        if response.status_code == 404:
-            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
-        raise typer.Exit()
-
-    parsed_data = json.loads(response.text)["info"]
+    parsed_data = fetch_pypi_json(package_name)["info"]
     if force_github:
-        import re  # pylint: disable=import-outside-toplevel
-
-        repos = set(
-            re.findall(r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
-        )
+        repos = find_github_repos(parsed_data)
         if len(repos) > 1:
             console.print("[red]:warning: WARNING:[/] I found multiple github repos. ")
             import questionary  # pylint: disable=import-outside-toplevel
 
             repo = questionary.select(
                 "Please specify the repo you want to use.",
-                choices=[questionary.Choice([("cyan", r)]) for r in list(repos)],
+                choices=[questionary.Choice([("cyan", r)]) for r in repos],
             ).ask()
         elif len(repos) == 1:
-            repo = next(iter(repos))
+            repo = repos[0]
         else:
             console.print("[red]:x: I could not find a GitHub repository[/]")
             raise typer.Exit()
@@ -903,14 +974,10 @@ def description(
             parsed_data["description_content_type"] = "text/markdown"
     if not parsed_data["description"] or parsed_data["description"] == "UNKNOWN":
         console.print("[red]:x: No description found on PyPI.[/]")
-        import re  # pylint: disable=import-outside-toplevel
-
-        repos = set(
-            re.findall(r"https://(?:www\.)?github\.com/([A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})", str(parsed_data))
-        )
+        repos = find_github_repos(parsed_data)
         if repos:
             if len(repos) == 1:
-                repo = next(iter(repos))
+                repo = repos[0]
                 console.print(f"[yellow]ℹ️ INFO:[/] However, I did find a github repo https://github.com/{repo}.\n")
 
                 try:
@@ -996,7 +1063,6 @@ def largest_files():
     url = f"{base_url}/stats/"
     with console.status("Loading largest files..."):
         response = session.get(url, headers=headers)
-        print(response.text)
         data = json.loads(response.text)
     packages = data["top_packages"]
     packages = dict(sorted(packages.items(), key=lambda i: i[1]["size"], reverse=True))
@@ -1045,8 +1111,6 @@ def search(
 
         soup = bs4.BeautifulSoup(response.text, "lxml" if lxml else "html.parser")
         result_list = soup.find("h2", string="Search results", class_="sr-only")
-        print(response.url)
-        print(soup.prettify())
         if not result_list:
             comment = soup.select(
                 "div.split-layout.split-layout--table.split-layout--wrap-on-tablet > div:nth-child(1) > p"
@@ -1101,17 +1165,7 @@ def releases(
     """
     if not version and "==" in package_name:
         package_name, _, version = package_name.partition("==")
-    url = f"{base_url}/pypi/{quote(package_name)}/json"
-    with console.status("Getting data from PyPI"):
-        response = session.get(url)
-
-    if response.status_code != 200:
-        if response.status_code == 404:
-            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
-        raise typer.Exit()
-
-    parsed_data = json.loads(response.text)
+    parsed_data = fetch_pypi_json(package_name)
     import humanize  # pylint: disable=import-outside-toplevel
 
     table = Table()
@@ -1150,18 +1204,7 @@ def vulnerabilities(
     version: str = Argument(..., help="The version of the package to show vulnerabilities for"),
 ):
     """See all the known vulnerabilities for a package."""
-
-    url = f"{base_url}/pypi/{quote(package_name)}/{quote(version)}/json"
-    with console.status("Getting data from PyPI"):
-        response = session.get(url)
-
-    if response.status_code != 200:
-        if response.status_code == 404:
-            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
-        raise typer.Exit()
-
-    parsed_data = json.loads(response.text)
+    parsed_data = fetch_pypi_json(package_name, version)
     vulnerabilities = parsed_data["vulnerabilities"]
     if not vulnerabilities:
         console.print(f"[green]:white_check_mark: No known vulnerabilities for {package_name} {version}[/]")
@@ -1192,17 +1235,7 @@ def wheels(
     """See detailed information about all the wheels of a release of a package"""
     if not version and "==" in package_name:
         package_name, _, version = package_name.partition("==")
-    url = f"{base_url}/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
-    with console.status("Getting data from PyPI"):
-        response = session.get(url)
-
-    if response.status_code != 200:
-        if response.status_code == 404:
-            console.print("[red]:no_entry_sign: Project or version not found[/]")
-        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
-        raise typer.Exit()
-
-    parsed_data = json.loads(response.text)
+    parsed_data = fetch_pypi_json(package_name, version)
 
     from rich.text import Text  # pylint: disable=import-outside-toplevel
     import humanize  # pylint: disable=import-outside-toplevel
@@ -1214,19 +1247,6 @@ def wheels(
     colors = cycle(["green", "blue", "magenta", "cyan", "yellow", "red"])
     wheel_panels = []
     if supported_only:
-        from packaging.tags import parse_tag, sys_tags  # pylint: disable=import-outside-toplevel
-        from wheel_filename import InvalidFilenameError, parse_wheel_filename
-
-        def is_wheel_supported(wheel):
-            try:
-                parsed_wheel_file = parse_wheel_filename(wheel["filename"])
-            except InvalidFilenameError:
-                return True
-            for tag in parsed_wheel_file.tag_triples():
-                if any(tag in sys_tags() for tag in list(parse_tag(tag))):
-                    return True
-            return False
-
         data = filter(is_wheel_supported, data)
     from datetime import timezone  # pylint: disable=import-outside-toplevel
 
@@ -1270,14 +1290,13 @@ def check(
         ...,
         help="The requirements.txt or pyproject.toml file to check",
     ),
+    json_output: bool = Option(False, "--json", help="Output the results as JSON instead of a table"),
 ):
     """Check a requirements.txt or pyproject.toml file for updates, wheel support, and abandoned packages."""
     import os  # pylint: disable=import-outside-toplevel
     from datetime import timezone  # pylint: disable=import-outside-toplevel
     from concurrent.futures import ThreadPoolExecutor  # pylint: disable=import-outside-toplevel
     from packaging.version import parse as parse_version  # pylint: disable=import-outside-toplevel
-    from packaging.tags import parse_tag, sys_tags  # pylint: disable=import-outside-toplevel
-    from wheel_filename import InvalidFilenameError, parse_wheel_filename  # pylint: disable=import-outside-toplevel
     import humanize  # pylint: disable=import-outside-toplevel
 
     if not os.path.exists(file_path):
@@ -1336,44 +1355,30 @@ def check(
                 try:
                     results.append(future.result())
                 except Exception:
-                    pass
+                    logger.debug("Failed to check a requirement", exc_info=True)
 
-    table = Table()
-    table.add_column("Package", style="green", header_style="green")
-    table.add_column("Specified", style="cyan", header_style="cyan")
-    table.add_column("Latest", style="magenta", header_style="magenta")
-    table.add_column("Wheel Support", header_style="yellow")
-    table.add_column("Last Updated", header_style="blue")
-    table.add_column("Status", header_style="red")
-
-    def is_wheel_supported(wheel):
-        try:
-            parsed_wheel_file = parse_wheel_filename(wheel["filename"])
-        except InvalidFilenameError:
-            return True
-        for tag in parsed_wheel_file.tag_triples():
-            if any(tag in sys_tags() for tag in list(parse_tag(tag))):
-                return True
-        return False
-
+    records = []
     for req, data in results:
         specified = extract_version(req.specifier)
-        specified_str = str(req.specifier) if req.specifier else "*"
+        record = {
+            "name": req.name,
+            "specified": str(req.specifier) if req.specifier else "*",
+            "latest": None,
+            "wheel_support": None,
+            "last_updated": None,
+            "abandoned": False,
+            "outdated": False,
+            "error": None,
+            "_latest_dt": None,
+        }
 
         if data is None or isinstance(data, int):
-            status_str = "[red]Not Found[/]" if data == 404 else "[orange]Error[/]"
-            table.add_row(
-                req.name,
-                specified_str,
-                "N/A",
-                "N/A",
-                "N/A",
-                status_str,
-            )
+            record["error"] = "not_found" if data == 404 else "error"
+            records.append(record)
             continue
 
         info = data.get("info", {})
-        latest_version = info.get("version", "Unknown")
+        record["latest"] = info.get("version", "Unknown")
 
         latest_dt = None
         for rel_list in data.get("releases", {}).values():
@@ -1385,55 +1390,82 @@ def check(
                         if latest_dt is None or dt > latest_dt:
                             latest_dt = dt
                     except Exception:
-                        pass
+                        logger.debug("Failed to parse upload time %r for %s", up_time, req.name, exc_info=True)
 
-        last_updated_str = "UNKNOWN"
-        is_abandoned = False
         if latest_dt:
             if latest_dt.tzinfo is None:
                 latest_dt = latest_dt.replace(tzinfo=timezone.utc)
-            is_abandoned = (datetime.now(timezone.utc) - latest_dt).days > 730
-            last_updated_str = humanize.naturaltime(utc_to_local(latest_dt, timezone.utc))
+            record["abandoned"] = (datetime.now(timezone.utc) - latest_dt).days > 730
+            record["last_updated"] = latest_dt.isoformat()
+            record["_latest_dt"] = latest_dt
 
-        files = None
         if specified and specified in data.get("releases", {}):
             files = data["releases"][specified]
         else:
             files = data.get("urls", [])
 
-        wheel_status = "[green]Supported[/]"
         wheels = [f for f in files if f.get("packagetype") == "bdist_wheel" or f.get("filename", "").endswith(".whl")]
         if not wheels:
-            wheel_status = "[yellow]No wheels[/]"
+            record["wheel_support"] = "no_wheels"
         elif not any(is_wheel_supported(w) for w in wheels):
-            wheel_status = "[red]Unsupported[/]"
+            record["wheel_support"] = "unsupported"
+        else:
+            record["wheel_support"] = "supported"
 
-        status_parts = []
-        is_outdated = False
         if specified:
             try:
-                is_outdated = parse_version(latest_version) > parse_version(specified)
+                record["outdated"] = parse_version(record["latest"]) > parse_version(specified)
             except Exception:
-                pass
+                logger.debug("Failed to compare versions for %s", req.name, exc_info=True)
 
-        if is_abandoned:
+        records.append(record)
+
+    if json_output:
+        for record in records:
+            record.pop("_latest_dt", None)
+        print(json.dumps(records, indent=2))
+        raise typer.Exit()
+
+    table = Table()
+    table.add_column("Package", style="green", header_style="green")
+    table.add_column("Specified", style="cyan", header_style="cyan")
+    table.add_column("Latest", style="magenta", header_style="magenta")
+    table.add_column("Wheel Support", header_style="yellow")
+    table.add_column("Last Updated", header_style="blue")
+    table.add_column("Status", header_style="red")
+
+    wheel_labels = {
+        "supported": "[green]Supported[/]",
+        "no_wheels": "[yellow]No wheels[/]",
+        "unsupported": "[red]Unsupported[/]",
+        None: "N/A",
+    }
+
+    for record in records:
+        if record["error"]:
+            status_str = "[red]Not Found[/]" if record["error"] == "not_found" else "[orange1]Error[/]"
+            table.add_row(record["name"], record["specified"], "N/A", "N/A", "N/A", status_str)
+            continue
+
+        status_parts = []
+        if record["abandoned"]:
             status_parts.append("[red][bold]Abandoned[/][/]")
-
-        if is_outdated:
+        if record["outdated"]:
             status_parts.append("[yellow]Outdated[/]")
-
         if not status_parts:
             status_parts.append("[green]Up to date[/]")
 
-        status_str = " & ".join(status_parts)
+        last_updated_str = "UNKNOWN"
+        if record["_latest_dt"]:
+            last_updated_str = humanize.naturaltime(utc_to_local(record["_latest_dt"], timezone.utc))
 
         table.add_row(
-            req.name,
-            specified_str,
-            latest_version,
-            wheel_status,
+            record["name"],
+            record["specified"],
+            record["latest"],
+            wheel_labels[record["wheel_support"]],
             last_updated_str,
-            status_str,
+            " & ".join(status_parts),
         )
 
     console.print(table)
@@ -1455,18 +1487,7 @@ def information(
     """See the information about a package."""
     if not version and "==" in package_name:
         package_name, _, version = package_name.partition("==")
-    url = f"{base_url}/pypi/{quote(package_name)}{f'/{quote(version)}' if version else ''}/json"
-    with console.status("Getting data from PyPI"):
-        response = session.get(url)
-
-
-    if response.status_code != 200:
-        if response.status_code == 404:
-            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
-        raise typer.Exit()
-
-    parsed_data = json.loads(response.text)
+    parsed_data = fetch_pypi_json(package_name, version)
 
     info = parsed_data["info"]
     releases = parsed_data.get("releases", {})
@@ -1503,21 +1524,8 @@ def information(
     else:
         version_comment = f"[green]Version[/]: {version}"
 
-    import re  # pylint: disable=import-outside-toplevel
-
-    repos = re.findall(
-        r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?", str(info)
-    )
-    if len(repos) > 1:
-        repos = list(
-            set(
-                re.findall(
-                    r"https://(?:www\.)?github\.com/(?P<repo>[A-Za-z0-9_.-]{0,38}/[A-Za-z0-9_.-]{0,100})(?:\.git)?",
-                    str(info["project_urls"]),
-                )
-            )
-        )
-    repo = remove_dot_git(repos[0]) if repos else None
+    repos = find_github_repos(info)
+    repo = repos[0] if repos else None
 
     from rich.text import Text  # pylint:disable=import-outside-toplevel
 
@@ -1542,9 +1550,15 @@ def information(
     if not hide_github:
         if repo:
             url = f"https://api.github.com/repos/{quote(repo)}"
-            with console.status("Getting data from GitHub"):
-                resp = session.get(url)
-            if resp.status_code == 200:
+            try:
+                with console.status("Getting data from GitHub"):
+                    resp = session.get(url)
+            except Exception:
+                logger.debug("Failed to fetch GitHub data for %s", repo, exc_info=True)
+                resp = None
+            if resp is None:
+                pass
+            elif resp.status_code == 200:
                 github_data = json.loads(resp.text)
                 if github_data.get("message") and github_data["message"] == "Not Found":
                     metadata.add_row(
@@ -1583,13 +1597,14 @@ def information(
                     )
     if not hide_stats:
         stats_url = f"https://pypistats.org/api/packages/{package_name}/recent"
-        with console.status("Getting statistics from PyPI Stats"):
-            r = session.get(stats_url)
         try:
+            with console.status("Getting statistics from PyPI Stats"):
+                r = session.get(stats_url)
             parsed_stats = json.loads(r.text)
             if not isinstance(parsed_stats, dict):
                 parsed_stats = None
-        except (json.JSONDecodeError, AssertionError, ValueError):
+        except Exception:
+            logger.debug("Failed to fetch download stats for %s", package_name, exc_info=True)
             parsed_stats = None
 
         stats = parsed_stats["data"] if parsed_stats else None
@@ -1874,20 +1889,8 @@ def read_the_docs(
                 "Docs not available. Do you want to search pypi to find the documentation?"
             ).ask()
             if resp:
-                url = f"{base_url}/pypi/{quote(package_name)}/json"
-                with console.status("Getting data from PyPI"):
-                    response = session.get(url)
-
-                if response.status_code != 200:
-                    if response.status_code == 404:
-                        console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-                    console.print(
-                        f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]"
-                    )
-                    raise typer.Exit()
-
-                parsed_data = json.loads(response.text)
-                url = parsed_data["info"].get("project_urls", {}).get("Documentation", None)
+                parsed_data = fetch_pypi_json(package_name)
+                url = (parsed_data["info"].get("project_urls") or {}).get("Documentation", None)
                 if not url:
                     console.print("[bold]:x: Documentation url not found on PyPI[/]")
                     raise typer.Exit()
@@ -1929,23 +1932,12 @@ def browse(
 
     link_style = questionary.Style([("name", "bold red"), ("separator", "gray"), ("url", "cyan")])
 
-    url = f"{base_url}/pypi/{quote(package_name)}/json"
-
-    with console.status("Getting data from PyPI"):
-        response = session.get(url)
-
-    if response.status_code != 200:
-        if response.status_code == 404:
-            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
-        raise typer.Exit()
-
-    parsed_data = json.loads(response.text)
+    parsed_data = fetch_pypi_json(package_name)
     info = parsed_data["info"]
 
-    urls = info["project_urls"]
+    urls = dict(info.get("project_urls") or {})
     urls["Project URL"] = info.get("project_url")
-    urls["Home Page"] = info.get("project_url")
+    urls["Home Page"] = info.get("home_page")
     urls["Release URL"] = info.get("release_url")
     urls["Mail to"] = ("mailto:" + info["maintainer_email"]) if info.get("maintainer_email") else None
 
@@ -1986,8 +1978,8 @@ def cache_info():
     import os.path  # pylint: disable=import-outside-toplevel
     import humanize  # pylint: disable=import-outside-toplevel
 
-    packages_cache = os.path.join(os.path.dirname(__file__), "cache", "packages.txt")
-    requests_cache = os.path.join(os.path.dirname(__file__), "cache", "requests.sqlite")
+    packages_cache = os.path.join(get_cache_dir(), "packages.txt")
+    requests_cache = os.path.join(get_cache_dir(), "requests.sqlite")
     try:
         packages_size = os.path.getsize(packages_cache)
         packages_last_refreshed = os.path.getmtime(packages_cache)
@@ -2049,17 +2041,7 @@ def version(
         console.print(f"Latest  version of [yellow]pypi-command-line[/] is [red]{latest_version}[/]")
         raise typer.Exit()
 
-    url = f"{base_url}/pypi/{quote(package_name)}/json"
-    with console.status("Getting latest versions from PyPI"):
-        response = session.get(url)
-
-    if response.status_code != 200:
-        if response.status_code == 404:
-            console.print(f"[red]:no_entry_sign: Project [green]{package_name}[/] not found[/]")
-        console.print(f"[orange]:grey_exclamation: Some error occurred. response code {response.status_code}[/]")
-        raise typer.Exit()
-
-    parsed_data = json.loads(response.text)
+    parsed_data = fetch_pypi_json(package_name)
 
     try:
         from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
@@ -2117,8 +2099,8 @@ def version(
                 timezone.utc,
             )
             output += f" [red]{humanize.naturaltime(upload_time)}[/] [cyan]({upload_time.strftime('%a %b %d %H:%M:%S %Y')})[/]"
-        except Exception as e:
-            print(e)
+        except Exception:
+            logger.debug("Failed to determine upload time for %s %s", package_name, version, exc_info=True)
         finally:
             output += "\n"
     console.print(output.strip())
@@ -2196,12 +2178,7 @@ def dependencies(
     # ── Fetch helper ─────────────────────────────────────────────────────────
     def fetch_info(name: str) -> tuple[str, dict | None]:
         """Fetch /pypi/<name>/json from PyPI; return (name, info_dict or None)."""
-        _session = session
-        if no_cache:
-            from requests import Session  # pylint: disable=import-outside-toplevel
-            s = Session()
-            s.headers.update({"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"})
-            _session = s
+        _session = _make_plain_session() if no_cache else session
         try:
             url = f"{base_url}/pypi/{quote(name)}/json"
             resp = _session.get(url)
@@ -2210,6 +2187,7 @@ def dependencies(
                 return name.lower(), data.get("info")
             return name.lower(), None
         except Exception:
+            logger.debug("Failed to fetch dependency info for %s", name, exc_info=True)
             return name.lower(), None
 
     # ── Formatting helpers ────────────────────────────────────────────────────
@@ -2357,23 +2335,42 @@ def dependencies(
 @app.callback()
 def main(
     cache: bool = Option(True, help="Whether to use cache or not"),
-    repository: str = Option(None, help="The repository to fetch the information from"),
+    repository: str = Option(
+        None, help="The repository to fetch the information from. Either 'testpypi' or a full URL like 'https://test.pypi.org'"
+    ),
+    timeout: float = Option(
+        DEFAULT_TIMEOUT, help="Timeout in seconds for network requests", min=0.1
+    ),
+    verbose: bool = Option(
+        False, "--verbose", "-v", help="Show debug logs for errors that are otherwise silently ignored"
+    ),
 ):
     """
     A beautiful command line interface for the Python Package Index
     """
+    global _timeout
+    _timeout = timeout
+    if verbose:
+        logging.basicConfig(level=logging.DEBUG, format="%(name)s: %(message)s")
+        logger.setLevel(logging.DEBUG)
     if not cache:
-        from requests import Session
-
         global session
-        session = Session()
-        session.headers.update({"User-Agent": "wasi_master/pypi_cli", "Accept": "application/json"})
+        session = _make_plain_session()
     if repository:
         global base_url
         if repository == "testpypi":
             base_url = "https://test.pypi.org"
         else:
-            base_url = repository
+            from urllib.parse import urlparse  # pylint: disable=import-outside-toplevel
+
+            parsed = urlparse(repository)
+            if parsed.scheme not in ("http", "https") or not parsed.netloc:
+                console.print(
+                    f"[red]:no_entry_sign: Invalid repository '{repository}'. "
+                    "Use 'testpypi' or a full URL like 'https://test.pypi.org'[/]"
+                )
+                raise typer.Exit(code=2)
+            base_url = repository.rstrip("/")
 
 
 def run():

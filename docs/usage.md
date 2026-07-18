@@ -75,6 +75,8 @@ TODO: Add demo for --no-cache
 
 Specify a base url for the repository from which the results are taken from. Such as [testpypi](https://test.pypi.org)
 
+The value must either be the shorthand `testpypi` or a full `http://`/`https://` URL. Anything else is rejected with an error and exit code 2.
+
 ### **Demo**
 
 TODO: Add demo for --repository
@@ -85,13 +87,37 @@ TODO: Add demo for --repository
 
 > pypi --repository https://test.pypi.org <command>
 
+## --timeout
+
+Set the timeout in seconds for network requests made by any command. The default is 15 seconds and the value must be at least 0.1. If a server does not respond within the timeout, the command fails with a network error message instead of hanging.
+
+### **Usage**
+
+> pypi --timeout 5 <command>
+
+## --verbose
+
+Show debug logs for errors that are otherwise silently ignored, such as unparseable requirements, failed GitHub or download-statistics lookups, and invalid timestamps. Useful for troubleshooting when a command shows `N/A` or skips data.
+
+### **Usage**
+
+> pypi --verbose <command>
+
 ## **Commands**
+
+!!! tip "Command aliases"
+
+    Every command can also be invoked by its aliases (listed in an "Aliases" section under each command below), or by any unambiguous prefix of its name (for example `pypi desc` for `pypi description`).
 
 ## version
 
 See the latest version of any package or pypi-command-line if no package was specified
 
 How this works is if you specify a package name then it shows the top *limit* latest versions of that specified package, otherwise it shows the current version of pypi-command-line and the latest version of pypi-command-line
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `v`, `ver`
 
 ### **Demo**
 
@@ -139,6 +165,10 @@ Browse for a package's URLs.
 
 This gets the package information, and shows a list containing it's project urls. If the project has a maintainer email set then it also shows that as a mailto<sup>[<a title="mailto is a Uniform Resource Identifier (URI) scheme for email addresses. It is used to produce hyperlinks on websites that allow users to send an email to a specific address directly from an HTML document, without having to copy it and entering it into an email client." href="https://en.wikipedia.org/wiki/Mailto" target="_blank">?</a>]</sup> that you can press to send a email via your default email client. This gets all the project urls from PyPI and then shows them, there is a known bug where PyPI in some cases shows UNKNOWN for some url so that also gets shown.
 
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `b`
+
 ### **Demo**
 
 ![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse.gif)
@@ -169,6 +199,10 @@ You can cancel using ++ctrl+c++ if you don't find your desired link
 
 Clears the local packages and requests cache, see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) for more information about the cache.
 
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `cc`
+
 ### **Usage**
 
 > pypi cache-clear
@@ -182,6 +216,10 @@ Clears the local packages and requests cache, see [notes](https://wasi-master.gi
 ## cache-information
 
 Shows the size for the packages cache and the size and additionally the websites cached with their creation date and expiry date, see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) for more information about the cache.
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `ci`
 
 ### **Errors and Warnings**
 
@@ -202,6 +240,10 @@ Shows the size for the packages cache and the size and additionally the websites
 
 Reloads the packages cache and shows the number of new packages added after the last refresh, see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache) for more information about the cache.
 
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `cr`
+
 ### **Usage**
 
 > pypi cache-refresh
@@ -211,6 +253,10 @@ Reloads the packages cache and shows the number of new packages added after the 
 Check a requirements.txt or pyproject.toml file for updates, compatibility, and abandoned status.
 
 This command parses the project's requirement file, fetches information from PyPI, and prints a table indicating whether the packages are outdated, abandoned, or have missing/unsupported wheel files on the current system.
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `chk`
 
 ### **Usage**
 
@@ -222,11 +268,23 @@ This command parses the project's requirement file, fetches information from PyP
 
     The path to the `requirements.txt` or `pyproject.toml` file to check. <span style="color: red">[required]</span>
 
+- `--json`
+
+    Output the results as JSON instead of a table. Each entry contains `name`, `specified`, `latest`, `wheel_support` (`supported`, `no_wheels`, or `unsupported`), `last_updated` (ISO 8601), `abandoned`, `outdated`, and `error` (`null`, `not_found`, or `error`). Useful for scripting, for example:
+
+    ```bash
+    pypi check requirements.txt --json | jq '.[] | select(.outdated) | .name'
+    ```
+
 ## compare
 
 Compare multiple libraries against each other
 
 This command compares the latest version, latest release date, github stars, open issues, downloads, and python version requirements across a given list of packages
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `c`, `cmp`
 
 ### **Usage**
 
@@ -244,6 +302,10 @@ Shows the description of a package as gotten from PyPI or GitHub.
 This first gets the information about the package and then finds the description. If the package has a description it gets the description format, if it's reStructuredText or Markdown then it shows the description formatted according to the format.
 
 If it doesn't get a description in PyPI then it looks for github repos mentioned in the json response gotten from the pypi api. this makes sure it gets the repo if it is supplied no matter where it is. If it finds multiple repos then it asks the user to pick one. Then it uses the github api to find the name of the readme file of the repo, this uses the api instead of manually finding it just in case. Then it reads the contents from the readme file and determines the format using the file extension then it shows the description formatted according to the format.
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `desc`, `readme`
 
 ### **Demo**
 
@@ -300,6 +362,10 @@ Examples:
     pypi dependencies requests
     pypi dependencies \"requests[security]\" --level 2
 
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `d`, `dep`, `deps`, `tree`
+
 ### **Usage**
 
 > pypi dependencies [OPTIONS] PACKAGE_NAME
@@ -324,6 +390,10 @@ Examples:
 ## information
 
 The information command gets data from [PyPI](https://pypi.org) and [GitHub](https://github.com) and [PyPIStats](https://pypistats.org) and shows them to the console
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `i`, `info`, `show`
 
 ### **Demo**
 
@@ -387,6 +457,10 @@ You can also see classifiers if you want to
 
 This command shows the all time largest pypi packages. The layout is similar to the [one found in PyPI](https://pypi.org/stats/)
 
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `lf`
+
 ### **Demo**
 
 ![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20largest-files.gif)
@@ -410,6 +484,10 @@ This command shows the all time largest pypi packages. The layout is similar to 
 ## new-packages
 
 Shows the top 40 newly added packages. Meaning that the first ever version of those packages were uploaded from pypi a short while ago.
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `np`
 
 ### **Usage**
 
@@ -439,6 +517,10 @@ Shows the top 40 newly added packages. Meaning that the first ever version of th
 ## new-releases
 
 Shows the top 100 newly updated packages. Meaning that the latest version of those packages were uploaded from pypi short while ago.
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `nr`
 
 ### **Usage**
 
@@ -472,6 +554,10 @@ Shows all the available releases for a package.
 The --link argument can be used to also show the link of the releases. This
 is turned off by default and the link is added as a hyperlink to the package
 name on supported terminals
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `rel`
 
 ### **Usage**
 
@@ -508,6 +594,10 @@ Regex stands for Regular Expressions. It allows you to search for all packages i
 
 If the packages cache is empty it then loads the packages first, the cache is kept for 1 day meaning your data is at most 1 day old. if you want to refresh you may do so by using the [cache-refresh](#cache-refresh) command. For more information about this cache see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache).
 
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `rs`, `rsearch`, `s`
+
 ### **Demo**
 
 ![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20rsearch.gif)
@@ -533,6 +623,10 @@ If the packages cache is empty it then loads the packages first, the cache is ke
 Searches the documentation for a certain package.
 
 This just gets the documentation url and opens it's search results page with the given query
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `rtd`, `docs`, `documentation`
 
 ### **Usage**
 
@@ -611,6 +705,10 @@ Shown when the pypi api returns a 404 response meaning the page number specified
 
 See the known vulnerabilities for a package.
 
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `vuln`, `vulns`
+
 ### **Usage**
 
 > pypi vulnerabilities PACKAGE_NAME VERSION
@@ -638,6 +736,10 @@ Shown when the pypi api returns a 404 response meaning the page number specified
 ## wheels
 
 See the available wheels of a release on PyPI. The wheel names are color coded and the information is colored too.
+
+### **Aliases**
+
+These shorthands can be used instead of the full command name: `w`, `whl`
 
 ### **Demo**
 

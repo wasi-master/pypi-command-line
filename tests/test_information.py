@@ -1,6 +1,9 @@
 def test_information(runner):
     result = runner.run("pypi information rich")
-    assert result.stdout.decode("utf-8"), "No output was gotten"  # Assert if a output was returned
+    output = result.stdout.decode("utf-8")
+    assert "rich" in output
+    assert "Description" in output
+    assert "Meta" in output
 
 
 def test_information_with_version(runner):
