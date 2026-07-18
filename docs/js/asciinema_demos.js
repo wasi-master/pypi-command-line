@@ -5,6 +5,9 @@ function createAsciinemaPlayer (el) {
   AsciinemaPlayer.create(el.dataset.cast, el, {
     fit: 'width',
     terminalFontFamily: "'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace",
+    /* box-drawing glyphs only fill the font's em box, so the default 1.33
+       line height leaves gaps that break panel borders into dashes */
+    terminalLineHeight: 1.0,
     theme: el.dataset.theme || 'dracula',
     idleTimeLimit: 2,
     /* a time past the end of every cast, so the poster shows the finished
