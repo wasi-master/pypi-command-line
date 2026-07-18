@@ -1686,14 +1686,7 @@ def information(
     metadata_height = _buf.getvalue().count("\n")
     max_desc_lines = max(40, metadata_height)
 
-    # Truncate the raw description source if needed
-    truncation_notice = False
     desc_source = info["description"] or ""
-    if not full_description:
-        lines = desc_source.splitlines()
-        if len(lines) > max_desc_lines:
-            desc_source = "\n".join(lines[:max_desc_lines])
-            truncation_notice = True
 
     if info["description_content_type"] == "text/markdown":
         from rich.markdown import Markdown  # pylint: disable=import-outside-toplevel
@@ -1707,6 +1700,26 @@ def information(
         from rich.text import Text  # pylint: disable=import-outside-toplevel
 
         desc_renderable = Text(desc_source)
+
+    # Truncate the rendered output rather than the source, since source lines
+    # don't map to rendered lines (HTML blocks and comments render to nothing)
+    truncation_notice = False
+    if not full_description:
+        from rich.segment import Segment, Segments  # pylint: disable=import-outside-toplevel
+
+        desc_panel_width = console.width if use_stacked else console.width - sidebar_width
+        # Account for the description panel's borders and padding
+        render_width = max(desc_panel_width - 4, 1)
+        rendered_lines = console.render_lines(
+            desc_renderable, console.options.update_width(render_width), pad=False
+        )
+        if len(rendered_lines) > max_desc_lines:
+            segments = []
+            for line in rendered_lines[:max_desc_lines]:
+                segments.extend(line)
+                segments.append(Segment.line())
+            desc_renderable = Segments(segments)
+            truncation_notice = True
 
     from rich.console import Group  # pylint: disable=import-outside-toplevel
 
