@@ -1,13 +1,20 @@
+from __future__ import annotations
+
 import os
 import subprocess
+from pathlib import Path
+from typing import TYPE_CHECKING
 
-def test_check_help(runner):
+if TYPE_CHECKING:
+    from tests.conftest import CommandRunner
+
+def test_check_help(runner: type[CommandRunner]) -> None:
     result = runner.run("pypi check --help")
-    output = result.stdout.decode("utf-8")
+    output: str = result.stdout.decode("utf-8")
     assert "Check a requirements.txt or pyproject.toml" in output
 
 
-def test_check_file_not_found(runner):
+def test_check_file_not_found(runner: type[CommandRunner]) -> None:
     try:
         runner.run("pypi check non_existent_file.txt")
         assert False, "Should have failed with a file not found error"
@@ -16,19 +23,19 @@ def test_check_file_not_found(runner):
         assert b"not found" in e.stdout or b"not found" in e.stderr
 
 
-def test_check_requirements_txt(runner, tmp_path):
+def test_check_requirements_txt(runner: type[CommandRunner], tmp_path: Path) -> None:
     req_file = tmp_path / "requirements.txt"
     req_file.write_text("charinfo==0.1.0\nurllib3\n# comment line\n")
-    
+
     result = runner.run(f"pypi check {req_file}")
-    output = result.stdout.decode("utf-8")
+    output: str = result.stdout.decode("utf-8")
     assert "charinfo" in output
     assert "urllib3" in output
     assert "Specified" in output
     assert "Latest" in output
 
 
-def test_check_pyproject_toml_pep621(runner, tmp_path):
+def test_check_pyproject_toml_pep621(runner: type[CommandRunner], tmp_path: Path) -> None:
     pyproject_file = tmp_path / "pyproject.toml"
     pyproject_file.write_text("""
 [project]
@@ -38,28 +45,28 @@ dependencies = [
     "charinfo>=0.1.0",
 ]
 """)
-    
+
     result = runner.run(f"pypi check {pyproject_file}")
-    output = result.stdout.decode("utf-8")
+    output: str = result.stdout.decode("utf-8")
     assert "charinfo" in output
     assert "Specified" in output
 
 
-def test_check_pyproject_toml_poetry(runner, tmp_path):
+def test_check_pyproject_toml_poetry(runner: type[CommandRunner], tmp_path: Path) -> None:
     pyproject_file = tmp_path / "pyproject.toml"
     pyproject_file.write_text("""
 [tool.poetry.dependencies]
 python = "^3.8"
 charinfo = "^0.1.0"
 """)
-    
+
     result = runner.run(f"pypi check {pyproject_file}")
-    output = result.stdout.decode("utf-8")
+    output: str = result.stdout.decode("utf-8")
     assert "charinfo" in output
     assert "Specified" in output
 
 
-def test_check_json_output(runner, tmp_path):
+def test_check_json_output(runner: type[CommandRunner], tmp_path: Path) -> None:
     import json
 
     req_file = tmp_path / "requirements.txt"
@@ -78,7 +85,7 @@ def test_check_json_output(runner, tmp_path):
     assert isinstance(record["abandoned"], bool)
 
 
-def test_check_json_output_not_found(runner, tmp_path):
+def test_check_json_output_not_found(runner: type[CommandRunner], tmp_path: Path) -> None:
     import json
 
     req_file = tmp_path / "requirements.txt"

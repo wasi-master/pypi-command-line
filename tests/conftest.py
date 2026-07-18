@@ -1,4 +1,6 @@
 """File for configuring test cases"""
+from __future__ import annotations
+
 import logging
 import subprocess
 import pytest
@@ -30,19 +32,19 @@ class CommandRunner:
     """A utility class for running commands and logging info"""
 
     @staticmethod
-    def run_raw(command: str) -> subprocess.CompletedProcess:
+    def run_raw(command: str) -> subprocess.CompletedProcess[bytes]:
         """Run a command without raising on a nonzero exit code."""
         import os
-        args = command.split()
+        args: list[str] = command.split()
         if args and args[0] == "pypi":
             args = ["python", "-m", "pypi_cli"] + args[1:]
-        env = os.environ.copy()
+        env: dict[str, str] = os.environ.copy()
         env["COLUMNS"] = "200"
         return subprocess.run(args, check=False, stdout=PIPE, stderr=PIPE, env=env)
 
     @staticmethod
-    def run(command: str) -> subprocess.CompletedProcess:
-        result = CommandRunner.run_raw(command)
+    def run(command: str) -> subprocess.CompletedProcess[bytes]:
+        result: subprocess.CompletedProcess[bytes] = CommandRunner.run_raw(command)
         if result.returncode != 0:
             raise subprocess.CalledProcessError(
                 result.returncode, result.args, output=result.stdout, stderr=result.stderr
@@ -80,6 +82,6 @@ class CommandRunner:
 
 
 @pytest.fixture(scope="module")
-def runner():
+def runner() -> type[CommandRunner]:
     """Returns the global CommandRunner instance"""
     return CommandRunner

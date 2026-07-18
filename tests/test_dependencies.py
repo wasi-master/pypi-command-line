@@ -1,19 +1,22 @@
 """Tests for the pypi dependencies command and _get_package_dependencies helper."""
+from __future__ import annotations
 
 import json
-import pytest
+from typing import Any
 from unittest.mock import patch, MagicMock
+
+import pytest
 from typer.testing import CliRunner
 from pypi_cli.__main__ import app, _get_package_dependencies
 
 
-runner = CliRunner()
+runner: CliRunner = CliRunner()
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _make_info(name, version, requires_dist=None, summary=""):
+def _make_info(name: str, version: str, requires_dist: list[str] | None = None, summary: str = "") -> dict[str, Any]:
     return {
         "name": name,
         "version": version,
@@ -22,7 +25,7 @@ def _make_info(name, version, requires_dist=None, summary=""):
     }
 
 
-def _mock_response(info_dict, status_code=200):
+def _mock_response(info_dict: dict[str, Any], status_code: int = 200) -> MagicMock:
     resp = MagicMock()
     resp.status_code = status_code
     resp.text = json.dumps({"info": info_dict})
@@ -35,17 +38,17 @@ def _mock_response(info_dict, status_code=200):
 
 class TestGetPackageDependencies:
 
-    def test_no_deps(self):
+    def test_no_deps(self) -> None:
         info = _make_info("pkg", "1.0")
         assert _get_package_dependencies(info, set()) == []
 
-    def test_simple_dep(self):
+    def test_simple_dep(self) -> None:
         info = _make_info("pkg", "1.0", requires_dist=["requests>=2.0"])
         deps = _get_package_dependencies(info, set())
         assert len(deps) == 1
         assert deps[0].name == "requests"
 
-    def test_marker_filters_out(self):
+    def test_marker_filters_out(self) -> None:
         import sys
         if sys.platform == "win32":
             pytest.skip("marker is True on win32")
@@ -53,23 +56,23 @@ class TestGetPackageDependencies:
         deps = _get_package_dependencies(info, set())
         assert deps == []
 
-    def test_extra_dep_excluded_without_extra(self):
+    def test_extra_dep_excluded_without_extra(self) -> None:
         info = _make_info("pkg", "1.0", requires_dist=["cryptography ; extra == 'security'"])
         deps = _get_package_dependencies(info, set())
         assert deps == []
 
-    def test_extra_dep_included_with_extra(self):
+    def test_extra_dep_included_with_extra(self) -> None:
         info = _make_info("pkg", "1.0", requires_dist=["cryptography ; extra == 'security'"])
         deps = _get_package_dependencies(info, {"security"})
         assert len(deps) == 1
         assert deps[0].name == "cryptography"
 
-    def test_invalid_requirement_is_skipped(self):
+    def test_invalid_requirement_is_skipped(self) -> None:
         info = _make_info("pkg", "1.0", requires_dist=["!!!invalid==="])
         deps = _get_package_dependencies(info, set())
         assert deps == []
 
-    def test_none_requires_dist(self):
+    def test_none_requires_dist(self) -> None:
         info = _make_info("pkg", "1.0")
         info["requires_dist"] = None
         assert _get_package_dependencies(info, set()) == []
@@ -81,8 +84,8 @@ class TestGetPackageDependencies:
 
 class TestDependenciesCommand:
 
-    def _patch_session_get(self, responses: dict):
-        def fake_get(url, **kwargs):
+    def _patch_session_get(self, responses: dict[str, dict[str, Any] | None]) -> Any:
+        def fake_get(url: str, **kwargs: Any) -> MagicMock:
             for name, data in responses.items():
                 if f"/pypi/{name}/json" in url.lower():
                     if data is None:
@@ -98,13 +101,13 @@ class TestDependenciesCommand:
 
         return patch("pypi_cli.__main__.session.get", side_effect=fake_get)
 
-    def test_package_not_found(self):
+    def test_package_not_found(self) -> None:
         with self._patch_session_get({"totally-fake-pkg": None}):
             result = runner.invoke(app, ["dependencies", "totally-fake-pkg"])
         assert result.exit_code == 1
         assert "not found" in result.output.lower()
 
-    def test_single_package_no_deps(self):
+    def test_single_package_no_deps(self) -> None:
         info = _make_info("mypkg", "1.0", summary="A simple package")
         with self._patch_session_get({"mypkg": info}):
             result = runner.invoke(app, ["dependencies", "mypkg", "--level", "1"])
@@ -113,7 +116,7 @@ class TestDependenciesCommand:
         assert "1.0" in result.output
         assert "Explored 0" in result.output
 
-    def test_single_level_dep_shown(self):
+    def test_single_level_dep_shown(self) -> None:
         root_info = _make_info("myapp", "2.0", requires_dist=["requests>=2.0"])
         requests_info = _make_info("requests", "2.34.0")
         with self._patch_session_get({"myapp": root_info, "requests": requests_info}):
@@ -122,7 +125,7 @@ class TestDependenciesCommand:
         assert "requests" in result.output
         assert "Explored 1" in result.output
 
-    def test_depth_2_tree(self):
+    def test_depth_2_tree(self) -> None:
         root_info = _make_info("myapp", "1.0", requires_dist=["alpha>=1"])
         alpha_info = _make_info("alpha", "1.5", requires_dist=["beta>=0.5"])
         beta_info = _make_info("beta", "0.9")
@@ -133,7 +136,7 @@ class TestDependenciesCommand:
         assert "beta" in result.output
         assert "Explored 2" in result.output
 
-    def test_extras_parsed_from_argument(self):
+    def test_extras_parsed_from_argument(self) -> None:
         root_info = _make_info("pkg", "1.0", requires_dist=[
             "core>=1.0",
             "bonus>=2.0 ; extra == 'opt'"
@@ -146,7 +149,7 @@ class TestDependenciesCommand:
         assert "core" in result.output
         assert "bonus" in result.output
 
-    def test_circular_dep_handled(self):
+    def test_circular_dep_handled(self) -> None:
         a_info = _make_info("a", "1.0", requires_dist=["b>=1"])
         b_info = _make_info("b", "1.0", requires_dist=["a>=1"])
         with self._patch_session_get({"a": a_info, "b": b_info}):
@@ -154,7 +157,7 @@ class TestDependenciesCommand:
         assert result.exit_code == 0
         assert "circular" in result.output
 
-    def test_level_option_limits_depth(self):
+    def test_level_option_limits_depth(self) -> None:
         root_info = _make_info("myapp", "1.0", requires_dist=["alpha>=1"])
         alpha_info = _make_info("alpha", "1.0", requires_dist=["hidden>=1"])
         with self._patch_session_get({"myapp": root_info, "alpha": alpha_info}):
@@ -162,7 +165,7 @@ class TestDependenciesCommand:
         assert result.exit_code == 0
         assert "hidden" not in result.output
 
-    def test_summary_shown_in_root(self):
+    def test_summary_shown_in_root(self) -> None:
         info = _make_info("mypkg", "1.0", summary="Super useful utility")
         with self._patch_session_get({"mypkg": info}):
             result = runner.invoke(app, ["dependencies", "mypkg", "--level", "1"])
