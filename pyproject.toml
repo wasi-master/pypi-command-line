@@ -68,6 +68,13 @@ speedups = [
     "shellingham",
     "ujson",
 ]
+test = [
+    "pytest",
+    "pytest-clarity",
+    "pytest-sugar",
+    "pytest-picked",
+    "pytest-xdist",
+]
 
 [project.urls]
 Homepage = "https://wasi-master.github.io/pypi-command-line/"

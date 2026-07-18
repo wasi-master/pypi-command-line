@@ -1,7 +1,6 @@
 """A rich command line interface for PyPI."""
 
-__name__ = "pypi-command-line"
-__title__ = __name__
+__title__ = "pypi-command-line"
 __license__ = "MIT"
 __version__ = "1.10.1"
 __author__ = "Arian Mollik Wasi"

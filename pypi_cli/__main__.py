@@ -219,27 +219,30 @@ class AliasedGroup(Group):
                 ]
             except ImportError:
                 try:
-                    import thefuzz.fuzz  # pylint: disable=import-outside-toplevel
-                    import thefuzz.process  # pylint: disable=import-outside-toplevel
                     import warnings  # pylint: disable=import-outside-toplevel
 
-                    warnings.filterwarnings("error")
-                    try:
-                        get_closest_match = lambda cmd: [
-                            i[0]
-                            for i in thefuzz.process.extractBests(
-                                cmd, commands, score_cutoff=50, processor=processor, limit=5
-                            )
-                        ]
-                    except UserWarning:
+                    # thefuzz emits a UserWarning at import time when its fast
+                    # Levenshtein backend is missing; record it without leaking
+                    # a global warning filter into the rest of the process.
+                    with warnings.catch_warnings(record=True) as caught_warnings:
+                        warnings.simplefilter("always")
+                        import thefuzz.fuzz  # pylint: disable=import-outside-toplevel
+                        import thefuzz.process  # pylint: disable=import-outside-toplevel
+                    if any(issubclass(w.category, UserWarning) for w in caught_warnings):
                         console.print(
                             "[yellow]WARNING:[/] Using slow [red]thefuzz[/] and [red]difflib.SequenceMatcher[/]. "
                             "Consider installing [red]rapidfuzz[/] or [red]python-Levenshtein[/]"
                         )
+                    get_closest_match = lambda cmd: [
+                        i[0]
+                        for i in thefuzz.process.extractBests(
+                            cmd, commands, score_cutoff=50, processor=processor, limit=5
+                        )
+                    ]
                 except ImportError:
                     import difflib  # pylint: disable=import-outside-toplevel
 
-                    get_closest_match = lambda cmd: difflib.get_close_matches(cmd, commands, n=5, cutoff=0.5) or [None]
+                    get_closest_match = lambda cmd: difflib.get_close_matches(cmd, commands, n=5, cutoff=0.5)
         if len(matches) == 0:
             closest_matches = get_closest_match(cmd_name)
             if not closest_matches:
@@ -483,6 +486,31 @@ def get_latest_version():
     return re.search(r"<text.+>v(.*?)</text>", r.text).group(1)
 
 
+def _get_installed_version(package_name: str):
+    """Return the locally installed version of a package, or None if not installed.
+
+    Uses importlib.metadata where available and falls back to pkg_resources on
+    older environments.
+    """
+    try:
+        from importlib.metadata import PackageNotFoundError  # pylint: disable=import-outside-toplevel
+        from importlib.metadata import version as _installed_version  # pylint: disable=import-outside-toplevel
+    except ImportError:  # Python < 3.8
+        try:
+            import pkg_resources  # pylint: disable=import-outside-toplevel
+
+            return pkg_resources.get_distribution(package_name).version
+        except Exception:  # pylint: disable=broad-except
+            return None
+    try:
+        return _installed_version(package_name)
+    except PackageNotFoundError:
+        return None
+    except Exception:  # pylint: disable=broad-except
+        logger.debug("Failed to get installed version for %s", package_name, exc_info=True)
+        return None
+
+
 def load_cache():
     import os  # pylint: disable=import-outside-toplevel
 
@@ -511,9 +539,12 @@ def fill_cache(msg="Fetching cache"):
     all_packages_url = f"{base_url}/simple/"
     cache_file = os.path.join(get_cache_dir(), "packages.txt")
 
+    # Prefer the PyPI Simple JSON API (PEP 691): smaller payload and a stable
+    # format. Indexes that don't support it fall back to the legacy HTML.
+    headers = {**DEFAULT_HEADERS, "Accept": "application/vnd.pypi.simple.v1+json"}
     chunks = []
     with Progress(transient=True) as progress:
-        response = requests.get(all_packages_url, stream=True, timeout=_timeout)
+        response = requests.get(all_packages_url, stream=True, timeout=_timeout, headers=headers)
         content_length = response.headers.get("content-length")
         if content_length is not None:
             total_length = int(content_length)
@@ -525,9 +556,17 @@ def fill_cache(msg="Fetching cache"):
         else:
             response_data = response.content.decode("utf-8")
 
-    import re  # pylint: disable=import-outside-toplevel
+    packages = None
+    if "json" in response.headers.get("content-type", ""):
+        try:
+            packages = [project["name"] for project in json.loads(response_data)["projects"]]
+        except (json.JSONDecodeError, KeyError, TypeError):
+            logger.debug("Failed to parse simple index JSON, falling back to HTML", exc_info=True)
+            packages = None
+    if packages is None:
+        import re  # pylint: disable=import-outside-toplevel
 
-    packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response_data)
+        packages = re.findall(r"<a[^>]*>([^<]+)<\/a>", response_data)
     with open(cache_file, "w", encoding="utf-8") as f:
         f.write("\n".join(packages))
     return packages
@@ -1155,8 +1194,9 @@ def releases(
         ...,
         help="The name of package to show releases for",
     ),
-    version: str = Option(None, help="The version of the package to show releases for"),
+    version: str = Option(None, help="Only show the release for this specific version"),
     show_links: bool = Option(False, metavar="link", help="Display the links to the releases"),
+    json_output: bool = Option(False, "--json", help="Output the results as JSON instead of a table"),
 ):
     """See all the available releases for a package.
 
@@ -1168,6 +1208,28 @@ def releases(
     parsed_data = fetch_pypi_json(package_name)
     import humanize  # pylint: disable=import-outside-toplevel
 
+    all_releases = parsed_data["releases"]
+    if version:
+        if version not in all_releases:
+            console.print(f"[red]:no_entry_sign: Version [green]{version}[/] not found for [green]{package_name}[/][/]")
+            raise typer.Exit(code=1)
+        all_releases = {version: all_releases[version]}
+
+    if json_output:
+        records = []
+        for release_version, release_files in all_releases.items():
+            release = release_files[0] if release_files else None
+            records.append(
+                {
+                    "version": release_version,
+                    "upload_time": release["upload_time_iso_8601"] if release else None,
+                    "size": release["size"] if release else None,
+                    "url": release["url"] if release else None,
+                }
+            )
+        print(json.dumps(records, indent=2))
+        raise typer.Exit()
+
     table = Table()
     table.add_column("Version", style="green", header_style="green")
     table.add_column("Upload date", width=24, style="red", header_style="red")
@@ -1175,23 +1237,23 @@ def releases(
     if show_links is True:
         table.add_column("Link", style="cyan", header_style="blue")
 
-    for version, releases in parsed_data["releases"].items():
-        if not releases:
-            table.add_row(version)
+    for release_version, release_files in all_releases.items():
+        if not release_files:
+            table.add_row(release_version)
             continue
-        release = releases[0]
+        release = release_files[0]
         upload_time = _parse_iso_datetime(release["upload_time_iso_8601"])
 
         if show_links is True:
             table.add_row(
-                f"[link={release['url']}] {version}[/]",
+                f"[link={release['url']}] {release_version}[/]",
                 upload_time.strftime("%c"),
                 humanize.naturalsize(release["size"], binary=True),
                 release["url"],
             )
         else:
             table.add_row(
-                f"[link={release['url']}] {version}[/]",
+                f"[link={release['url']}] {release_version}[/]",
                 upload_time.strftime("%c"),
                 humanize.naturalsize(release["size"], binary=True),
             )
@@ -1201,13 +1263,19 @@ def releases(
 @app.command()
 def vulnerabilities(
     package_name: str = Argument(..., help="The name of the package to show vulnerabilities for"),
-    version: str = Argument(..., help="The version of the package to show vulnerabilities for"),
+    version: str = Argument(
+        None,
+        help="The version of the package to show vulnerabilities for, defaults to latest, can be omitted if using package_name==version",
+    ),
 ):
     """See all the known vulnerabilities for a package."""
+    if not version and "==" in package_name:
+        package_name, _, version = package_name.partition("==")
     parsed_data = fetch_pypi_json(package_name, version)
-    vulnerabilities = parsed_data["vulnerabilities"]
+    vulnerabilities = parsed_data.get("vulnerabilities") or []
+    shown_version = version or parsed_data.get("info", {}).get("version", "latest")
     if not vulnerabilities:
-        console.print(f"[green]:white_check_mark: No known vulnerabilities for {package_name} {version}[/]")
+        console.print(f"[green]:white_check_mark: No known vulnerabilities for {package_name} {shown_version}[/]")
         raise typer.Exit()
     table = Table(title=f"Known Vulnerabilities for {package_name}", show_lines=True)
     table.add_column("ID", style="red", header_style="bold red")
@@ -1482,12 +1550,17 @@ def information(
     hide_stats: bool = Option(False, metavar="stats", help="Hide the stats"),
     hide_meta: bool = Option(False, metavar="meta", help="Hide the metadata"),
     full_description: bool = Option(False, help="Show the full description instead of truncating"),
+    json_output: bool = Option(False, "--json", help="Output the package metadata as JSON instead of rendering it"),
 ):
 
     """See the information about a package."""
     if not version and "==" in package_name:
         package_name, _, version = package_name.partition("==")
     parsed_data = fetch_pypi_json(package_name, version)
+
+    if json_output:
+        print(json.dumps(parsed_data["info"], indent=2))
+        raise typer.Exit()
 
     info = parsed_data["info"]
     releases = parsed_data.get("releases", {})
@@ -1496,7 +1569,11 @@ def information(
     try:
         from packaging.version import parse as parse_version  # pylint:disable=import-outside-toplevel
     except ImportError:
-        from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
+        try:
+            # distutils was removed in Python 3.12; only usable on older versions
+            from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
+        except ImportError:
+            parse_version = str
 
     from datetime import timezone  # pylint: disable=import-outside-toplevel
 
@@ -1607,7 +1684,9 @@ def information(
             logger.debug("Failed to fetch download stats for %s", package_name, exc_info=True)
             parsed_stats = None
 
-        stats = parsed_stats["data"] if parsed_stats else None
+        stats = parsed_stats.get("data") if parsed_stats else None
+        if not isinstance(stats, dict):
+            stats = None
         if stats:
             metadata.add_row(
                 Panel(
@@ -1777,7 +1856,11 @@ def regex_search(
     limit = float('inf') if limit == -1 else limit
 
     # We compile the regex because it's twice as fast (https://imgur.com/a/MoUyEMg)
-    _regex = re.compile(regex)
+    try:
+        _regex = re.compile(regex)
+    except re.error as exc:
+        console.print(f"[red]:no_entry_sign: Invalid regular expression: {exc}[/]")
+        raise typer.Exit(code=2)
     if compact:
         matches = []
         for package in packages:
@@ -2051,7 +2134,14 @@ def version(
                 "[red]:no_entry_sign: Install packaging (`pip install packaging`) to use the --no-pre-releases flag[/]"
             )
             raise typer.Exit()
-        from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
+        try:
+            # distutils was removed in Python 3.12; only usable on older versions
+            from distutils.version import LooseVersion as parse_version  # pylint:disable=import-outside-toplevel
+        except ImportError:
+            console.print(
+                "[red]:no_entry_sign: Install packaging (`pip install packaging`) to use the version command[/]"
+            )
+            raise typer.Exit(code=1)
 
     versions = map(parse_version, parsed_data["releases"].keys())
     if no_pre_releases:
@@ -2059,17 +2149,14 @@ def version(
     latest_versions = sorted(versions, reverse=True)[:limit]
 
     minimal_output = limit == 1
+    installed_version = _get_installed_version(package_name) if show_installed_version else None
 
     if minimal_output:
         output = f"[green]{package_name}[/] -"
     else:
         version_info = ""
         if show_installed_version:
-            import pkg_resources
-
-            try:
-                installed_version = pkg_resources.get_distribution(package_name).version
-            except Exception:
+            if installed_version is None:
                 version_info = " [red](Not Installed)[/]"
             else:
                 version_info = f" [dark_orange](Installed Version: {installed_version})[/]"
@@ -2081,15 +2168,8 @@ def version(
     for n, version in enumerate(latest_versions, start=1):
         output += f" {f'[magenta]{n}.[/] ' if not minimal_output else ''}"
 
-        if limit == 1 and show_installed_version:
-            import pkg_resources
-
-            try:
-                installed_version = pkg_resources.get_distribution(package_name).version
-            except Exception:
-                output += f"[blue]{version}[/]"
-            else:
-                output += f"[yellow]{installed_version}[/]->[blue]{version}[/]"
+        if limit == 1 and show_installed_version and installed_version is not None:
+            output += f"[yellow]{installed_version}[/]->[blue]{version}[/]"
         else:
             output += f"[blue]{version}[/]"
 
@@ -2108,6 +2188,7 @@ def version(
 @app.command()
 def compare(
     package_names: list[str] = Argument(..., help="The names of the packages to compare"),
+    json_output: bool = Option(False, "--json", help="Output the results as JSON instead of a table"),
 ):
     """Compare multiple packages side-by-side."""
     from concurrent.futures import ThreadPoolExecutor  # pylint: disable=import-outside-toplevel
@@ -2115,6 +2196,18 @@ def compare(
     with console.status("Fetching comparison data..."):
         with ThreadPoolExecutor(max_workers=8) as executor:
             results = list(executor.map(fetch_comparison_data, package_names))
+
+    if json_output:
+        from rich.text import Text  # pylint: disable=import-outside-toplevel
+
+        # Strip the rich markup used for error values so the JSON stays plain
+        records = [
+            {key: Text.from_markup(value).plain if isinstance(value, str) else value for key, value in pkg.items()}
+            for pkg in results
+            if pkg
+        ]
+        print(json.dumps(records, indent=2))
+        raise typer.Exit()
 
     table = Table(
         title="[bold]PyPI Package Comparison[/bold]",
@@ -2176,12 +2269,13 @@ def dependencies(
     fetched: dict[str, dict | None] = {}
 
     # ── Fetch helper ─────────────────────────────────────────────────────────
+    fetch_session = _make_plain_session() if no_cache else session
+
     def fetch_info(name: str) -> tuple[str, dict | None]:
         """Fetch /pypi/<name>/json from PyPI; return (name, info_dict or None)."""
-        _session = _make_plain_session() if no_cache else session
         try:
             url = f"{base_url}/pypi/{quote(name)}/json"
-            resp = _session.get(url)
+            resp = fetch_session.get(url)
             if resp.status_code == 200:
                 data = json.loads(resp.text)
                 return name.lower(), data.get("info")
