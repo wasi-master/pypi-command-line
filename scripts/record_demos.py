@@ -338,15 +338,19 @@ def build_demos() -> list[dict[str, Any]]:
         },
         {
             "name": "pypi-description-syntax-theme",
-            "display": "pypi description rich --syntax-theme dracula",
-            "args": ["description", "rich", "--syntax-theme", "dracula"],
+            "display": "pypi description rich-rst --syntax-theme dracula",
+            "args": ["description", "rich-rst", "--syntax-theme", "dracula"],
         },
         # ── dependencies ────────────────────────────────────────────────
-        {"name": "pypi-dependencies", "display": "pypi dependencies requests", "args": ["dependencies", "requests"]},
+        {
+            "name": "pypi-dependencies",
+            "display": "pypi dependencies pypi-command-line",
+            "args": ["dependencies", "pypi-command-line"],
+        },
         {
             "name": "pypi-dependencies-level",
-            "display": 'pypi dependencies "requests[socks]" --level 2',
-            "args": ["dependencies", "requests[socks]", "--level", "2"],
+            "display": 'pypi dependencies "pypi-command-line[speedups]" --level 2',
+            "args": ["dependencies", "pypi-command-line[speedups]", "--level", "2"],
         },
         # ── information ─────────────────────────────────────────────────
         {"name": "pypi-information", "display": "pypi information rich", "args": ["information", "rich"]},
