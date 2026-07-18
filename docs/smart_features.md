@@ -13,7 +13,7 @@ description: pypi-command-line is a powerful, colorful, beautiful command line i
 
 ## Autocompletion
 
-It supports command line argument autocompletion that can be used via pressing tab.
+It supports command line argument autocompletion that can be used via pressing tab. It works in bash, zsh, fish, and PowerShell. To enable it, run `pypi --install-completion` once and restart your shell (see [--install-completion](usage.md#-install-completion) for details).
 ![Example of autocomplete](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/autocomplete%20example.gif)
 
 ## Smart aliases

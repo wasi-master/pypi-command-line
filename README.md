@@ -166,6 +166,22 @@ pypi search --help
 
 For a full guide see <https://wasi-master.github.io/pypi-command-line/usage>.
 
+### Shell completion
+
+pypi-command-line supports tab completion for commands and options in bash, zsh, fish, and PowerShell. To install it for your current shell, run:
+
+```sh
+pypi --install-completion
+```
+
+Then restart your shell (or `source` your shell configuration file) for the changes to take effect.
+
+To see the completion script without installing it, for example to copy or customize it, run:
+
+```sh
+pypi --show-completion
+```
+
 ## Alternatives
 
 ### [pypi-cli](https://pypi.org/project/pypi-cli/ "pypi-cli")
