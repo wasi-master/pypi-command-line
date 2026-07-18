@@ -588,7 +588,7 @@ def fill_cache(msg: str = "Fetching cache") -> list[str]:
     chunks: list[bytes] = []
     response_data: str
     try:
-        with Progress(transient=True) as progress:
+        with Progress(transient=True, console=console) as progress:
             response = requests.get(all_packages_url, stream=True, timeout=_timeout, headers=headers)
             response.raise_for_status()
             content_length: str | None = response.headers.get("content-length")
@@ -897,11 +897,23 @@ def _fallback_parse_pyproject(content: str) -> list[Requirement]:
 
 
 def _refresh_cache() -> None:
-    with console.status("Getting current cache"):
-        old_cache: list[str] = load_cache()
+    import os  # pylint: disable=import-outside-toplevel
+
+    # Read the old cache file directly instead of load_cache(): load_cache
+    # re-downloads a stale/missing cache, which would nest its progress bar
+    # inside a status spinner and make the old and new counts always match.
+    cache_file: str = os.path.join(get_cache_dir(), "packages.txt")
+    try:
+        with open(cache_file, "r", encoding="utf-8") as f:
+            old_cache: list[str] = f.read().splitlines()
+    except FileNotFoundError:
+        old_cache = []
     new_cache: list[str] = fill_cache(msg="Fetching new cache")
+    if not old_cache:
+        console.print(f"[yellow]:repeat: Created the cache with[/] [red]{len(new_cache)}[/] [yellow]packages[/]")
+        return
     changed: int = len(new_cache) - len(old_cache)
-    console.print(f"[yellow]:repeat: Updated the cache, number of new packages till last refresh:[/] [red]{changed}[/]")
+    console.print(f"[yellow]:repeat: Updated the cache, number of new packages since the last refresh:[/] [red]{changed}[/]")
 
 
 def _clear_cache() -> None:
