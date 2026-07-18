@@ -541,21 +541,10 @@ def get_latest_version() -> str | None:
 
 
 def _get_installed_version(package_name: str) -> str | None:
-    """Return the locally installed version of a package, or None if not installed.
+    """Return the locally installed version of a package, or None if not installed."""
+    from importlib.metadata import PackageNotFoundError  # pylint: disable=import-outside-toplevel
+    from importlib.metadata import version as _installed_version  # pylint: disable=import-outside-toplevel
 
-    Uses importlib.metadata where available and falls back to pkg_resources on
-    older environments.
-    """
-    try:
-        from importlib.metadata import PackageNotFoundError  # pylint: disable=import-outside-toplevel
-        from importlib.metadata import version as _installed_version  # pylint: disable=import-outside-toplevel
-    except ImportError:  # Python < 3.8
-        try:
-            import pkg_resources  # pylint: disable=import-outside-toplevel
-
-            return pkg_resources.get_distribution(package_name).version
-        except Exception:  # pylint: disable=broad-except
-            return None
     try:
         return _installed_version(package_name)
     except PackageNotFoundError:
