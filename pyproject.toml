@@ -56,6 +56,7 @@ dependencies = [
     "rich-click",
     "rich-rst",
     "thefuzz",
+    'tomli; python_version < "3.11"',
     "typer",
     "wheel-filename",
 ]
