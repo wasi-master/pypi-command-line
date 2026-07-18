@@ -58,9 +58,12 @@ markdown_extensions:
 
 extra_javascript:
   - js/gif_script.js
+  - https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.min.js
+  - js/asciinema_demos.js
 
 extra_css:
   - css/custom.css
+  - https://cdn.jsdelivr.net/npm/asciinema-player@3.8.0/dist/bundle/asciinema-player.css
 
 extra:
   social:

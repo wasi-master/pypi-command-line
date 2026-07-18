@@ -8,8 +8,8 @@ description: pypi-command-line is a powerful, colorful, beautiful command line i
 
 !!! tip "Tips"
 
-    - You can *click* the gifs to make them reload, if this does not work refresh the page</br>
-    - You can *right click* and press "*Open Image in New Tab*" to open them in *full screen*
+    - The demos are interactive [asciinema](https://asciinema.org) recordings, press the *play* button to watch them</br>
+    - You can *pause*, *seek*, and use the <kbd>f</kbd> key (or the button in the bottom right corner) to watch them in *full screen*
 
 ## Autocompletion
 
@@ -22,11 +22,11 @@ You can write the first character(s) of the command and it will automatically ge
 
 It always tries not to show a command not found message unless the input doesn't match with any command (50% match is required). It asks the user which command they tried to use if it finds multiple matching commands
 
-![Example of the smart aliases](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/smart_alias.png)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-smart-alias.cast"></div>
 
 If there are multiple commands that start with the specified character(s) then it shows a selection and asks the user to select a command.
 
-![Example of smart aliases selection](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/autocomplete%20example%20with%20ambiguity.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-smart-alias-ambiguous.cast"></div>
 
 ## Caching packages and requests
 
@@ -38,7 +38,9 @@ It shows colored output wherever it can. help command, errors, command outputs
 
 ## Smart and Inituitive error handling
 
-![Example of smart and inituitive error handling](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/error%20handling.gif)
+If you make a typo in a command name it finds the closest matching commands and asks you which one you meant.
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-smart-error-handling.cast"></div>
 
 ## Emojis
 

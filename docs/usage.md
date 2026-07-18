@@ -13,16 +13,23 @@ description: pypi-command-line is a powerful, colorful, beautiful command line i
 
 !!! tip "Tips"
 
-    - You can *click* the gifs to make them restart, if this does not work reload the page (Shortcut for reloading: <kbd>F5</kbd>)</br>
-    - You can either
-        - *right click* and press "*Open Image in New Tab*" to open them in *full screen*
-        - *drag* the image *and drop* it to your tabs panel to open them in *full screen*
+    - The demos are interactive [asciinema](https://asciinema.org) recordings, press the *play* button to watch them</br>
+    - You can *pause*, *seek*, and use the <kbd>f</kbd> key (or the button in the bottom right corner) to watch them in *full screen*</br>
+    - Since the recordings are plain text you can also *select and copy* any text from them while paused
 
 ## **Options**
 
 ## -h, --help
 
 Sends a help message, each command also has this flag that you can use to see the help about that specific command
+
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-help.cast"></div>
+
+Command specific help:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-command-help.cast"></div>
 
 ### **Usage**
 
@@ -39,7 +46,7 @@ Installs autocompletion for the current shell.
 
 ### **Demo**
 
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20--install-completion.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-install-completion.cast"></div>
 
 ### **Usage**
 
@@ -53,7 +60,7 @@ See code for autocompletion for the current shell, to copy it or customize the i
 
 The output will be different depending on the shell
 
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20--show-completion.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-show-completion.cast"></div>
 
 ### **Usage**
 
@@ -63,9 +70,9 @@ The output will be different depending on the shell
 
 If used, disabled the cache for the current command, for more information about the cache see [notes](https://wasi-master.github.io/pypi-command-line/notes#cache)
 
-### **Demo**
+??? example "Demo"
 
-TODO: Add demo for --no-cache
+    <div class="asciinema-demo" data-cast="../assets/demos/pypi-no-cache.cast"></div>
 
 ### **Usage**
 
@@ -77,9 +84,9 @@ Specify a base url for the repository from which the results are taken from. Suc
 
 The value must either be the shorthand `testpypi` or a full `http://`/`https://` URL. Anything else is rejected with an error and exit code 2.
 
-### **Demo**
+??? example "Demo"
 
-TODO: Add demo for --repository
+    <div class="asciinema-demo" data-cast="../assets/demos/pypi-repository.cast"></div>
 
 ### **Usage**
 
@@ -91,6 +98,10 @@ TODO: Add demo for --repository
 
 Set the timeout in seconds for network requests made by any command. The default is 15 seconds and the value must be at least 0.1. If a server does not respond within the timeout, the command fails with a network error message instead of hanging.
 
+??? example "Demo"
+
+    <div class="asciinema-demo" data-cast="../assets/demos/pypi-timeout.cast"></div>
+
 ### **Usage**
 
 > pypi --timeout 5 <command>
@@ -98,6 +109,10 @@ Set the timeout in seconds for network requests made by any command. The default
 ## --verbose
 
 Show debug logs for errors that are otherwise silently ignored, such as unparseable requirements, failed GitHub or download-statistics lookups, and invalid timestamps. Useful for troubleshooting when a command shows `N/A` or skips data.
+
+??? example "Demo"
+
+    <div class="asciinema-demo" data-cast="../assets/demos/pypi-verbose.cast"></div>
 
 ### **Usage**
 
@@ -123,15 +138,15 @@ These shorthands can be used instead of the full command name: `v`, `ver`
 
 Seeing the current and latest version of pypi-command-line:
 
-![Seeing the current and latest version of pypi-command-line](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20without%20package.png)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-version.cast"></div>
 
-Seeing the latest versions of another package (django in this case):
+Seeing the latest versions of another package (django in this case) along with the installed version:
 
-![Seeing the latest versions of another package](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20installed%20version%20limit%205.png)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-version-package.cast"></div>
 
 Omitting the pre-releases:
 
-![Seeing the latest versions of another package](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20version%20with%20no%20pre%20releases.png)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-version-no-pre-releases.cast"></div>
 
 ### **Usage**
 
@@ -171,11 +186,13 @@ These shorthands can be used instead of the full command name: `b`
 
 ### **Demo**
 
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse.gif)
+You can move through the links with the arrow keys and cancel using ++ctrl+c++ if you don't find your desired link
 
-You can cancel using ++ctrl+c++ if you don't find your desired link
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-browse.cast"></div>
 
-![Demo of cancelling](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20browse%20but%20cancel.gif)
+Using `--url-only` to just print the urls instead of opening anything:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-browse-url-only.cast"></div>
 
 ### **Usage**
 
@@ -203,6 +220,10 @@ Clears the local packages and requests cache, see [notes](https://wasi-master.gi
 
 These shorthands can be used instead of the full command name: `cc`
 
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-cache-clear.cast"></div>
+
 ### **Usage**
 
 > pypi cache-clear
@@ -221,6 +242,10 @@ Shows the size for the packages cache and the size and additionally the websites
 
 These shorthands can be used instead of the full command name: `ci`
 
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-cache-information.cast"></div>
+
 ### **Errors and Warnings**
 
 - #### <span style="color: yellow">W:</span> Packages cache not available
@@ -234,7 +259,7 @@ These shorthands can be used instead of the full command name: `ci`
 
 ### **Usage**
 
-> pypi cache-information
+> pypi cache-info
 
 ## cache-refresh
 
@@ -243,6 +268,10 @@ Reloads the packages cache and shows the number of new packages added after the 
 ### **Aliases**
 
 These shorthands can be used instead of the full command name: `cr`
+
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-cache-refresh.cast"></div>
 
 ### **Usage**
 
@@ -257,6 +286,14 @@ This command parses the project's requirement file, fetches information from PyP
 ### **Aliases**
 
 These shorthands can be used instead of the full command name: `chk`
+
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-check.cast"></div>
+
+Getting the results as JSON with `--json`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-check-json.cast"></div>
 
 ### **Usage**
 
@@ -286,6 +323,14 @@ This command compares the latest version, latest release date, github stars, ope
 
 These shorthands can be used instead of the full command name: `c`, `cmp`
 
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-compare.cast"></div>
+
+Getting the results as JSON with `--json`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-compare-json.cast"></div>
+
 ### **Usage**
 
 > pypi compare PACKAGE1 PACKAGE2...
@@ -309,11 +354,15 @@ These shorthands can be used instead of the full command name: `desc`, `readme`
 
 ### **Demo**
 
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-description.cast"></div>
 
-Demo of getting description from github if pypi does not have one
+Demo of forcefully getting the description from github with `--force-github`
 
-![Demo of it finding github repo and getting the description from there](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20desc%20github.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-description-force-github.cast"></div>
+
+Demo of using a custom syntax highlighting theme for code blocks with `--syntax-theme`
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-description-syntax-theme.cast"></div>
 
 ### **Usage**
 
@@ -366,6 +415,14 @@ Examples:
 
 These shorthands can be used instead of the full command name: `d`, `dep`, `deps`, `tree`
 
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-dependencies.cast"></div>
+
+Limiting the depth of the tree with `--level` and using extras:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-dependencies-level.cast"></div>
+
 ### **Usage**
 
 > pypi dependencies [OPTIONS] PACKAGE_NAME
@@ -397,11 +454,19 @@ These shorthands can be used instead of the full command name: `i`, `info`, `sho
 
 ### **Demo**
 
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-information.cast"></div>
 
 You can also see classifiers if you want to
 
-![Demo with classifiers](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-information-classifiers.cast"></div>
+
+Hiding the parts you don't care about with the `--hide-*` flags:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-information-hide.cast"></div>
+
+Getting the raw package metadata as JSON with `--json`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-information-json.cast"></div>
 
 ### **Usage**
 
@@ -419,9 +484,7 @@ You can also see classifiers if you want to
 
 - `--show-classifiers`
 
-    Show the classifiers  </br>
-   Example of how this looks:
-   ![Example of this flag](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20info%20with%20classifiers.gif)
+    Show the classifiers (see the demo above for an example)
 
 - `--hide-project-urls`
 
@@ -463,7 +526,7 @@ These shorthands can be used instead of the full command name: `lf`
 
 ### **Demo**
 
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20largest-files.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-largest-files.cast"></div>
 
 ### **Usage**
 
@@ -488,6 +551,14 @@ Shows the top 40 newly added packages. Meaning that the first ever version of th
 ### **Aliases**
 
 These shorthands can be used instead of the full command name: `np`
+
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-new-packages.cast"></div>
+
+Showing the author and hiding the link with `--show-author` and `--hide-link`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-new-packages-flags.cast"></div>
 
 ### **Usage**
 
@@ -521,6 +592,14 @@ Shows the top 100 newly updated packages. Meaning that the latest version of tho
 ### **Aliases**
 
 These shorthands can be used instead of the full command name: `nr`
+
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-new-releases.cast"></div>
+
+Showing the author and hiding the link with `--show-author` and `--hide-link`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-new-releases-flags.cast"></div>
 
 ### **Usage**
 
@@ -558,6 +637,22 @@ name on supported terminals
 ### **Aliases**
 
 These shorthands can be used instead of the full command name: `rel`
+
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-releases.cast"></div>
+
+Only showing a specific version with `--version`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-releases-version.cast"></div>
+
+Also showing the release links with `--show-links`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-releases-links.cast"></div>
+
+Getting the results as JSON with `--json`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-releases-json.cast"></div>
 
 ### **Usage**
 
@@ -600,7 +695,11 @@ These shorthands can be used instead of the full command name: `rs`, `rsearch`, 
 
 ### **Demo**
 
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20rsearch.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-regex-search.cast"></div>
+
+Compact formatting with `--compact` and limiting the number of results with `--limit`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-regex-search-compact.cast"></div>
 
 ### **Usage**
 
@@ -627,6 +726,14 @@ This just gets the documentation url and opens it's search results page with the
 ### **Aliases**
 
 These shorthands can be used instead of the full command name: `rtd`, `docs`, `documentation`
+
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-read-the-docs.cast"></div>
+
+Searching the docs for a specific query:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-read-the-docs-query.cast"></div>
 
 ### **Usage**
 
@@ -673,7 +780,7 @@ Search for a package on PyPI. <span style="color: red">NOTE: This command is cur
 
 ### **Demo**
 
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-search.cast"></div>
 
 ### **Usage**
 
@@ -687,9 +794,7 @@ Search for a package on PyPI. <span style="color: red">NOTE: This command is cur
 
 - `--page INTEGER RANGE`
 
-    The page of the search results to show. [<span style="color: cyan">default:</span> 1; <span style="color: green">should be greater than 1 and less than 500</span>]</br>
-    For example:
-    ![Demo of the flag](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20search%20with%20page.gif)
+    The page of the search results to show. [<span style="color: cyan">default:</span> 1; <span style="color: green">should be greater than 1 and less than 500</span>]
 
 - -h, --help
 
@@ -708,6 +813,10 @@ See the known vulnerabilities for a package.
 ### **Aliases**
 
 These shorthands can be used instead of the full command name: `vuln`, `vulns`
+
+### **Demo**
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-vulnerabilities.cast"></div>
 
 ### **Usage**
 
@@ -743,7 +852,11 @@ These shorthands can be used instead of the full command name: `w`, `whl`
 
 ### **Demo**
 
-![Demo of the command](https://raw.githubusercontent.com/wasi-master/pypi-command-line/main/images/pypi%20wheels.gif)
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-wheels.cast"></div>
+
+Only showing the wheels supported on the current platform with `--supported-only`:
+
+<div class="asciinema-demo" data-cast="../assets/demos/pypi-wheels-supported-only.cast"></div>
 
 ### **Usage**
 
