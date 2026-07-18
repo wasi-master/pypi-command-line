@@ -916,6 +916,8 @@ def _clear_cache() -> None:
     from contextlib import nullcontext
 
     folder: str = get_cache_dir()
+    deleted: int = 0
+    failed: int = 0
     for filename in os.listdir(folder):
         file_path: str = os.path.join(folder, filename)
         try:
@@ -923,8 +925,15 @@ def _clear_cache() -> None:
                 disable_cache = session.cache_disabled() if hasattr(session, "cache_disabled") else nullcontext()
                 with disable_cache:
                     os.remove(file_path)
+                deleted += 1
         except Exception as exc:
+            failed += 1
             console.print(f"[red]:x: Failed to delete {file_path}. Reason: {exc}[/]")
+    if not failed:
+        if deleted:
+            console.print(f"[green]:white_check_mark: Deleted {deleted} cache file{'s' if deleted != 1 else ''}[/]")
+        else:
+            console.print("[green]:white_check_mark: No cache files to delete[/]")
 
 
 def _get_github_readme(repo: str) -> tuple[str, str] | tuple[None, None]:
