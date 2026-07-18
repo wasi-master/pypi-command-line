@@ -2180,10 +2180,22 @@ def cache_info() -> None:
         table.add_column("Link", style="cyan", header_style="bold cyan")
         table.add_column("Created", style="green", header_style="bold green")
         table.add_column("Expires", style="green", header_style="bold green")
-        for n, response in enumerate(session.cache.values()):
-            table.add_row(
-                f"{n}.", response.url, humanize.naturaltime(response.created_at), humanize.naturaltime(response.expires)
-            )
+        # requests-cache >= 0.8 exposes responses via `cache.responses`; older
+        # versions made the cache itself a mapping.
+        cached_responses = getattr(session.cache, "responses", session.cache)
+
+        from datetime import datetime, timezone  # pylint: disable=import-outside-toplevel
+
+        def natural_time(dt: datetime | None) -> str:
+            if dt is None:
+                return "never"
+            # requests-cache may return timezone-aware datetimes, which humanize
+            # cannot compare against its naive "now" default.
+            now = datetime.now(timezone.utc) if dt.tzinfo else None
+            return humanize.naturaltime(dt, when=now)
+
+        for n, response in enumerate(cached_responses.values()):
+            table.add_row(f"{n}.", response.url, natural_time(response.created_at), natural_time(response.expires))
         console.print(table)
 
 
