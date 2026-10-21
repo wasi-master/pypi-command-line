@@ -1,0 +1,92 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-22.04, target: linux-x86_64 }
+          - { os: ubuntu-22.04-arm, target: linux-aarch64 }
+          - { os: macos-15-intel, target: macos-x86_64 }
+          - { os: macos-latest, target: macos-arm64 }
+          - { os: windows-latest, target: windows-x86_64 }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install package and PyInstaller
+        run: python -m pip install ".[speedups]" pyinstaller
+
+      - name: Check tag matches package version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="$(python -c 'import pypi_cli; print(pypi_cli.__version__)')"
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package version $version" >&2
+            exit 1
+          fi
+
+      - name: Build binary
+        run: |
+          printf 'from pypi_cli.__main__ import run\n\nrun()\n' > entry.py
+          pyinstaller --onefile --name pypi --collect-all rich --copy-metadata pypi_command_line entry.py
+
+      - name: Smoke test
+        run: |
+          ./dist/pypi --help
+          ./dist/pypi version
+
+      - name: Package
+        run: |
+          name="pypi-${GITHUB_REF_NAME}-${{ matrix.target }}"
+          mkdir -p out
+          cp LICENSE README.md dist/
+          cd dist
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            7z a "../out/$name.zip" pypi.exe LICENSE README.md
+          else
+            tar -czf "../out/$name.tar.gz" pypi LICENSE README.md
+          fi
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.target }}
+          path: out/*
+
+  release:
+    name: Publish GitHub release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: out
+          merge-multiple: true
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd out
+          sha256sum ./* > SHA256SUMS
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes ./*
