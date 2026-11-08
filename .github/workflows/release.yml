@@ -21,6 +21,7 @@ jobs:
           - { os: macos-15-intel, target: macos-x86_64 }
           - { os: macos-latest, target: macos-arm64 }
           - { os: windows-latest, target: windows-x86_64 }
+          - { os: windows-11-arm, target: windows-arm64 }
     defaults:
       run:
         shell: bash
@@ -46,7 +47,17 @@ jobs:
       - name: Build binary
         run: |
           printf 'from pypi_cli.__main__ import run\n\nrun()\n' > entry.py
-          pyinstaller --onefile --name pypi --collect-all rich --copy-metadata pypi_command_line entry.py
+          # The runner's Linux Python ships with debug symbols (libpython alone is
+          # ~31 MB unstripped vs ~7 MB on macOS), so strip there. Stripping is not
+          # useful on Windows and would invalidate the ad-hoc signatures on macOS.
+          extra=()
+          if [ "$RUNNER_OS" = "Linux" ]; then extra+=(--strip); fi
+          # Nothing imports these at runtime; PyInstaller picks them up from the
+          # build environment.
+          pyinstaller --onefile --name pypi --collect-all rich --copy-metadata pypi_command_line \
+            --exclude-module setuptools --exclude-module pkg_resources \
+            --exclude-module lxml.objectify --exclude-module pydoc_data \
+            "${extra[@]}" entry.py
 
       - name: Smoke test
         run: |
