@@ -73,3 +73,11 @@ def test_information_without_meta(runner: type[CommandRunner]) -> None:
 def test_information_help(runner: type[CommandRunner]) -> None:
     result = runner.run("pypi information --help")
     assert result.stdout.decode("utf-8"), "No output was gotten"  # Assert if a output was returned
+
+
+def test_format_classifiers_skips_malformed_lines() -> None:
+    from pypi_cli.__main__ import _format_classifiers
+
+    out = _format_classifiers("Development Status :: 4 - Beta\nMalformedLine")
+    assert "Development Status" in out
+    assert "MalformedLine" not in out
