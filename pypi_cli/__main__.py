@@ -520,6 +520,10 @@ def _format_classifiers(_classifiers: str) -> str:
     from collections import defaultdict
     classifier_dict: defaultdict[str, list[str]] = defaultdict(list)
     for classifier in _classifiers.splitlines():
+        if "::" not in classifier:
+            # Malformed metadata (e.g. from a private index): skip the line
+            # instead of crashing the whole command.
+            continue
         topic, content = map(str.strip, classifier.split("::", 1))
         classifier_dict[topic].append(content)
     return "".join(
